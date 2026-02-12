@@ -37,14 +37,14 @@ npm run dev
 
 
 ## Project Structure
-- app/ - Contains the source code for the UI components
-- public/ - Public assets (e.g., images, svg files)
-- .gitignore - List of files and directories to exclude in the GitHub repository
-- eslint.config.mjs - Eslint configuration
-- next.config.js - Next configuration
-- package.json - Project dependencies
-- postcss.config.mjs - Postcss configuration with Tailwind CSS
-- tsconfig.json - TypeScript configuration
+- **app/** - Contains the source code for the UI components
+- **public/** - Public assets (e.g., images, svg files)
+- **.gitignore** - List of files and directories to exclude in the GitHub repository
+- **eslint.config.mjs** - Eslint configuration
+- **next.config.js** - Next configuration
+- **package.json** - Project dependencies
+- **postcss.config.mjs** - Postcss configuration with Tailwind CSS
+- **tsconfig.json** - TypeScript configuration
 
 
 ## Next.js Documentation 
