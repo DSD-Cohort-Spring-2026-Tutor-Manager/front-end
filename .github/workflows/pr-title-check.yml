@@ -1,0 +1,20 @@
+name: "PR Title Check"
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  pr-title-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR Title Check
+        run: | 
+          title="${{ github.event.pull_request.title }}"
+          title="${title//$'\n'/ }"
+          # Require exactly: <chore|feat|fix>: #<digits> <description>
+          if [[ ! $title =~ ^(chore|feat|fix):\ #[0-9]+[[:space:]].+$ ]]; then
+            echo "::error ::PR title must follow format: <chore|feat|fix>: #<issue number> <description>"
+            echo "Actual: $title"
+            exit 1
+          fi
