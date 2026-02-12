@@ -3,8 +3,8 @@ Tutortoise is a learning center management platform designed to help parents see
 
 Visit Tutortoise's website at <https://public-url>.
 
-## Technical Details
-This web application uses React and Next.js.
+<!-- ## Technical Details
+This web application uses React and Next.js. -->
 
 ## Local Setup
 ### Prerequisites
@@ -23,22 +23,31 @@ git clone https://github.com/DSD-Cohort-Spring-2026-Tutor-Manager/front-end.git
 cd front-end
 ```
 
-3. Install the dependencies
+3. Install the dependencies.
 ```bash
 npm install
 ```
 
-4. Run the development server
+4. Run the development server.
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open your browser to [http://localhost:3000](http://localhost:3000) to view the application.
+
+
+## Project Structure
+- app/ - Contains the source code for the UI components
+- public/ - Public assets (e.g., images, svg files)
+- .gitignore - List of files and directories to exclude in the GitHub repository
+- eslint.config.mjs - Eslint configuration
+- next.config.js - Next configuration
+- package.json - Project dependencies
+- postcss.config.mjs - Postcss configuration with Tailwind CSS
+- tsconfig.json - TypeScript configuration
+
 
 ## Next.js Documentation 
-To learn more about Next.js, take a look at the following resources:
+To learn more about Next.js, take a look at:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
