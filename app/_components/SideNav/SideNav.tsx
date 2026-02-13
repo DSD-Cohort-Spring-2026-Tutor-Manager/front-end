@@ -6,10 +6,20 @@ import { usePathname } from 'next/navigation';
 import './SideNav.css';
 
 const navItems = [
-  { href: '/', label: 'Home', icon: '/icons/home.svg' },
-  { href: '/class', label: 'Class', icon: '/icons/tutor.svg' },
+  {
+    href: '/',
+    label: 'Home',
+    icon: '/icons/home.svg',
+    iconActive: '/icons/Home-act.svg',
+  },
+  { href: '/class', label: 'Classes', icon: '/icons/tutor.svg' },
   { href: '/student', label: 'Student', icon: '/icons/student.svg' },
-  { href: '/shop', label: 'Shop', icon: '/icons/shop.svg' },
+  {
+    href: '/credits',
+    label: 'Credits',
+    icon: '/icons/shop.svg',
+    iconActive: '/icons/Shop-act.svg',
+  },
 ];
 
 function SideNav() {
@@ -19,16 +29,22 @@ function SideNav() {
     <aside className='side-nav bg-(--Support)'>
       <nav className='side-nav__container'>
         <div className='side-nav__logo-container'>
-          <img src='/icons/logo.svg' alt='Tutortoise logo' />
+          <img
+            className='side-nav__logo'
+            src='/icons/tutortoise-logo.svg'
+            alt='Tutortoise logo'
+          />
         </div>
         <ul className='side-nav__list'>
           {navItems.map((item) => {
+            const isActive = pathname === item.href;
+
             return (
               <li key={item.href}>
                 <Link className='side-nav__item' href={item.href}>
                   <img
                     className='side-nav__icon-img'
-                    src={item.icon}
+                    src={isActive ? item.iconActive : item.icon}
                     alt={item.label}
                   />
                   <span className='side-nav__icon-label'>{item.label}</span>
