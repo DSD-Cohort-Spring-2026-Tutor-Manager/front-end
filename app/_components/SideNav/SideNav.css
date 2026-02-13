@@ -44,4 +44,34 @@
 
 .side-nav__logout {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+@media (max-height: 950px) {
+  .side-nav__icon-img {
+    width: 35px;
+    height: 39px;
+  }
+
+  .side-nav__list {
+    gap: 40px;
+  }
+}
+
+@media (max-height: 700px) {
+  .side-nav__icon-img {
+    width: 25px;
+    height: 29px;
+  }
+
+  .side-nav__list {
+    gap: 20px;
+  }
+  .side-nav__icon-label {
+    font-size: 14px;
+  }
 }

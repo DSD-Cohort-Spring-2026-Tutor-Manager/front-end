@@ -17,11 +17,13 @@ export default function RootLayout({
     <html lang='en'>
       <body>
         <SideNav />
-        <TopNav
-          name="Samantha Villanueva"
-          avatarIconSrc="/images/worm_with_glasses.png"
-        />
-        {children}
+        <div className='shell__body'>
+          <TopNav
+            name='Samantha Villanueva'
+            avatarIconSrc='/images/worm_with_glasses.png'
+          />
+          {children}
+        </div>
       </body>
     </html>
   );
