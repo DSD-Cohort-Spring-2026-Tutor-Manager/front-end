@@ -18,6 +18,10 @@
   font-weight: 400;
 }
 
+.billing {
+  padding-bottom: 40px;
+}
+
 .billing__title {
   font-size: 24px;
   font-weight: 700;
@@ -32,6 +36,10 @@
   padding: 22px 24px;
   border-radius: 28px;
   justify-content: space-between;
+}
+
+.billing__card-info {
+  font-weight: 500;
 }
 
 .billing__card-btn {
