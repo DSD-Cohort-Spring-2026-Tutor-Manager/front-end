@@ -1,5 +1,9 @@
+'use client'
+
+import Modal from '@/app/_components/Modal/Modal';
 import './credits.css';
 import CreditOpts from '@/app/_components/CreditOpts/CreditOpts';
+
 function page() {
   return (
     <div className='credits'>
@@ -25,6 +29,13 @@ function page() {
         </div>
       </section>
       <CreditOpts />
+      <Modal
+        text="Thanks for your purchase! Loading up your account now!"
+        buttons={[{
+          text: "Return to Dashboard",
+          onClick: () => alert('Modal button clicked.')
+        }]}
+        />
     </div>
   );
 }
