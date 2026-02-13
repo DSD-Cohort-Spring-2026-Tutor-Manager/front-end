@@ -1,12 +1,12 @@
 @import 'tailwindcss';
 
 :root {
---Primary: #CDE8B5;  /* Mint green */
---Outlines: #2E6F5E; /* Dark Green */
---Accent: #F39C34; /* Orange */
---Support: #243A5E; /* Navy blue */
---Highlight: #7FBF4D; /* Bright Green */
---Off-white: #F8FAF7; /* Slightly darker white */
+  --Primary: #cde8b5; /* Mint green */
+  --Outlines: #2e6f5e; /* Dark Green */
+  --Accent: #f39c34; /* Orange */
+  --Support: #243a5e; /* Navy blue */
+  --Highlight: #7fbf4d; /* Bright Green */
+  --Off-white: #f8faf7; /* Slightly darker white */
 }
 
 @theme inline {
@@ -16,4 +16,5 @@
 }
 
 body {
+  display: flex;
 }
