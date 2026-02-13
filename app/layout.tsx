@@ -28,7 +28,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TopNav />
+        <TopNav
+          name="Samantha Villanueva"
+          avatarIconSrc="/images/worm_with_glasses.png"
+        />
         {children}
       </body>
     </html>
