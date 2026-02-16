@@ -3,8 +3,23 @@
 import Modal from '@/app/_components/Modal/Modal';
 import './credits.css';
 import CreditOpts from '@/app/_components/CreditOpts/CreditOpts';
-
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 function page() {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  // const { isOpen, setIsOpen } = useContext(ModalContext);
+
+  const modalDetails = {
+    text: 'Thanks for your purchase! Loading up your account now!',
+    buttons: [
+      {
+        text: 'Return to Dashboard',
+        onClick: () => router.push('/')
+      }
+    ]
+  };
+
   return (
     <div className='credits'>
       <header className='credits__header'>
@@ -29,13 +44,15 @@ function page() {
         </div>
       </section>
       <CreditOpts />
-      <Modal
-        text="Thanks for your purchase! Loading up your account now!"
-        buttons={[{
-          text: "Return to Dashboard",
-          onClick: () => alert('Modal button clicked.')
-        }]}
-        />
+
+      <button onClick={() => setIsOpen(true)}>Test Modal</button>
+      { isOpen ? 
+        <Modal
+          text={modalDetails.text}
+          buttons={modalDetails.buttons}
+        />: undefined
+      }
+      
     </div>
   );
 }

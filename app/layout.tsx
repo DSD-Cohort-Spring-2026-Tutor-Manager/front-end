@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import SideNav from './_components/SideNav/SideNav';
 import TopNav from './_components/TopNav/TopNav';
+import { ModalContext } from './_components/Modal/ModalContext';
 
 export const metadata: Metadata = {
   title: 'Tutortoise',
@@ -17,14 +18,14 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <SideNav />
-        <div className='shell__body'>
-          <TopNav
-            name='Samantha Villanueva'
-            avatarIconSrc='/images/worm_with_glasses.png'
-          />
-          {children}
-        </div>
+          <SideNav />
+          <div className='shell__body'>
+            <TopNav
+              name='Samantha Villanueva'
+              avatarIconSrc='/images/worm_with_glasses.png'
+            />
+            {children}
+          </div>
       </body>
     </html>
   );
