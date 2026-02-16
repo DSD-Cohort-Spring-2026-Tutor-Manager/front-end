@@ -1,0 +1,6 @@
+# This is a CODEOWNERS file.
+# It indicates who owns a specific portion of the codebase.
+# When a pull request is opened for a change made to code, the codeowners are automatically added to that pull request.
+# Learn more at https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners.
+
+* @YourDevVince @jeje1197 @Padmaja-Ramesh
