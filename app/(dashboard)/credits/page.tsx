@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Modal from '@/app/_components/Modal/Modal';
 import './credits.css';
@@ -15,9 +15,9 @@ function page() {
     buttons: [
       {
         text: 'Return to Dashboard',
-        onClick: () => router.push('/')
-      }
-    ]
+        onClick: () => router.push('/'),
+      },
+    ],
   };
 
   return (
@@ -46,13 +46,9 @@ function page() {
       <CreditOpts />
 
       <button onClick={() => setIsOpen(true)}>Test Modal</button>
-      { isOpen ? 
-        <Modal
-          text={modalDetails.text}
-          buttons={modalDetails.buttons}
-        />: undefined
-      }
-      
+      {isOpen ? (
+        <Modal text={modalDetails.text} buttons={modalDetails.buttons} />
+      ) : undefined}
     </div>
   );
 }
