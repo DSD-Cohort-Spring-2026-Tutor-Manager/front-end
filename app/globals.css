@@ -23,3 +23,21 @@ body {
 .shell__body {
   width: 100vw;
 }
+
+/* Global Convenience Styles */
+
+button {
+  padding: 10px 15px;
+  border-radius: 14px;
+  background-color: #243a5e;
+  color: #fff;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button:active {
+  box-shadow: 0 3px #7a7979;
+  transform: translateY(2px);
+}

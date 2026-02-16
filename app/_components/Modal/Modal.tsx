@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './Modal.css'
+import { ModalContext } from './ModalContext'
 
 type ModalType = 'confirm'
 
@@ -17,25 +18,29 @@ const Modal = ({
     text: string,
     buttons: ModalButton[]
 }) => {
+    const { isOpen, setIsOpen } = useContext(ModalContext);
   return (
-    <div className="modal">
-        <div className='modal-content'>
-            <p className="modal-text">
-                {text}
-            </p>
-            <div id="modal__buttons-container">
-                {buttons?.map((button, index) => (
-                    <button 
-                        key={`modal-button-${index}`}
-                        className='modal-button'
-                        onClick={() => button.onClick()}
-                    >
-                        {button.text}
-                    </button>
-                ))}
+    // isOpen ?
+        <div className="modal">
+            <div className='modal-content'>
+                <p className="modal-text">
+                    {text}
+                </p>
+                <div id="modal__buttons-container">
+                    {buttons?.map((button, index) => (
+                        <button 
+                            key={`modal-button-${index}`}
+                            className='modal-button'
+                            onClick={() => button.onClick()}
+                        >
+                            {button.text}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
-    </div>
+        // :
+        // undefined
   )
 }
 
