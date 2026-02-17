@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* Uncomment this to remove the next js icon in development mode. */
+  // devIndicators: false
 };
 
 export default nextConfig;
