@@ -1,17 +1,15 @@
 'use client';
-import { useState } from 'react';
-
+import { useContext } from 'react';
+import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import Databox from '../_components/DataBox/Databox';
 import './dashboard.css';
 function Home() {
-  const [credits, setCredits] = useState(3);
-  const addCredits = () => {
-    setCredits((prev) => prev + 1);
-  };
+  const ctx = useContext(CreditContext);
+  if (!ctx)
+    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
-  const subtractCredits = () => {
-    setCredits((prev) => prev - 1);
-  };
+  const { credits, addCredits } = ctx;
+
   return (
     <main className='dashboard'>
       <section className='dashboard__data-row'>
@@ -23,8 +21,6 @@ function Home() {
           cta='Buy'
         />
       </section>
-      <button onClick={addCredits}>add credits</button>
-      <button onClick={subtractCredits}>subtract credits</button>
     </main>
   );
 }

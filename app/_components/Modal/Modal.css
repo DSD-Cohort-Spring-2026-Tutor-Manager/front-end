@@ -11,48 +11,57 @@
   width: 100%; /* Full width */
   height: 100vh; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 .modal-content {
-    width: 60%;
-    border-radius: 28px;
-    padding: 60px 100px 60px 100px;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  width: 60%;
+  border-radius: 28px;
+  padding: 60px 100px 60px 100px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
 }
 
 .modal-text {
-    /* margin-top: 3.7rem; */
-    /* margin-top: 59px; */
-    font-weight: 600;
-    font-size: 38px;
-    line-height: 55px;
-    letter-spacing: normal;
-    white-space: pre-wrap;
-    color: var(--Outlines);
-    text-align: center;
+  /* margin-top: 3.7rem; */
+  /* margin-top: 59px; */
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 55px;
+  letter-spacing: normal;
+  white-space: pre-wrap;
+  color: var(--Outlines);
+  text-align: center;
 }
 
-.modal__buttons-container {}
+#modal__buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 50%;
+  align-items: center;
+  justify-content: center;
+}
 
 .modal-button {
-    height: 73px;
-    margin-top: 4rem;
-    padding: 9px 61px 9px 61px;
-    font-weight: 600;
-    font-size: 28px;
-    line-height: 55px;
-    /* margin-top: 80px; */
-    border-radius: 14px;
-    background-color: var(--Support);
-    color: white;
+  height: 73px;
+  margin-top: 4rem;
+  padding: 9px 61px 9px 61px;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 55px;
+  /* margin-top: 80px; */
+  border-radius: 14px;
+  background-color: var(--Support);
+  color: white;
 }
 
 .modal-button:hover {
-    cursor: pointer;
+  cursor: pointer;
+  opacity: 0.8;
 }
