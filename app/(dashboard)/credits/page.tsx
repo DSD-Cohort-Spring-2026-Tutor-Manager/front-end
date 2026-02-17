@@ -4,29 +4,46 @@ import Modal from '@/app/_components/Modal/Modal';
 import './credits.css';
 import CreditOpts from '@/app/_components/CreditOpts/CreditOpts';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+
+import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
+
 function page() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  // const { isOpen, setIsOpen } = useContext(ModalContext);
+  const [pendingAmount, setPendingAmount] = useState<number>(0);
+  const [currentBtn, setCurrentBtn] = useState<boolean>(false);
+
+  const onPurchase = (payload: { credits: number }) => {
+    setPendingAmount(payload.credits);
+  };
 
   const modalDetails = {
-    text: 'Thanks for your purchase! Loading up your account now!',
+    text: `Purchase ${pendingAmount} credits?`,
     buttons: [
       {
-        text: 'Return to Dashboard',
-        onClick: () => router.push('/'),
+        text: 'Confirm',
+        onClick: () => {
+          addCredits(pendingAmount);
+          setIsOpen(false);
+        },
       },
+      { text: 'Cancel', onClick: () => setIsOpen(false) },
     ],
   };
 
+  const ctx = useContext(CreditContext);
+  if (!ctx)
+    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
+
+  const { credits, addCredits } = ctx;
   return (
     <div className='credits'>
       <header className='credits__header'>
         <h1 className='credits__header-title'>Credits</h1>
         <p className='credits__header-subtext'>
-          You have 3 credits available.<br></br> 1 credit equals an hour of
-          tutoring for your child.
+          You have {credits} credits available.<br></br> 1 credit equals an hour
+          of tutoring for your child.
         </p>
       </header>
       <section className='billing'>
@@ -43,12 +60,25 @@ function page() {
           <div className='billing__card-btn'>Edit</div>
         </div>
       </section>
-      <CreditOpts />
+      <CreditOpts
+        currentCredit={credits}
+        isModalOpen={isOpen}
+        modalDetails={modalDetails}
+        onSelectOption={onPurchase}
+      />
 
-      <button onClick={() => setIsOpen(true)}>Test Modal</button>
-      {isOpen ? (
-        <Modal text={modalDetails.text} buttons={modalDetails.buttons} />
-      ) : undefined}
+      <button
+        className='credits__purchase-btn'
+        onClick={() => {
+          if (pendingAmount > 0) setIsOpen(true);
+        }}
+      >
+        Purchase Credits
+      </button>
+
+      {isOpen && (
+        <Modal text={modalDetails.text} buttons={modalDetails.buttons ?? []} />
+      )}
     </div>
   );
 }
