@@ -1,6 +1,7 @@
 // Make calls to the same origin to route requests through the proxy
 const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
 const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
+const BUY_CREDITS_ENDPOINT = '/api/credits/buy?parentId={parentId}&credits={credits}&amount={amount}';
 
 export const TutortoiseClient = {
     getBasePath: () => window.location.origin,
@@ -19,5 +20,22 @@ export const TutortoiseClient = {
         return await fetch(TutortoiseClient.getBasePath() + TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id))
         .then(res => res.json())
         .catch(err => console.error('Transaction History API call failed'));
-    }
+    },
+
+    buyCredits: async (id: string, credits: number, amount: number): Promise<any> => {
+        return await fetch(TutortoiseClient.getBasePath() + BUY_CREDITS_ENDPOINT
+            .replace('{parentId}', id)
+            .replace('{credits}', String(credits))
+            .replace('{amount}', String(amount)),
+            {
+                method: 'POST',
+                headers: {
+                    'accept': '*/*',
+                    'content-type': 'text/plain'
+                }
+            }
+        )
+        .then(res => res.text())
+        .catch(err => console.error('Buy credits API call failed', err));
+    },
 };
