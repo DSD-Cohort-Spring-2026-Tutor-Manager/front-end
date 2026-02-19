@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useContext } from 'react';
 
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
+import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
 
 function page() {
   const router = useRouter();
@@ -24,8 +25,14 @@ function page() {
       {
         text: 'Confirm',
         onClick: () => {
-          addCredits(pendingAmount);
-          setIsOpen(false);
+          TutortoiseClient.buyCredits('1', pendingAmount, 15)
+            .then((res: number) => {
+              addCredits(pendingAmount);
+            })
+            .finally(() => {
+              setIsOpen(false);
+              // router.push('/'); // Redirect to home
+            });
         },
       },
       { text: 'Cancel', onClick: () => setIsOpen(false) },
