@@ -27,11 +27,11 @@ function page() {
         onClick: () => {
           TutortoiseClient.buyCredits('1', pendingAmount, 15)
             .then((res: number) => {
-              addCredits(- credits + pendingAmount);
+              addCredits(pendingAmount);
             })
             .finally(() => {
               setIsOpen(false);
-              router.push('/'); // Redirect to home
+              // router.push('/'); // Redirect to home
             })
         },
       },
