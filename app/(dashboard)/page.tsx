@@ -2,6 +2,8 @@
 import { useContext, useEffect } from 'react';
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import Databox from '../_components/DataBox/Databox';
+import DataboxMed from '../_components/DataBox/DataboxMed';
+import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
 import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 function Home() {
@@ -12,8 +14,8 @@ function Home() {
   const { credits, addCredits } = ctx;
 
   const openAddStudentModal = () => {
-    window.alert("Add student");
-  }
+    window.alert('Add student');
+  };
 
   useEffect(() => {
     TutortoiseClient.getBalance('1').then((res: number) => {
@@ -24,6 +26,11 @@ function Home() {
 
   return (
     <main className='dashboard'>
+      <CreditsViewBar
+        value={credits.toString()}
+        href='/credits'
+        cta='Need more credits?'
+      />
       <section className='dashboard__data-row'>
         <Databox
           title='Student'
@@ -33,15 +40,16 @@ function Home() {
           topRightIcon={{
             src: '/icons/Add user icon.svg',
             alt: 'Add student button',
-            onClick: openAddStudentModal
+            onClick: openAddStudentModal,
           }}
         />
         <Databox
-          title='Credits available'
-          value={credits.toString()}
-          href='/credits'
-          cta='Buy'
+          title='Sessions completed'
+          value='3'
+          href='/student'
+          cta='View'
         />
+        <DataboxMed />
       </section>
     </main>
   );
