@@ -1,0 +1,36 @@
+.view-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 0 20px 0;
+  gap: 24px;
+}
+
+.view-bar__text {
+  color: var(--Support);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.view-bar__credits {
+  font-weight: 700;
+}
+
+.view-bar__credits_type_low {
+  color: red;
+}
+
+.view-bar__credits_type_good {
+  color: var(--Outlines);
+}
+
+.view-bar__button {
+  color: var(--Support);
+  font-weight: 600;
+  border-bottom: 2px solid var(--Accent);
+}
+
+.view-bar__button:hover {
+  border-bottom: 2px solid var(--Outlines);
+}
