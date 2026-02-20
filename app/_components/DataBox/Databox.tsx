@@ -18,6 +18,13 @@ function Databox({
       <Link className='databox__btn' href={href}>
         {cta}
       </Link>
+      <button>
+        <image
+          className='databox__'
+          src='/icons/Add user icon.svg'
+          alt='Add student button'
+        />
+      </button>
     </div>
   );
 }
