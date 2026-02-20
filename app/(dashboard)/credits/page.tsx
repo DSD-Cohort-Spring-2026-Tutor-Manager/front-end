@@ -32,7 +32,7 @@ function page() {
             .finally(() => {
               setIsOpen(false);
               // router.push('/'); // Redirect to home
-            })
+            });
         },
       },
       { text: 'Cancel', onClick: () => setIsOpen(false) },

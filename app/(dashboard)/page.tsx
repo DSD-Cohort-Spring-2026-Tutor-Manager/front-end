@@ -12,10 +12,9 @@ function Home() {
   const { credits, addCredits } = ctx;
 
   useEffect(() => {
-    TutortoiseClient.getBalance('1')
-    .then((res: number) => {
-      addCredits(- credits + res);
-    })
+    TutortoiseClient.getBalance('1').then((res: number) => {
+      addCredits(-credits + res);
+    });
   }, []);
 
   return (
