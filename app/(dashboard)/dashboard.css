@@ -38,3 +38,21 @@
   color: #fff;
   border-radius: 14px;
 }
+
+.databox__tr-image {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  top: 15px;
+  right: 15px;
+  /* top: .94rem;
+  right: .94rem; */
+}
+
+.databox__tr-image:hover {
+  cursor: pointer;
+}
+
+/* .databox__tr-image:active {
+
+} */

@@ -11,16 +11,31 @@ function Home() {
 
   const { credits, addCredits } = ctx;
 
+  const openAddStudentModal = () => {
+    window.alert("Add student");
+  }
+
   useEffect(() => {
     TutortoiseClient.getBalance('1').then((res: number) => {
       addCredits(-credits + res);
     });
   }, []);
 
+
   return (
     <main className='dashboard'>
       <section className='dashboard__data-row'>
-        <Databox title='Student' value='Zayn' href='/student' cta='switch' />
+        <Databox
+          title='Student'
+          value='Zayn'
+          href='/student'
+          cta='switch'
+          topRightIcon={{
+            src: '/icons/Add user icon.svg',
+            alt: 'Add student button',
+            onClick: openAddStudentModal
+          }}
+        />
         <Databox
           title='Credits available'
           value={credits.toString()}
