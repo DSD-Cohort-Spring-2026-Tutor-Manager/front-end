@@ -7,8 +7,10 @@ import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
 import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
+import Alert from '../_components/Alert/Alert';
 function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
   const ctx = useContext(CreditContext);
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
@@ -23,6 +25,9 @@ function Home() {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
+    .then(() => {
+      setIsAlertVisible(true);
+    })
     .catch((err) => {
      console.error(err); 
     })
@@ -81,6 +86,12 @@ function Home() {
           ]}
         />}
       </section>
+      { isAlertVisible &&
+        <Alert 
+          type='success'
+          text='Student Created!'
+        />
+      }
     </main>
   );
 }
