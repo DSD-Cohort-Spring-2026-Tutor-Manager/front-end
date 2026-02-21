@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 interface User {
   name: string;
   avatar: string;
+  role: "parent" | "tutor";
 }
 
 const AuthContext = createContext<{

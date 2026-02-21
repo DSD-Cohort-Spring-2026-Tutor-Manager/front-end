@@ -24,8 +24,9 @@ export default function LoginPage() {
       setUser({
         name: "Samantha Villanueva",
         avatar: "/images/worm_with_glasses.png",
+        role: "parent",
       });
-      router.push("/dashboard");
+      router.push("parent/dashboard");
       return;
     }
 
@@ -37,8 +38,9 @@ export default function LoginPage() {
       setUser({
         name: "Tortoise Tutor",
         avatar: "/images/worm_with_glasses.png",
+        role: "tutor",
       });
-      router.push("/dashboard");
+      router.push("tutor/dashboard");
       return;
     }
 
