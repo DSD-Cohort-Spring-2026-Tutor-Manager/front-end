@@ -1,0 +1,45 @@
+.floating-alert {
+    top: 19px;
+    right: 23px;
+    width: 412px;
+    height: 105px;
+    border-radius: 28px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation-name: slide-in;
+    animation-duration: 2s;
+}
+
+.floating-alert p {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: white;
+
+}
+
+.success-alert {
+    background-color: #7FBF4D;
+}
+
+@keyframes slide-in {
+    /* 0% { translate: translateX(150%);} */
+    100% { transform: translateX(0%); }
+}
+
+@-webkit-keyframes slide-in {
+    100% { -webkit-transform: translateX(0%); }
+}
+    
+@keyframes slide-out {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
+@-webkit-keyframes slide-out {
+    0% { -webkit-transform: translateX(0%); }
+    100% { -webkit-transform: translateX(-100%); }
+}
