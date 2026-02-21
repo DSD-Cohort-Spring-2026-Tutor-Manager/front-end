@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./context/AuthContext";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,52 +49,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--Primary)] to-[var(--Off-white)]">
+    <div className="min-h-screen w-full w-screen flex items-center justify-center bg-gradient-to-br from-[var(--Primary)] to-[var(--Off-white)]">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* Accent Header Bar */}
         <div className="h-2 bg-[var(--Accent)]"></div>
 
         <div className="p-8">
-          {/* Logo */}
           <div className="flex flex-col items-center mb-6">
-            <img
+            <Image
               src="/images/worm_with_glasses.png"
               alt="Tutortoise Logo"
               className="w-14 h-14 mb-2"
+              width="100"
+              height="100"
             />
             <h1 className="text-xl font-semibold text-[var(--Support)]">
               Tutortoise
             </h1>
             <p className="text-sm text-gray-500">Learning Center Portal</p>
           </div>
-
-          {/* Role Selection */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-            <button
-              type="button"
-              onClick={() => setRole("parent")}
-              className={`flex-1 py-2 rounded-md text-sm transition ${
+          <div className="flex justify-between mb-6 bg-gray-100 rounded-lg p-1">
+            <label
+              className={`flex-1 text-center py-2 rounded-md text-sm cursor-pointer transition ${
                 role === "parent"
                   ? "bg-white shadow text-[var(--Support)]"
                   : "text-gray-500"
               }`}
             >
+              <input
+                type="radio"
+                name="role"
+                value="parent"
+                checked={role === "parent"}
+                onChange={() => setRole("parent")}
+                className="hidden"
+              />
               Parent
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("tutor")}
-              className={`flex-1 py-2 rounded-md text-sm transition ${
+            </label>
+
+            <label
+              className={`flex-1 text-center py-2 rounded-md text-sm cursor-pointer transition ${
                 role === "tutor"
                   ? "bg-white shadow text-[var(--Support)]"
                   : "text-gray-500"
               }`}
             >
+              <input
+                type="radio"
+                name="role"
+                value="tutor"
+                checked={role === "tutor"}
+                onChange={() => setRole("tutor")}
+                className="hidden"
+              />
               Tutor
-            </button>
+            </label>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
