@@ -1,11 +1,5 @@
-'use client';
-
-import type { Metadata } from 'next';
-import { useState, createContext } from 'react';
-import './globals.css';
-import SideNav from './_components/SideNav/SideNav';
-import TopNav from './_components/TopNav/TopNav';
-import CreditProvider from './_components/CreditContext/CreditProvider';
+import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
 
 // export const metadata: Metadata = {
 //   title: 'Tutortoise',
@@ -19,16 +13,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body>
-        <SideNav />
-        <div className='shell__body'>
-          <TopNav
-            name='Samantha Villanueva'
-            avatarIconSrc='/images/worm_with_glasses.png'
-          />
-          <CreditProvider>{children}</CreditProvider>
-        </div>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
