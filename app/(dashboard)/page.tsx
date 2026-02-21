@@ -16,16 +16,18 @@ function Home() {
   const { credits, addCredits } = ctx;
 
   const addStudent = () => {
-    const firstName = document.getElementById('firstName')?.innerText;
-    const lastName = document.getElementById('lastName')?.innerText;
+    const firstName = (document.getElementById('firstName') as any)?.value;
+    const lastName = (document.getElementById('lastName') as any)?.value;
 
     if (!firstName || !lastName) {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
-    .then(() => null)
+    .catch((err) => {
+     console.error(err); 
+    })
     .finally(() => {
-      setAddStudentModalIsOpen(false)
+      setAddStudentModalIsOpen(false);
     })
   }
 

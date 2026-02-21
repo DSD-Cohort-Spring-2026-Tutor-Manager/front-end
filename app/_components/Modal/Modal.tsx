@@ -54,8 +54,7 @@ const Modal = ({
             >
               {button.text}
             </button>
-          )
-          }
+          )}
         </div>
       </div>
     </div>

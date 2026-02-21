@@ -39,6 +39,12 @@
   color: #2E6F5E
 }
 
+.add-student-modal-text {
+  font-style: 600;
+  font-size: 16px;
+  color: #243A5E;
+}
+
 .add-student-modal-input__container {
   width: 366px;
   height: 83px;
@@ -48,29 +54,42 @@
   width: 100%;
   font-size: 16px;
   font-weight: 500;
+  color: #212121BE;
 }
 
 .add-student-modal-input__container input {
   width: 100%;
   border-radius: 8px;
+  border-color: #21212166;
 }
 
 .add-student-modal-buttons {
+  height: fit-content !important;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   width: 366px;
+  font-size: 16px;
+  font-weight: 600;
+  padding-top: 15px;
+}
+
+.add-student-modal-buttons button {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  width: 164px !important;
+  height: 41px !important;
+  font-size: 16px;
+  text-align: center;
+  line-height: normal;
 }
 
 .add-student-confirm-button {
-  width: 164px;
-  height: 41px;
-  background-color: #7FBF4D;
+  background-color: #7FBF4D !important;
 }
 
 .add-student-cancel-button {
-  width: 164px;
-  height: 41px;
   background-color: #2E2E2E;
 }
 

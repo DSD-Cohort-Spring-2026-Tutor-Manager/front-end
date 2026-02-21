@@ -59,10 +59,3 @@
 /* .databox__tr-image:active {
 
 } */
-
-.add-student-modal-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 366px;
-}
