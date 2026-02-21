@@ -1,21 +1,33 @@
 'use client';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import Databox from '../_components/DataBox/Databox';
 import DataboxMed from '../_components/DataBox/DataboxMed';
 import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
 import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
+import Modal from '../_components/Modal/Modal';
 function Home() {
+  const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const ctx = useContext(CreditContext);
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
 
-  const openAddStudentModal = () => {
-    window.alert('Add student');
-  };
+  const addStudent = () => {
+    const firstName = document.getElementById('firstName')?.innerText;
+    const lastName = document.getElementById('lastName')?.innerText;
+
+    if (!firstName || !lastName) {
+      return;
+    }
+    TutortoiseClient.addStudent(1, firstName, lastName)
+    .then(() => null)
+    .finally(() => {
+      setAddStudentModalIsOpen(false)
+    })
+  }
 
   useEffect(() => {
     TutortoiseClient.getBalance('1').then((res: number) => {
@@ -40,7 +52,7 @@ function Home() {
           topRightIcon={{
             src: '/icons/Add user icon.svg',
             alt: 'Add student button',
-            onClick: openAddStudentModal,
+            onClick: () => setAddStudentModalIsOpen(true),
           }}
         />
         <Databox
@@ -50,6 +62,22 @@ function Home() {
           cta='View'
         />
         <DataboxMed />
+        {isAddStudentModalOpen && <Modal
+          type='add student'
+          text=''
+          buttons={[
+            {
+              className: 'add-student-confirm-button',
+              text: 'Add Student',
+              onClick: () => addStudent()
+            },
+            {
+              className: 'add-student-cancel-button',
+              text: 'Cancel',
+              onClick: () => setAddStudentModalIsOpen(false)
+            }
+          ]}
+        />}
       </section>
     </main>
   );

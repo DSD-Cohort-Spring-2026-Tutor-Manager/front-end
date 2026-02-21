@@ -2,13 +2,14 @@
 const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
 const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
 const BUY_CREDITS_ENDPOINT = '/api/credits/buy';
+const ADD_STUDENT_ENDPOINT = '/api/student/add';
 
 export const TutortoiseClient = {
     getBasePath: () => window.location.origin,
     getBalance: async (id: string): Promise<number> => {
         return await fetch(TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace('{id}', id), {
             headers: {
-                // 'accept': 'application/json',
+                'accept': '*/*',
                 'content-type': 'application/json'
             }
         })
@@ -40,4 +41,26 @@ export const TutortoiseClient = {
         .then(res => res.text())
         .catch(err => console.error('Buy credits API call failed', err));
     },
+    addStudent: async (
+        parentId: number,
+        firstName: string,
+        lastName: string
+    ): Promise<any> => {
+        return await fetch(TutortoiseClient.getBasePath() + ADD_STUDENT_ENDPOINT,
+            {
+                method: 'POST',
+                headers: {
+                    'accept': '*/*',
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    parentId,
+                    firstName,
+                    lastName
+                }) as any
+            }
+        )
+        .then(res => res.text())
+        .catch(err => console.error('Buy credits API call failed', err));
+    }
 };
