@@ -6,7 +6,7 @@ type ModalType = 'confirm' | 'add student';
 
 export interface ModalButton {
   text: string;
-  className: string;
+  className?: string;
   onClick: () => any;
 }
 
