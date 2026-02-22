@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: column;
   padding: 0 40px 40px;
+  position: relative;
+  /* overflow-x: hidden; */
 }
 
 .dashboard__data-row {
