@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 type TopRightIcon = {
   src: string;
@@ -7,36 +6,28 @@ type TopRightIcon = {
   onClick?: () => void;
 };
 
-function Databox({
+function DataContainer({
   title,
   value,
-  cta,
-  href,
   topRightIcon,
 }: {
   title: string;
   value: string;
-  cta: string;
-  href: string;
   topRightIcon?: TopRightIcon;
 }) {
   return (
     <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
       <h2 className="databox__title">{title}</h2>
       <p className="databox__title-value">{value}</p>
-      <Link className="databox__btn" href={href}>
-        {cta}
-      </Link>
       {topRightIcon && (
         <Image
           className="databox__tr-image"
           src={topRightIcon.src}
           alt={topRightIcon.alt}
-          onClick={() => topRightIcon.onClick?.()}
         />
       )}
     </div>
   );
 }
 
-export default Databox;
+export default DataContainer;

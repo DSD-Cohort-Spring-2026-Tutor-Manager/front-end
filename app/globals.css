@@ -1,4 +1,10 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   globals.css — base resets only.
+   CSS custom properties (:root) are generated automatically from tokens.ts
+   via ThemeProvider. Do NOT add --color-* variables here manually.
+   ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
   --Primary: #cde8b5; /* Mint green */
@@ -8,12 +14,6 @@
   --Highlight: #7fbf4d; /* Bright Green */
   --Off-white: #f8faf7; /* Slightly darker white */
   --Nav-Border: #d5d5d5; /* Dark Gray */
-}
-
-@theme inline {
-}
-
-@media (prefers-color-scheme: dark) {
 }
 
 body {
