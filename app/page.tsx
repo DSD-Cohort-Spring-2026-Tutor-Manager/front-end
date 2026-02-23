@@ -27,7 +27,7 @@ export default function LoginPage() {
         avatar: '/images/worm_with_glasses.png',
         role: 'parent',
       });
-      router.push('parent/dashboard');
+      router.push('parent/');
       return;
     }
 
@@ -41,7 +41,7 @@ export default function LoginPage() {
         avatar: '/images/worm_with_glasses.png',
         role: 'tutor',
       });
-      router.push('tutor/dashboard');
+      router.push('tutor/');
       return;
     }
 
