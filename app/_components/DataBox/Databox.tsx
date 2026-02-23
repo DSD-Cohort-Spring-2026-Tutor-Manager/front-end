@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
+import Link from 'next/link';
 
 type TopRightIcon = {
   src: string;
@@ -21,15 +20,15 @@ function Databox({
   topRightIcon?: TopRightIcon;
 }) {
   return (
-    <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-      <h2 className="databox__title">{title}</h2>
-      <p className="databox__title-value">{value}</p>
-      <Link className="databox__btn" href={href}>
+    <div className='databox-sm w-full h-80 bg-(--Primary) rounded-xl relative'>
+      <h2 className='databox__title'>{title}</h2>
+      <p className='databox__title-value'>{value}</p>
+      <Link className='databox__btn' href={href}>
         {cta}
       </Link>
       {topRightIcon && (
-        <Image
-          className="databox__tr-image"
+        <img
+          className='databox__tr-image'
           src={topRightIcon.src}
           alt={topRightIcon.alt}
           onClick={() => topRightIcon.onClick?.()}

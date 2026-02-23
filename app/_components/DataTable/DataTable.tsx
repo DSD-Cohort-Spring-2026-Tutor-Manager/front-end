@@ -1,12 +1,12 @@
-import React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
+import React from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 
 interface Session {
   id: string;
@@ -19,16 +19,16 @@ interface Session {
 
 interface Props {
   sessions: Session[];
-  type: "upcoming" | "completed";
+  type: 'upcoming' | 'completed';
 }
 
 export default function DataTable({ sessions, type }: Props) {
   const handleJoin = (id: string) => {
-    console.log("Join session:", id);
+    console.log('Join session:', id);
   };
 
   const handleCancel = (id: string) => {
-    console.log("Cancel session:", id);
+    console.log('Cancel session:', id);
   };
 
   return (
@@ -48,7 +48,7 @@ export default function DataTable({ sessions, type }: Props) {
         <TableBody>
           {sessions.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} align="center">
+              <TableCell colSpan={6} align='center'>
                 No sessions available
               </TableCell>
             </TableRow>
@@ -61,21 +61,21 @@ export default function DataTable({ sessions, type }: Props) {
                 <TableCell>{session.duration}</TableCell>
                 <TableCell>{session.time}</TableCell>
                 <TableCell>
-                  {type === "upcoming" && (
+                  {type === 'upcoming' && (
                     <>
                       <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
+                        variant='contained'
+                        color='primary'
+                        size='small'
                         sx={{ mr: 1 }}
                         onClick={() => handleJoin(session.id)}
                       >
                         Join
                       </Button>
                       <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="small"
+                        variant='outlined'
+                        color='secondary'
+                        size='small'
                         onClick={() => handleCancel(session.id)}
                       >
                         Cancel
@@ -83,12 +83,12 @@ export default function DataTable({ sessions, type }: Props) {
                     </>
                   )}
 
-                  {type === "completed" && (
+                  {type === 'completed' && (
                     <Button
-                      variant="contained"
-                      color="success"
-                      size="small"
-                      onClick={() => console.log("View session:", session.id)}
+                      variant='contained'
+                      color='success'
+                      size='small'
+                      onClick={() => console.log('View session:', session.id)}
                     >
                       View
                     </Button>

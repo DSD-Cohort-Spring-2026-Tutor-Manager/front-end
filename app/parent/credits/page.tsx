@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Modal from "../../../_components/Modal/Modal";
-import "./credits.css";
-import CreditOpts from "../../../_components/CreditOpts/CreditOpts";
-import { useRouter } from "next/navigation";
-import { useState, useContext } from "react";
+import Modal from '../../_components/Modal/Modal';
+import './credits.css';
+import CreditOpts from '../../_components/CreditOpts/CreditOpts';
+import { useRouter } from 'next/navigation';
+import { useState, useContext } from 'react';
 
-import { CreditContext } from "../../../_components/CreditContext/CreditContext";
-import { TutortoiseClient } from "../../../_api/tutortoiseClient";
+import { CreditContext } from '../../_components/CreditContext/CreditContext';
+import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
 function page() {
   const router = useRouter();
@@ -23,9 +23,9 @@ function page() {
     text: `Purchase ${pendingAmount} credits?`,
     buttons: [
       {
-        text: "Confirm",
+        text: 'Confirm',
         onClick: () => {
-          TutortoiseClient.buyCredits("1", pendingAmount, 15)
+          TutortoiseClient.buyCredits('1', pendingAmount, 15)
             .then((res: number) => {
               addCredits(pendingAmount);
             })
@@ -35,28 +35,28 @@ function page() {
             });
         },
       },
-      { text: "Cancel", onClick: () => setIsOpen(false) },
+      { text: 'Cancel', onClick: () => setIsOpen(false) },
     ],
   };
 
   const ctx = useContext(CreditContext);
   if (!ctx)
-    throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
+    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
   return (
-    <div className="credits">
-      <header className="credits__header">
-        <h1 className="credits__header-title">Credits</h1>
-        <p className="credits__header-subtext">
+    <div className='credits'>
+      <header className='credits__header'>
+        <h1 className='credits__header-title'>Credits</h1>
+        <p className='credits__header-subtext'>
           You have {credits} credits available.<br></br> 1 credit equals an hour
           of tutoring for your child.
         </p>
       </header>
-      <section className="billing">
-        <h2 className="billing__title">Billing information</h2>
-        <div className="billing__card">
-          <div className="billing__card-info">
+      <section className='billing'>
+        <h2 className='billing__title'>Billing information</h2>
+        <div className='billing__card'>
+          <div className='billing__card-info'>
             <p>
               Card nickname: <span>turtle debit</span>
             </p>
@@ -64,7 +64,7 @@ function page() {
               Ending in: <span>xxxx-xxxx-xxxx-5432</span>
             </p>
           </div>
-          <div className="billing__card-btn">Edit</div>
+          <div className='billing__card-btn'>Edit</div>
         </div>
       </section>
       <CreditOpts
@@ -75,7 +75,7 @@ function page() {
       />
 
       <button
-        className="credits__purchase-btn"
+        className='credits__purchase-btn'
         onClick={() => {
           if (pendingAmount > 0) setIsOpen(true);
         }}
