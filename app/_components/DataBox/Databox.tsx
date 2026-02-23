@@ -1,23 +1,23 @@
 import Link from 'next/link';
 
 type TopRightIcon = {
-  src: string,
-  alt: string,
-  onClick: Function
-}
+  src: string;
+  alt: string;
+  onClick?: () => void;
+};
 
 function Databox({
   title,
   value,
   cta,
   href,
-  topRightIcon
+  topRightIcon,
 }: {
   title: string;
   value: string;
   cta: string;
   href: string;
-  topRightIcon?: TopRightIcon
+  topRightIcon?: TopRightIcon;
 }) {
   return (
     <div className='databox-sm w-full h-80 bg-(--Primary) rounded-xl relative'>
@@ -26,16 +26,14 @@ function Databox({
       <Link className='databox__btn' href={href}>
         {cta}
       </Link>
-      {
-        topRightIcon && (
-          <img
-            className='databox__tr-image'
-            src={topRightIcon.src}
-            alt={topRightIcon.alt}
-            onClick={() => topRightIcon.onClick()}
-          />
-        )
-      }
+      {topRightIcon && (
+        <img
+          className='databox__tr-image'
+          src={topRightIcon.src}
+          alt={topRightIcon.alt}
+          onClick={() => topRightIcon.onClick?.()}
+        />
+      )}
     </div>
   );
 }

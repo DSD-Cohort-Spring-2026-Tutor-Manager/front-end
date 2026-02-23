@@ -1,13 +1,13 @@
 'use client';
 
-import Modal from '@/app/_components/Modal/Modal';
+import Modal from '../../_components/Modal/Modal';
 import './credits.css';
-import CreditOpts from '@/app/_components/CreditOpts/CreditOpts';
+import CreditOpts from '../../_components/CreditOpts/CreditOpts';
 import { useRouter } from 'next/navigation';
 import { useState, useContext } from 'react';
 
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
-import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
+import { CreditContext } from '../../_components/CreditContext/CreditContext';
+import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
 function page() {
   const router = useRouter();

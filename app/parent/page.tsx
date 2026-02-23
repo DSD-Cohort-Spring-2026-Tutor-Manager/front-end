@@ -25,16 +25,16 @@ function Home() {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
-    .then(() => {
-      setIsAlertVisible(true);
-    })
-    .catch((err) => {
-     console.error(err); 
-    })
-    .finally(() => {
-      setAddStudentModalIsOpen(false);
-    })
-  }
+      .then(() => {
+        setIsAlertVisible(true);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setAddStudentModalIsOpen(false);
+      });
+  };
 
   useEffect(() => {
     TutortoiseClient.getBalance('1').then((res: number) => {
@@ -42,12 +42,11 @@ function Home() {
     });
   }, []);
 
-
   return (
     <main className='dashboard'>
       <CreditsViewBar
         value={credits.toString()}
-        href='/credits'
+        href='/parent/credits'
         cta='Need more credits?'
       />
       <section className='dashboard__data-row'>
@@ -69,29 +68,26 @@ function Home() {
           cta='View'
         />
         <DataboxMed />
-        {isAddStudentModalOpen && <Modal
-          type='add student'
-          text=''
-          buttons={[
-            {
-              className: 'add-student-confirm-button',
-              text: 'Add Student',
-              onClick: () => addStudent()
-            },
-            {
-              className: 'add-student-cancel-button',
-              text: 'Cancel',
-              onClick: () => setAddStudentModalIsOpen(false)
-            }
-          ]}
-        />}
+        {isAddStudentModalOpen && (
+          <Modal
+            type='add student'
+            text=''
+            buttons={[
+              {
+                className: 'add-student-confirm-button',
+                text: 'Add Student',
+                onClick: () => addStudent(),
+              },
+              {
+                className: 'add-student-cancel-button',
+                text: 'Cancel',
+                onClick: () => setAddStudentModalIsOpen(false),
+              },
+            ]}
+          />
+        )}
       </section>
-      { isAlertVisible &&
-        <Alert 
-          type='success'
-          text='Student Created!'
-        />
-      }
+      {isAlertVisible && <Alert type='success' text='Student Created!' />}
     </main>
   );
 }

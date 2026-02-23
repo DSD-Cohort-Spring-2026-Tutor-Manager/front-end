@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
 
 import './SideNav.css';
 
-const navItems = [
+const parentNavItems = [
   {
-    href: '/',
+    href: '/parent',
     label: 'Home',
     icon: '/icons/home.svg',
     iconActive: '/icons/Home-act.svg',
@@ -15,15 +16,38 @@ const navItems = [
   { href: '/class', label: 'Classes', icon: '/icons/tutor.svg' },
   { href: '/student', label: 'Student', icon: '/icons/student.svg' },
   {
-    href: '/credits',
+    href: '/parent/credits',
     label: 'Credits',
     icon: '/icons/shop.svg',
     iconActive: '/icons/Shop-act.svg',
   },
 ];
 
+const tutorNavItems = [
+  {
+    href: '/tutor',
+    label: 'Home',
+    icon: '/icons/home.svg',
+    iconActive: '/icons/Home-act.svg',
+  },
+  { href: '/class', label: 'Classes', icon: '/icons/tutor.svg' },
+  { href: '/student', label: 'Student', icon: '/icons/student.svg' },
+];
+
 function SideNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { setUser, user } = useAuth();
+
+  const role = user?.role;
+
+  const navItems = role === 'tutor' ? tutorNavItems : parentNavItems;
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user'); // clear persisted login
+    router.push('/'); // redirect to login page
+  };
 
   return (
     <aside className='side-nav bg-(--Support)'>
@@ -53,7 +77,7 @@ function SideNav() {
             );
           })}
         </ul>
-        <div className='side-nav__logout'>
+        <div className='side-nav__logout' onClick={handleLogout}>
           <img
             className='side-nav__icon-img'
             src='/icons/logout.svg'
