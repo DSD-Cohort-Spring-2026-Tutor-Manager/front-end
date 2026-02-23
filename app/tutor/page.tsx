@@ -2,7 +2,7 @@
 import DataContainer from "@/app/_components/DataBox/DataContainer";
 import "./dashboard.css";
 
-import TablePanel from "../../_components/DataTable/TablePanel";
+import TablePanel from "../_components/DataTable/TablePanel";
 
 function Home() {
   return (

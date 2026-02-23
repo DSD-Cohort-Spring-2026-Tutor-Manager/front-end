@@ -1,7 +1,7 @@
 // app/dashboard/layout.tsx
-import SideNav from "../../_components/SideNav/SideNav";
-import TopNavWrapper from "../../_components/TopNav/TopNavWrapper";
-import CreditProvider from "../../_components/CreditContext/CreditProvider";
+import SideNav from "../_components/SideNav/SideNav";
+import TopNavWrapper from "../_components/TopNav/TopNavWrapper";
+import CreditProvider from "../_components/CreditContext/CreditProvider";
 
 export default function DashboardLayout({
   children,

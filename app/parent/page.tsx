@@ -1,13 +1,13 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import { CreditContext } from "@/app/_components/CreditContext/CreditContext";
-import Databox from "../../_components/DataBox/Databox";
-import DataboxMed from "../../_components/DataBox/DataboxMed";
-import CreditsViewBar from "../../_components/CreditsViewbar/CreditsViewBar";
+import Databox from "../_components/DataBox/Databox";
+import DataboxMed from "../_components/DataBox/DataboxMed";
+import CreditsViewBar from "../_components/CreditsViewbar/CreditsViewBar";
 import "./dashboard.css";
-import { TutortoiseClient } from "../../_api/tutortoiseClient";
-import Modal from "../../_components/Modal/Modal";
-import Alert from "../../_components/Alert/Alert";
+import { TutortoiseClient } from "../_api/tutortoiseClient";
+import Modal from "../_components/Modal/Modal";
+import Alert from "../_components/Alert/Alert";
 function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
