@@ -3,64 +3,77 @@ const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
 const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
 const BUY_CREDITS_ENDPOINT = '/api/credits/buy';
 const ADD_STUDENT_ENDPOINT = '/api/student/add';
+const VIEW_SESSIONS_ENDPOINT = '/api/sessions';
 
 export const TutortoiseClient = {
-    getBasePath: () => window.location.origin,
-    getBalance: async (id: string): Promise<number> => {
-        return await fetch(TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace('{id}', id), {
-            headers: {
-                'accept': '*/*',
-                'content-type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .catch(err => console.error('Balance API call failed:', err));
-    },
+  getBasePath: () => window.location.origin,
+  getBalance: async (id: string): Promise<number> => {
+    return await fetch(
+      TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace('{id}', id),
+      {
+        headers: {
+          accept: '*/*',
+          'content-type': 'application/json',
+        },
+      },
+    )
+      .then((res) => res.json())
+      .catch((err) => console.error('Balance API call failed:', err));
+  },
 
-    getTransactionHistory: async (id: string): Promise<any> => {
-        return await fetch(TutortoiseClient.getBasePath() + TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id))
-        .then(res => res.json())
-        .catch(err => console.error('Transaction History API call failed'));
-    },
+  getAllSessions: async () => {
+    return await fetch(TutortoiseClient.getBasePath() + VIEW_SESSIONS_ENDPOINT)
+      .then((res) => res.json())
+      .catch((err) => console.error('Sessions API call failed:', err));
+  },
 
-    buyCredits: async (id: string, credits: number, amount: number): Promise<any> => {
-        return await fetch(TutortoiseClient.getBasePath() + BUY_CREDITS_ENDPOINT,
-            {
-                method: 'POST',
-                headers: {
-                    'accept': '*/*',
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    parentId: id,
-                    credits,
-                    amount
-                }) as any
-            }
-        )
-        .then(res => res.text())
-        .catch(err => console.error('Buy credits API call failed', err));
-    },
-    addStudent: async (
-        parentId: number,
-        firstName: string,
-        lastName: string
-    ): Promise<any> => {
-        return await fetch(TutortoiseClient.getBasePath() + ADD_STUDENT_ENDPOINT,
-            {
-                method: 'POST',
-                headers: {
-                    'accept': '*/*',
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    parentId,
-                    firstName,
-                    lastName
-                }) as any
-            }
-        )
-        .then(res => res.text())
-        .catch(err => console.error('Buy credits API call failed', err));
-    }
+  getTransactionHistory: async (id: string): Promise<any> => {
+    return await fetch(
+      TutortoiseClient.getBasePath() +
+        TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id),
+    )
+      .then((res) => res.json())
+      .catch((err) => console.error('Transaction History API call failed'));
+  },
+
+  buyCredits: async (
+    id: string,
+    credits: number,
+    amount: number,
+  ): Promise<any> => {
+    return await fetch(TutortoiseClient.getBasePath() + BUY_CREDITS_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        parentId: id,
+        credits,
+        amount,
+      }) as any,
+    })
+      .then((res) => res.text())
+      .catch((err) => console.error('Buy credits API call failed', err));
+  },
+  addStudent: async (
+    parentId: number,
+    firstName: string,
+    lastName: string,
+  ): Promise<any> => {
+    return await fetch(TutortoiseClient.getBasePath() + ADD_STUDENT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        parentId,
+        firstName,
+        lastName,
+      }) as any,
+    })
+      .then((res) => res.text())
+      .catch((err) => console.error('Buy credits API call failed', err));
+  },
 };
