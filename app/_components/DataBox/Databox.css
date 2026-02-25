@@ -1,0 +1,43 @@
+.databox-sm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 265px;
+  height: 204px;
+  background-color: var(--Primary);
+  border-radius: 28px;
+}
+
+.databox__title {
+  font-size: 24px;
+  font-weight: 400;
+}
+.databox__title-value {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--Outlines);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.databox__btn {
+  padding: 10px 15px;
+  background-color: var(--Support);
+  color: #fff;
+  border-radius: 14px;
+}
+
+.databox__tr-image {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  top: 15px;
+  right: 15px;
+  /* top: .94rem;
+  right: .94rem; */
+}
+
+.databox__tr-image:hover {
+  cursor: pointer;
+}

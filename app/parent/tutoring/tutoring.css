@@ -1,0 +1,15 @@
+.tutoring {
+  width: 100%;
+}
+
+.tutoring__nav {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.tutoring__selector {
+  display: flex;
+  width: 300px;
+  align-items: center;
+}
