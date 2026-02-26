@@ -12,14 +12,16 @@ function Databox({
   value,
   cta,
   href,
+  onClick,
   topRightIcon,
   dropdownContent,
   dropdownOnChange,
 }: {
   title: string;
-  value: string;
-  cta: string;
-  href: string;
+  value: string | number;
+  cta?: string;
+  href?: string;
+  onClick?: () => void;
   topRightIcon?: TopRightIcon;
   dropdownContent?: any[];
   dropdownOnChange?: (selectedOption: any) => void;
@@ -28,22 +30,26 @@ function Databox({
     <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
       <h2 className="databox__title">{title}</h2>
       <p className="databox__title-value">{value}</p>
-      {dropdownContent?.length ? (
-        <div className="dropdown databox_btn">
-          <button className="dropbtn">Switch</button>
-          <div className="dropdown-content">
-            {dropdownContent.map((e, index) => (
-              <a key={`option-${index}`} onClick={() => dropdownOnChange(e)}>
-                {e.label}
-              </a>
-            ))}
+      {cta &&
+        (dropdownContent?.length ? (
+          <div className="dropdown databox_btn">
+            <button className="dropbtn">Switch</button>
+            <div className="dropdown-content">
+              {dropdownContent.map((e, index) => (
+                <a
+                  key={`option-${index}`}
+                  onClick={() => dropdownOnChange?.(e)}
+                >
+                  {e.label}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <Link className="databox__btn" href={href}>
-          {cta}
-        </Link>
-      )}
+        ) : (
+          <Link className="databox__btn" href={href ?? "#"} onClick={onClick}>
+            {cta}
+          </Link>
+        ))}
 
       {topRightIcon && (
         <img
