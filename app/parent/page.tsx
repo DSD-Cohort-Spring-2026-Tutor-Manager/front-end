@@ -8,6 +8,18 @@ import "./dashboard.css";
 import { TutortoiseClient } from "../_api/tutortoiseClient";
 import Modal from "../_components/Modal/Modal";
 import Alert from "../_components/Alert/Alert";
+import { StudentContext } from "../context/StudentContext";
+
+type Student = {
+  studentId: number;
+  parentId: number;
+  studentName: string;
+  notes: string;
+  sessionsCompleted: number;
+  previousScore: number;
+  latestScore: number;
+  sessions: Session[];
+};
 
 type Session = {
   sessionId: number;
@@ -29,15 +41,39 @@ function Home() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatesTwo] = useState<Session[]>([]);
+  const [availableStudents, setAvailableStudents] = useState();
 
   const ctx = useContext(CreditContext);
-
   if (!ctx)
     throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
 
   const { credits, addCredits } = ctx;
 
-  const addStudent = () => {
+  const studentCtx = useContext(StudentContext);
+  if (!studentCtx)
+    throw new Error(
+      "StudentContext is missing. Wrap the app in StudentProvider.",
+    );
+
+  const { student, setStudent } = studentCtx;
+
+  function getCompletedSessions(sessions: Session[], studentId: number) {
+    return sessions.filter(
+      (s) => s.sessionStatus === "completed" && s.studentId === studentId,
+    );
+  }
+
+  function getLatestTwo(sessions: Session[]) {
+    return [...sessions]
+      .sort(
+        (a, b) =>
+          new Date(b.datetimeStarted).getTime() -
+          new Date(a.datetimeStarted).getTime(),
+      )
+      .slice(0, 2);
+  }
+
+  function addStudent() {
     const firstName = (document.getElementById("firstName") as any)?.value;
     const lastName = (document.getElementById("lastName") as any)?.value;
 
@@ -54,7 +90,8 @@ function Home() {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
-      .then(() => {
+      .then((res: Student) => {
+        setStudent(res);
         showSuccessAlert();
       })
       .catch((err) => {
@@ -63,16 +100,21 @@ function Home() {
       .finally(() => {
         setAddStudentModalIsOpen(false);
       });
-  };
+  }
 
   // balance fetch
   useEffect(() => {
+    TutortoiseClient.getParentDetails(1).then((res) => {
+      console.log(res);
+    });
     TutortoiseClient.getBalance("1").then((res: number) => {
       addCredits(-credits + res);
     });
   }, []);
+
   // sessions fetch
   useEffect(() => {
+    // const students = availableStudents =
     const loadSessions = async () => {
       try {
         const data = await TutortoiseClient.getAllSessions();
@@ -80,17 +122,11 @@ function Home() {
           ? data
           : (data.sessions ?? []);
 
-        const completedSessions = allSessions.filter(
-          (s) => s.sessionStatus === "completed" && s.studentId === 7,
+        const completedSessions = getCompletedSessions(
+          allSessions,
+          student?.studentId,
         );
-
-        const latest = [...completedSessions]
-          .sort(
-            (a, b) =>
-              new Date(b.datetimeStarted).getTime() -
-              new Date(a.datetimeStarted).getTime(),
-          )
-          .slice(0, 2);
+        const latest = getLatestTwo(completedSessions);
 
         setSessions(allSessions);
         setCompletedSess(completedSessions);
@@ -100,7 +136,7 @@ function Home() {
       }
     };
     loadSessions();
-  }, []);
+  }, [student]);
 
   // Alert
 
@@ -123,7 +159,7 @@ function Home() {
   }, [isAlertVisible]);
 
   return (
-    <main className="dashboard overflow-x-hidden">
+    <main className="dashboard overflow-x-hidden h-full">
       <CreditsViewBar
         value={credits.toString()}
         href="/parent/credits"
@@ -132,7 +168,7 @@ function Home() {
       <section className="dashboard__data-row">
         <Databox
           title="Student"
-          value="Zayn"
+          value={student?.studentName?.split(" ")[0]}
           href="/student"
           cta="switch"
           topRightIcon={{
@@ -140,6 +176,8 @@ function Home() {
             alt: "Add student button",
             onClick: () => setAddStudentModalIsOpen(true),
           }}
+          dropdownContent={[{ label: "Zayn" }, { label: "Student2" }]}
+          dropdownOnChange={setStudent}
         />
         <Databox
           title="Sessions completed"
