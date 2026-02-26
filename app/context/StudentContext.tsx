@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useMemo, useState } from 'react';
-import { CreditContext } from './CreditContext';
 
 type Props = {
   children: React.ReactNode;
