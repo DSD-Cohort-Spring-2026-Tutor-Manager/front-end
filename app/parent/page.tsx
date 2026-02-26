@@ -9,6 +9,17 @@ import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
 
+type Student = {
+  studentId: number,
+  parentId: number,
+  studentName: string,
+  notes: string,
+  sessionsCompleted: number,
+  previousScore: number,
+  latestScore: number,
+  sessions: Session[]
+}
+
 type Session = {
   sessionId: number;
   parentId: number;
@@ -26,6 +37,7 @@ function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
+  const [student, setStudent] = useState({studentName: "Zayn", studentId: 7} as Student);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatesTwo] = useState<Session[]>([]);
@@ -37,7 +49,23 @@ function Home() {
 
   const { credits, addCredits } = ctx;
 
-  const addStudent = () => {
+  function getCompletedSessions(sessions: Session[], studentId: number) {
+    return sessions.filter(
+      (s) => s.sessionStatus === 'completed' && s.studentId === studentId
+    )
+  }
+
+  function getLatestTwo(sessions: Session[]) {
+    return [...sessions]
+      .sort(
+        (a, b) =>
+          new Date(b.datetimeStarted).getTime() -
+          new Date(a.datetimeStarted).getTime(),
+      )
+      .slice(0, 2);
+  }
+
+  function addStudent() {
     const firstName = (document.getElementById('firstName') as any)?.value;
     const lastName = (document.getElementById('lastName') as any)?.value;
 
@@ -54,7 +82,8 @@ function Home() {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
-      .then(() => {
+      .then((res: Student) => {
+        setStudent(res);
         showSuccessAlert();
       })
       .catch((err) => {
@@ -71,6 +100,7 @@ function Home() {
       addCredits(-credits + res);
     });
   }, []);
+
   // sessions fetch
   useEffect(() => {
     const loadSessions = async () => {
@@ -80,17 +110,8 @@ function Home() {
           ? data
           : (data.sessions ?? []);
 
-        const completedSessions = allSessions.filter(
-          (s) => s.sessionStatus === 'completed' && s.studentId === 7,
-        );
-
-        const latest = [...completedSessions]
-          .sort(
-            (a, b) =>
-              new Date(b.datetimeStarted).getTime() -
-              new Date(a.datetimeStarted).getTime(),
-          )
-          .slice(0, 2);
+        const completedSessions = getCompletedSessions(allSessions, student?.studentId);
+        const latest = getLatestTwo(completedSessions);
 
         setSessions(allSessions);
         setCompletedSess(completedSessions);
@@ -132,7 +153,7 @@ function Home() {
       <section className='dashboard__data-row'>
         <Databox
           title='Student'
-          value='Zayn'
+          value={student.studentName.split(' ')[0]}
           href='/student'
           cta='switch'
           topRightIcon={{

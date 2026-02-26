@@ -73,7 +73,7 @@ export const TutortoiseClient = {
         lastName,
       }) as any,
     })
-      .then((res) => res.text())
+      .then((res) => res.json())
       .catch((err) => console.error('Buy credits API call failed', err));
   },
 };
