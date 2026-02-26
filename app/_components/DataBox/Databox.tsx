@@ -46,7 +46,7 @@ function Databox({
             </div>
           </div>
         ) : (
-          <Link className="databox__btn" href={href}>
+          <Link className="databox__btn" href={href ?? "#"} onClick={onClick}>
             {cta}
           </Link>
         ))}
