@@ -143,7 +143,7 @@ function Home() {
   useEffect(() => {
     loadParentDetails();
     loadSessions();
-  }, [student]);
+  }, []);
 
   useEffect(() => {
     setStudentSpecificValuesFromSessions(allSessions);
