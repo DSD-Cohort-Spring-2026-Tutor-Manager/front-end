@@ -164,6 +164,7 @@ export const theme: Theme = createTheme({
         root: {
           backgroundColor: "var(--color-surface)",
           borderSpacing: "0 10px",
+          borderRadius: 16,
           transition: "background-color 0.15s ease",
           "&:hover": {
             backgroundColor: "var(--color-surface) !important",

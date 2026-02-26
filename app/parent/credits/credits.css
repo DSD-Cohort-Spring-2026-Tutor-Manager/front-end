@@ -8,13 +8,13 @@
 }
 
 .credits__header-title {
-  font-size: 48px;
+  font-size: 1.9rem;
   font-weight: 700;
   color: var(--Outlines);
 }
 
 .credits__header-subtext {
-  font-size: 24px;
+  font-size: 1.3rem;
   font-weight: 400;
 }
 

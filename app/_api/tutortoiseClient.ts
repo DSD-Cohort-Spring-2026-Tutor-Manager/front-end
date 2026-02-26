@@ -3,7 +3,7 @@ const BALANCE_ENDPOINT = "/api/credits/balance/{id}";
 const TRANSACTION_HISTORY_ENDPOINT = "/api/credits/history/{id}";
 const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
 const ADD_STUDENT_ENDPOINT = "/api/student/add";
-const SESSION_ENDPOINT = "/api/sessions";
+const VIEW_SESSIONS_ENDPOINT = "/api/sessions";
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -19,6 +19,12 @@ export const TutortoiseClient = {
     )
       .then((res) => res.json())
       .catch((err) => console.error("Balance API call failed:", err));
+  },
+
+  getAllSessions: async () => {
+    return await fetch(TutortoiseClient.getBasePath() + VIEW_SESSIONS_ENDPOINT)
+      .then((res) => res.json())
+      .catch((err) => console.error("Sessions API call failed:", err));
   },
 
   getTransactionHistory: async (id: string): Promise<any> => {
@@ -71,7 +77,7 @@ export const TutortoiseClient = {
       .catch((err) => console.error("Buy credits API call failed", err));
   },
   getSessionHistory: async (): Promise<any> => {
-    return await fetch(TutortoiseClient.getBasePath() + SESSION_ENDPOINT)
+    return await fetch(TutortoiseClient.getBasePath() + VIEW_SESSIONS_ENDPOINT)
       .then((res) => res.json())
       .catch((err) =>
         console.error("Transaction History API call failed", err),

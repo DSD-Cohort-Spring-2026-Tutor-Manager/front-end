@@ -8,10 +8,30 @@ import "./dashboard.css";
 import { TutortoiseClient } from "../_api/tutortoiseClient";
 import Modal from "../_components/Modal/Modal";
 import Alert from "../_components/Alert/Alert";
+
+type Session = {
+  sessionId: number;
+  parentId: number;
+  studentId: number;
+  tutorId: number;
+  sessionStatus: string;
+  datetimeStarted: string;
+  durationHours: number;
+  assessmentPointsEarned: number;
+  assessmentPointsGoal: number;
+  assessmentPointsMax: number;
+};
+
 function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isAlertExiting, setIsAlertExiting] = useState(false);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [completedSess, setCompletedSess] = useState<Session[]>([]);
+  const [latestTwo, setLatesTwo] = useState<Session[]>([]);
+
   const ctx = useContext(CreditContext);
+
   if (!ctx)
     throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
 
@@ -21,12 +41,21 @@ function Home() {
     const firstName = (document.getElementById("firstName") as any)?.value;
     const lastName = (document.getElementById("lastName") as any)?.value;
 
+    const showSuccessAlert = () => {
+      setIsAlertExiting(true);
+      setIsAlertVisible(true);
+
+      requestAnimationFrame(() => {
+        setIsAlertExiting(false);
+      });
+    };
+
     if (!firstName || !lastName) {
       return;
     }
     TutortoiseClient.addStudent(1, firstName, lastName)
       .then(() => {
-        setIsAlertVisible(true);
+        showSuccessAlert();
       })
       .catch((err) => {
         console.error(err);
@@ -36,14 +65,65 @@ function Home() {
       });
   };
 
+  // balance fetch
   useEffect(() => {
     TutortoiseClient.getBalance("1").then((res: number) => {
       addCredits(-credits + res);
     });
   }, []);
+  // sessions fetch
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const data = await TutortoiseClient.getAllSessions();
+        const allSessions: Session[] = Array.isArray(data)
+          ? data
+          : (data.sessions ?? []);
+
+        const completedSessions = allSessions.filter(
+          (s) => s.sessionStatus === "completed" && s.studentId === 7,
+        );
+
+        const latest = [...completedSessions]
+          .sort(
+            (a, b) =>
+              new Date(b.datetimeStarted).getTime() -
+              new Date(a.datetimeStarted).getTime(),
+          )
+          .slice(0, 2);
+
+        setSessions(allSessions);
+        setCompletedSess(completedSessions);
+        setLatesTwo(latest);
+      } catch (err) {
+        console.error("Failed to load the sessions:", err);
+      }
+    };
+    loadSessions();
+  }, []);
+
+  // Alert
+
+  useEffect(() => {
+    if (!isAlertVisible) return;
+
+    const stayTimer = setTimeout(() => {
+      setIsAlertExiting(true);
+    }, 3000);
+
+    const removeTimer = setTimeout(() => {
+      setIsAlertVisible(false);
+      setIsAlertExiting(false);
+    }, 3400);
+
+    return () => {
+      clearTimeout(stayTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [isAlertVisible]);
 
   return (
-    <main className="dashboard">
+    <main className="dashboard overflow-x-hidden">
       <CreditsViewBar
         value={credits.toString()}
         href="/parent/credits"
@@ -63,11 +143,11 @@ function Home() {
         />
         <Databox
           title="Sessions completed"
-          value="3"
+          value={completedSess.length.toString()}
           href="/student"
           cta="View"
         />
-        <DataboxMed />
+        <DataboxMed latest={latestTwo} />
         {isAddStudentModalOpen && (
           <Modal
             type="add student"
@@ -87,7 +167,15 @@ function Home() {
           />
         )}
       </section>
-      {isAlertVisible && <Alert type="success" text="Student Created!" />}
+      <div className="alert-layer">
+        {isAlertVisible && (
+          <Alert
+            type="success"
+            text="Student Created!"
+            className={isAlertExiting ? "alert-exit" : "alert-enter"}
+          />
+        )}
+      </div>
     </main>
   );
 }

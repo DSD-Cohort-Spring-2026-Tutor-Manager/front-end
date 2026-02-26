@@ -13,7 +13,12 @@ const parentNavItems = [
     icon: '/icons/home.svg',
     iconActive: '/icons/Home-act.svg',
   },
-  { href: '/class', label: 'Classes', icon: '/icons/tutor.svg' },
+  {
+    href: '/parent/tutoring',
+    label: 'Tutoring',
+    icon: '/icons/tutor.svg',
+    iconActive: '/icons/tutor-act.svg',
+  },
   { href: '/student', label: 'Student', icon: '/icons/student.svg' },
   {
     href: '/parent/credits',

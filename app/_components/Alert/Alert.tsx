@@ -1,26 +1,26 @@
-import React from 'react'
+import React from 'react';
 import './Alert.css';
 
 type AlertType = 'success';
 
-const Alert = ({
-    type,
-    text
-}: {
-    type: AlertType,
-    text: string
-}) => {
-    const colorMap = new Map<string, string>([
-        ['success', 'success-alert']
-    ]);
+type AlertProps = {
+  type: AlertType;
+  text: string;
+  className?: string;
+};
 
-    const colorClass = colorMap.get(type);
-    console.log(colorClass)
-    return (
-        <div className={`floating-alert ${colorClass} slide-in`}>
-            <p>{text}</p>
-        </div>
-    )
-}
+const Alert = ({ type, text, className = '' }: AlertProps) => {
+  const colorMap = new Map<string, string>([['success', 'success-alert']]);
 
-export default Alert
+  const colorClass = colorMap.get(type);
+
+  return (
+    <div
+      className={`floating-alert alert-animate ${colorClass} ${className}`.trim()}
+    >
+      <p>{text}</p>
+    </div>
+  );
+};
+
+export default Alert;

@@ -8,6 +8,7 @@ import { TutortoiseClient } from "../../_api/tutortoiseClient";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
+
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
@@ -18,36 +19,43 @@ function CustomTabPanel(props: TabPanelProps) {
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
-  value: number;
 }
 
-interface Props {
-  defaultTab?: "upcoming" | "completed";
-}
-
-export default function BasicTabs({ defaultTab = "upcoming" }: Props) {
+export default function BasicTabs(props: any) {
   const [completedSessions, setCompletedSessions] = useState<any[]>([]);
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [fullSessions, setFullSessions] = useState<any[]>([]);
-  const [value, setValue] = useState(defaultTab === "completed" ? 1 : 0);
+  const [value, setValue] = React.useState(0);
 
-  // Sync tab when defaultTab prop changes (e.g. clicked from dashboard)
-  useEffect(() => {
-    setValue(defaultTab === "completed" ? 1 : 0);
-  }, [defaultTab]);
-
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+  const getSessionsByTab = () => {
+    switch (value) {
+      case 0:
+        return upcomingSessions;
+      case 1:
+        return completedSessions;
+
+      default:
+        return fullSessions;
+    }
   };
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
         setCompletedSessions(
-          sessions.filter((s) => s.sessionStatus === "completed"),
+          sessions.filter(
+            (s) =>
+              s.sessionStatus === "completed" && s.tutorName === "Tutor1 No1",
+          ),
         );
         setUpcomingSessions(
-          sessions.filter((s) => s.sessionStatus === "scheduled"),
+          sessions.filter(
+            (s) =>
+              s.sessionStatus === "scheduled" && s.tutorName === "Tutor1 No1",
+          ),
         );
         setFullSessions(sessions);
       }
@@ -58,17 +66,17 @@ export default function BasicTabs({ defaultTab = "upcoming" }: Props) {
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label="Upcoming Schedule" />
-          <Tab label="Completed Schedule" />
+          <Tab label={"Upcoming Schedule"} />
+          <Tab label={"Completed Schedule"} />
         </Tabs>
       </Box>
 
       <CustomTabPanel value={value} index={0}>
-        <DataTable sessions={upcomingSessions} type="upcoming" />
+        <DataTable sessions={getSessionsByTab()} type="upcoming" />
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={1}>
-        <DataTable sessions={completedSessions} type="completed" />
+        <DataTable sessions={getSessionsByTab()} type="completed" />
       </CustomTabPanel>
     </Box>
   );
