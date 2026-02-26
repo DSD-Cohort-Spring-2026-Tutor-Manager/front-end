@@ -19,6 +19,7 @@ function CustomTabPanel(props: TabPanelProps) {
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
+  value: number;
 }
 
 export default function BasicTabs(props: any) {
