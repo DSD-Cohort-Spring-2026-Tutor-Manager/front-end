@@ -17,7 +17,7 @@ function Databox({
   dropdownOnChange,
 }: {
   title: string;
-  value: string;
+  value: number | string;
   cta: string;
   href: string;
   topRightIcon?: TopRightIcon;
