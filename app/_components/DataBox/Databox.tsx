@@ -34,7 +34,10 @@ function Databox({
             <button className="dropbtn">Switch</button>
             <div className="dropdown-content">
               {dropdownContent.map((e, index) => (
-                <a key={`option-${index}`} onClick={() => dropdownOnChange(e)}>
+                <a
+                  key={`option-${index}`}
+                  onClick={() => dropdownOnChange?.(e)}
+                >
                   {e.label}
                 </a>
               ))}
