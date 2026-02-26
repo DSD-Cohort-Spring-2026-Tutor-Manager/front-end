@@ -8,6 +8,7 @@ import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
+import { StudentContext } from '../context/StudentContext';
 
 type Student = {
   studentId: number,
@@ -37,17 +38,21 @@ function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
-  const [student, setStudent] = useState({studentName: "Zayn", studentId: 7} as Student);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatesTwo] = useState<Session[]>([]);
 
   const ctx = useContext(CreditContext);
-
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
+
+  const studentCtx = useContext(StudentContext);
+  if (!studentCtx)
+    throw new Error('StudentContext is missing. Wrap the app in StudentProvider.');
+
+  const { student, setStudent } = studentCtx;
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(
@@ -121,7 +126,7 @@ function Home() {
       }
     };
     loadSessions();
-  }, []);
+  }, [student]);
 
   // Alert
 
@@ -183,7 +188,7 @@ function Home() {
                 className: 'add-student-cancel-button',
                 text: 'Cancel',
                 onClick: () => setAddStudentModalIsOpen(false),
-              },
+              }
             ]}
           />
         )}
