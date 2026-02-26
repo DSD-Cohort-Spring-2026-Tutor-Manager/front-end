@@ -1,4 +1,5 @@
 // Make calls to the same origin to route requests through the proxy
+const PARENT_DETAILS_ENDPOINT = '/api/base/{id}';
 const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
 const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
 const BUY_CREDITS_ENDPOINT = '/api/credits/buy';
@@ -7,6 +8,13 @@ const VIEW_SESSIONS_ENDPOINT = '/api/sessions';
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
+
+  getParentDetails: async (id: number): Promise<any> => {
+    return await fetch(TutortoiseClient.getBasePath() + PARENT_DETAILS_ENDPOINT.replace('{id}', String(id)))
+    .then((res) => res.json())
+    .catch((err) => console.error('Sessions API call failed:', err));
+  },
+
   getBalance: async (id: string): Promise<number> => {
     return await fetch(
       TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace('{id}', id),
@@ -73,7 +81,7 @@ export const TutortoiseClient = {
         lastName,
       }) as any,
     })
-      .then((res) => res.text())
+      .then((res) => res.json())
       .catch((err) => console.error('Buy credits API call failed', err));
   },
 };
