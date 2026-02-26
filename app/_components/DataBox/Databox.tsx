@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import './Databox.css';
 
 type TopRightIcon = {
   src: string;
