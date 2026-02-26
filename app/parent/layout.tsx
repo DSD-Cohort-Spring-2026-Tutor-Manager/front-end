@@ -12,7 +12,7 @@ export default function DashboardLayout({
   return (
     <>
       <SideNav />
-      <div className='shell__body'>
+      <div className="shell__body">
         <TopNavWrapper />
         <CreditProvider>
           <ParentProvider>
