@@ -2,7 +2,6 @@
 import SideNav from '../_components/SideNav/SideNav';
 import TopNavWrapper from '../_components/TopNav/TopNavWrapper';
 import CreditProvider from '../_components/CreditContext/CreditProvider';
-import { StudentProvider } from '../context/StudentContext';
 import { ParentProvider } from '../context/ParentContext';
 
 export default function DashboardLayout({
@@ -17,9 +16,7 @@ export default function DashboardLayout({
         <TopNavWrapper />
         <CreditProvider>
           <ParentProvider>
-          <StudentProvider>
             {children}
-          </StudentProvider>
           </ParentProvider>
         </CreditProvider>
       </div>

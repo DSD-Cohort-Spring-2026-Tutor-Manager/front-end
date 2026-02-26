@@ -8,7 +8,6 @@ import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
-import { StudentContext } from '../context/StudentContext';
 import { ParentContext } from '../context/ParentContext';
 
 type Student = {
