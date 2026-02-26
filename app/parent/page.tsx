@@ -41,6 +41,7 @@ function Home() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatesTwo] = useState<Session[]>([]);
+  const [availableStudents, setAvailableStudents] = useState();
 
   const ctx = useContext(CreditContext);
   if (!ctx)
@@ -101,6 +102,10 @@ function Home() {
 
   // balance fetch
   useEffect(() => {
+    TutortoiseClient.getParentDetails(1)
+    .then(res => {
+      console.log(res)
+    })
     TutortoiseClient.getBalance('1').then((res: number) => {
       addCredits(-credits + res);
     });
@@ -108,6 +113,7 @@ function Home() {
 
   // sessions fetch
   useEffect(() => {
+    // const students = availableStudents = 
     const loadSessions = async () => {
       try {
         const data = await TutortoiseClient.getAllSessions();
@@ -149,7 +155,7 @@ function Home() {
   }, [isAlertVisible]);
 
   return (
-    <main className='dashboard overflow-x-hidden'>
+    <main className='dashboard overflow-x-hidden h-full'>
       <CreditsViewBar
         value={credits.toString()}
         href='/parent/credits'
@@ -158,7 +164,7 @@ function Home() {
       <section className='dashboard__data-row'>
         <Databox
           title='Student'
-          value={student.studentName.split(' ')[0]}
+          value={student?.studentName?.split(' ')[0]}
           href='/student'
           cta='switch'
           topRightIcon={{
@@ -166,6 +172,10 @@ function Home() {
             alt: 'Add student button',
             onClick: () => setAddStudentModalIsOpen(true),
           }}
+          dropdownContent={
+            [{ label: 'Zayn'}, {label: 'Student2'}]
+          }
+          dropdownOnChange={setStudent}
         />
         <Databox
           title='Sessions completed'
