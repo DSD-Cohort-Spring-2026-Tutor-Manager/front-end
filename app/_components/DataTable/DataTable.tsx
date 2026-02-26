@@ -1,104 +1,111 @@
-import React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import React, { useState } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TablePagination from "@mui/material/TablePagination";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import { grey } from "@mui/material/colors";
 
 interface Session {
   id: string;
-  date: string;
-  student: string;
+  datetimeStarted: string;
+  studentFirstName: string;
   subject: string;
-  duration: string;
   time: string;
 }
 
 interface Props {
   sessions: Session[];
-  type: 'upcoming' | 'completed';
+  type: "upcoming" | "completed";
 }
 
 export default function DataTable({ sessions, type }: Props) {
-  const handleJoin = (id: string) => {
-    console.log('Join session:', id);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
   };
 
-  const handleCancel = (id: string) => {
-    console.log('Cancel session:', id);
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
+
+  const paginatedSessions = sessions.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  );
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Student</TableCell>
-            <TableCell>Subject</TableCell>
-            <TableCell>Duration</TableCell>
-            <TableCell>Time</TableCell>
-            <TableCell>Options</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {sessions.length === 0 ? (
+    <Paper>
+      <TableContainer>
+        <Table sx={{ minWidth: 700 }}>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={6} align='center'>
-                No sessions available
-              </TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Student</TableCell>
+              <TableCell>Subject</TableCell>
+              <TableCell>Time</TableCell>
+              {type === "upcoming" && <TableCell>Options</TableCell>}
             </TableRow>
-          ) : (
-            sessions.map((session) => (
-              <TableRow key={session.id}>
-                <TableCell>{session.date}</TableCell>
-                <TableCell>{session.student}</TableCell>
-                <TableCell>{session.subject}</TableCell>
-                <TableCell>{session.duration}</TableCell>
-                <TableCell>{session.time}</TableCell>
-                <TableCell>
-                  {type === 'upcoming' && (
-                    <>
-                      <Button
-                        variant='contained'
-                        color='primary'
-                        size='small'
-                        sx={{ mr: 1 }}
-                        onClick={() => handleJoin(session.id)}
-                      >
-                        Join
-                      </Button>
-                      <Button
-                        variant='outlined'
-                        color='secondary'
-                        size='small'
-                        onClick={() => handleCancel(session.id)}
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  )}
+          </TableHead>
 
-                  {type === 'completed' && (
-                    <Button
-                      variant='contained'
-                      color='success'
-                      size='small'
-                      onClick={() => console.log('View session:', session.id)}
-                    >
-                      View
-                    </Button>
-                  )}
+          <TableBody>
+            {sessions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  No sessions available
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ) : (
+              paginatedSessions.map((session) => (
+                <TableRow key={session.id}>
+                  <TableCell>
+                    {session.datetimeStarted?.split("T")[0]}
+                  </TableCell>
+                  <TableCell>{session.studentFirstName}</TableCell>
+                  <TableCell>{session.subject}</TableCell>
+                  <TableCell>
+                    {session.datetimeStarted?.split("T")[1]}
+                  </TableCell>
+                  <TableCell>
+                    {type === "upcoming" && (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        size="small"
+                        onClick={() => console.log("View session:", session.id)}
+                      >
+                        View
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {sessions.length > 10 && (
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={sessions.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          style={{ color: "#595959" }}
+        />
+      )}
+    </Paper>
   );
 }
