@@ -38,7 +38,7 @@ function Databox({
               {dropdownContent.map((e, index) => (
                 <a
                   key={`option-${index}`}
-                  onClick={() => dropdownOnChange(e)}
+                  onClick={() => dropdownOnChange && dropdownOnChange(e)}
                 >
                   {e.label}
                 </a>
