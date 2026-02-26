@@ -12,14 +12,16 @@ function Databox({
   value,
   cta,
   href,
+  onClick,
   topRightIcon,
   dropdownContent,
   dropdownOnChange,
 }: {
   title: string;
-  value: number | string;
-  cta: string;
-  href: string;
+  value: string | number;
+  cta?: string;
+  href?: string;
+  onClick?: () => void;
   topRightIcon?: TopRightIcon;
   dropdownContent?: any[];
   dropdownOnChange?: (selectedOption: any) => void;
