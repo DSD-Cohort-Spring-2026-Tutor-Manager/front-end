@@ -1,25 +1,25 @@
-'use client';
-import { useContext, useEffect, useState } from 'react';
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
-import Databox from '../_components/DataBox/Databox';
-import DataboxMed from '../_components/DataBox/DataboxMed';
-import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
-import './dashboard.css';
-import { TutortoiseClient } from '../_api/tutortoiseClient';
-import Modal from '../_components/Modal/Modal';
-import Alert from '../_components/Alert/Alert';
-import { StudentContext } from '../context/StudentContext';
+"use client";
+import { useContext, useEffect, useState } from "react";
+import { CreditContext } from "@/app/_components/CreditContext/CreditContext";
+import Databox from "../_components/DataBox/Databox";
+import DataboxMed from "../_components/DataBox/DataboxMed";
+import CreditsViewBar from "../_components/CreditsViewbar/CreditsViewBar";
+import "./dashboard.css";
+import { TutortoiseClient } from "../_api/tutortoiseClient";
+import Modal from "../_components/Modal/Modal";
+import Alert from "../_components/Alert/Alert";
+import { StudentContext } from "../context/StudentContext";
 
 type Student = {
-  studentId: number,
-  parentId: number,
-  studentName: string,
-  notes: string,
-  sessionsCompleted: number,
-  previousScore: number,
-  latestScore: number,
-  sessions: Session[]
-}
+  studentId: number;
+  parentId: number;
+  studentName: string;
+  notes: string;
+  sessionsCompleted: number;
+  previousScore: number;
+  latestScore: number;
+  sessions: Session[];
+};
 
 type Session = {
   sessionId: number;
@@ -45,20 +45,22 @@ function Home() {
 
   const ctx = useContext(CreditContext);
   if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
+    throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
 
   const { credits, addCredits } = ctx;
 
   const studentCtx = useContext(StudentContext);
   if (!studentCtx)
-    throw new Error('StudentContext is missing. Wrap the app in StudentProvider.');
+    throw new Error(
+      "StudentContext is missing. Wrap the app in StudentProvider.",
+    );
 
   const { student, setStudent } = studentCtx;
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(
-      (s) => s.sessionStatus === 'completed' && s.studentId === studentId
-    )
+      (s) => s.sessionStatus === "completed" && s.studentId === studentId,
+    );
   }
 
   function getLatestTwo(sessions: Session[]) {
@@ -72,8 +74,8 @@ function Home() {
   }
 
   function addStudent() {
-    const firstName = (document.getElementById('firstName') as any)?.value;
-    const lastName = (document.getElementById('lastName') as any)?.value;
+    const firstName = (document.getElementById("firstName") as any)?.value;
+    const lastName = (document.getElementById("lastName") as any)?.value;
 
     const showSuccessAlert = () => {
       setIsAlertExiting(true);
@@ -98,22 +100,21 @@ function Home() {
       .finally(() => {
         setAddStudentModalIsOpen(false);
       });
-  };
+  }
 
   // balance fetch
   useEffect(() => {
-    TutortoiseClient.getParentDetails(1)
-    .then(res => {
-      console.log(res)
-    })
-    TutortoiseClient.getBalance('1').then((res: number) => {
+    TutortoiseClient.getParentDetails(1).then((res) => {
+      console.log(res);
+    });
+    TutortoiseClient.getBalance("1").then((res: number) => {
       addCredits(-credits + res);
     });
   }, []);
 
   // sessions fetch
   useEffect(() => {
-    // const students = availableStudents = 
+    // const students = availableStudents =
     const loadSessions = async () => {
       try {
         const data = await TutortoiseClient.getAllSessions();
@@ -121,14 +122,17 @@ function Home() {
           ? data
           : (data.sessions ?? []);
 
-        const completedSessions = getCompletedSessions(allSessions, student?.studentId);
+        const completedSessions = getCompletedSessions(
+          allSessions,
+          student?.studentId,
+        );
         const latest = getLatestTwo(completedSessions);
 
         setSessions(allSessions);
         setCompletedSess(completedSessions);
         setLatesTwo(latest);
       } catch (err) {
-        console.error('Failed to load the sessions:', err);
+        console.error("Failed to load the sessions:", err);
       }
     };
     loadSessions();
@@ -155,60 +159,58 @@ function Home() {
   }, [isAlertVisible]);
 
   return (
-    <main className='dashboard overflow-x-hidden h-full'>
+    <main className="dashboard overflow-x-hidden h-full">
       <CreditsViewBar
         value={credits.toString()}
-        href='/parent/credits'
-        cta='Need more credits?'
+        href="/parent/credits"
+        cta="Need more credits?"
       />
-      <section className='dashboard__data-row'>
+      <section className="dashboard__data-row">
         <Databox
-          title='Student'
-          value={student?.studentName?.split(' ')[0]}
-          href='/student'
-          cta='switch'
+          title="Student"
+          value={student?.studentName?.split(" ")[0]}
+          href="/student"
+          cta="switch"
           topRightIcon={{
-            src: '/icons/Add user icon.svg',
-            alt: 'Add student button',
+            src: "/icons/Add user icon.svg",
+            alt: "Add student button",
             onClick: () => setAddStudentModalIsOpen(true),
           }}
-          dropdownContent={
-            [{ label: 'Zayn'}, {label: 'Student2'}]
-          }
+          dropdownContent={[{ label: "Zayn" }, { label: "Student2" }]}
           dropdownOnChange={setStudent}
         />
         <Databox
-          title='Sessions completed'
+          title="Sessions completed"
           value={completedSess.length.toString()}
-          href='/student'
-          cta='View'
+          href="/student"
+          cta="View"
         />
         <DataboxMed latest={latestTwo} />
         {isAddStudentModalOpen && (
           <Modal
-            type='add student'
-            text=''
+            type="add student"
+            text=""
             buttons={[
               {
-                className: 'add-student-confirm-button',
-                text: 'Add Student',
+                className: "add-student-confirm-button",
+                text: "Add Student",
                 onClick: () => addStudent(),
               },
               {
-                className: 'add-student-cancel-button',
-                text: 'Cancel',
+                className: "add-student-cancel-button",
+                text: "Cancel",
                 onClick: () => setAddStudentModalIsOpen(false),
-              }
+              },
             ]}
           />
         )}
       </section>
-      <div className='alert-layer'>
+      <div className="alert-layer">
         {isAlertVisible && (
           <Alert
-            type='success'
-            text='Student Created!'
-            className={isAlertExiting ? 'alert-exit' : 'alert-enter'}
+            type="success"
+            text="Student Created!"
+            className={isAlertExiting ? "alert-exit" : "alert-enter"}
           />
         )}
       </div>
