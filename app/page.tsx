@@ -14,51 +14,43 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const users = {
+    parent: {
+      email: "parent@example.com",
+      password: "123456",
+      name: "Samantha Villanueva",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    tutor: {
+      email: "tutor@example.com",
+      password: "123456",
+      name: "Tortoise Tutor",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    admin: {
+      email: "admin@example.com",
+      password: "123456",
+      name: "Admin",
+      avatar: "/images/worm_with_glasses.png",
+    },
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      role === "parent" &&
-      email === "parent@example.com" &&
-      password === "123456"
-    ) {
-      setUser({
-        name: "Samantha Villanueva",
-        avatar: "/images/worm_with_glasses.png",
-        role: "parent",
-      });
-      router.push("parent/");
-      return;
-    }
-    if (
-      role === "admin" &&
-      email === "admin@example.com" &&
-      password === "123456"
-    ) {
-      setUser({
-        name: "Admin",
-        avatar: "/images/worm_with_glasses.png",
-        role: "admin",
-      });
-      router.push("admin/");
-      return;
-    }
+    const user = users[role];
 
-    if (
-      role === "tutor" &&
-      email === "tutor@example.com" &&
-      password === "123456"
-    ) {
+    if (email === user.email && password === user.password) {
       setUser({
-        name: "Tortoise Tutor",
-        avatar: "/images/worm_with_glasses.png",
-        role: "tutor",
+        name: user.name,
+        avatar: user.avatar,
+        role,
       });
-      router.push("tutor/");
-      return;
-    }
 
-    setError("Invalid credentials");
+      router.push(`/${role}`);
+    } else {
+      setError("Invalid credentials");
+    }
   };
 
   return (
