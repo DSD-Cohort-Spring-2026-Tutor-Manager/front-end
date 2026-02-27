@@ -13,6 +13,8 @@ export type ParentContextValue = {
 
 // A parent object with the added field 'selectedStudent' which will be used throughout the app
 const defaultParentDetails = {
+    // other fields populated from the API
+    creditBalance: 0.0,
     students: [],
     selectedStudent: undefined
 };
