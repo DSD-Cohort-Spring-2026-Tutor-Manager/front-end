@@ -101,9 +101,10 @@ function Home() {
 
     try {
       const student = await TutortoiseClient.addStudent(parentId, firstName, lastName);
-      setParentDetails({ ...parentDetails, selectedStudent: student });
+      const newStudentList = [ ...parentDetails.students, student ]
+      setParentDetails({ ...parentDetails, students: newStudentList, selectedStudent: student });
       showSuccessAlert();
-      loadParentDetails();
+      // loadParentDetails();
     } catch (err) {
       console.error('Failed to add student:', err);
     } finally {
