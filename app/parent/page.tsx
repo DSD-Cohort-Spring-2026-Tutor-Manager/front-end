@@ -52,6 +52,7 @@ function Home() {
   const [allSessions, setAllSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatestTwo] = useState<Session[]>([]);
+  const parentId = 1;
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
@@ -99,9 +100,10 @@ function Home() {
     };
 
     try {
-      const student = TutortoiseClient.addStudent(1, firstName, lastName);
+      const student = await TutortoiseClient.addStudent(parentId, firstName, lastName);
       setParentDetails({ ...parentDetails, selectedStudent: student });
       showSuccessAlert();
+      loadParentDetails();
     } catch (err) {
       console.error('Failed to add student:', err);
     } finally {
@@ -110,14 +112,13 @@ function Home() {
   };
 
   const loadParentDetails = async () => {
-    TutortoiseClient.getParentDetails(1)
-    .then((res: Parent) => {
-      setParentDetails({
-        ...res,
-        selectedStudent: parentDetails.selectedStudent || res.students[0]
-      })
-      addCredits(-credits + res.creditBalance);
+    const parent: Parent = await TutortoiseClient.getParentDetails(parentId);
+    
+    setParentDetails({
+      ...parent,
+      selectedStudent: parentDetails.selectedStudent || parent.students[0]
     })
+    addCredits(-credits + parent.creditBalance);
   }
 
   const loadSessions = async () => {
