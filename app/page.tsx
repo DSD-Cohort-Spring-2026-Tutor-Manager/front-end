@@ -9,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAuth();
 
-  const [role, setRole] = useState<"parent" | "tutor">("parent");
+  const [role, setRole] = useState<"parent" | "tutor" | "admin">("parent");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,6 +28,19 @@ export default function LoginPage() {
         role: "parent",
       });
       router.push("parent/");
+      return;
+    }
+    if (
+      role === "admin" &&
+      email === "admin@example.com" &&
+      password === "123456"
+    ) {
+      setUser({
+        name: "Admin",
+        avatar: "/images/worm_with_glasses.png",
+        role: "admin",
+      });
+      router.push("admin/");
       return;
     }
 
@@ -102,6 +115,23 @@ export default function LoginPage() {
                 className="hidden"
               />
               Tutor
+            </label>
+            <label
+              className={`flex-1 text-center py-2 rounded-md text-sm cursor-pointer transition ${
+                role === "admin"
+                  ? "bg-white shadow text-(--Support)"
+                  : "text-gray-500"
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                checked={role === "admin"}
+                onChange={() => setRole("admin")}
+                className="hidden"
+              />
+              Admin
             </label>
           </div>
 
