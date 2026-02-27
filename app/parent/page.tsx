@@ -8,7 +8,7 @@ import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
-import { StudentContext } from '../context/StudentContext';
+import { ParentContext } from '../context/ParentContext';
 
 type Student = {
   studentId: number;
@@ -21,6 +21,17 @@ type Student = {
   sessions: Session[];
 };
 
+type Parent = {
+  "status": string,
+  "operationStatus": string,
+  "message": string,
+  "parentId": number,
+  "parentName": string,
+  "parentEmail": string,
+  "sessionCount": number,
+  "creditBalance": number,
+  "students": Student[]
+}
 type Session = {
   sessionId: number;
   parentId: number;
@@ -38,24 +49,22 @@ function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [allSessions, setAllSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
-  const [latestTwo, setLatesTwo] = useState<Session[]>([]);
-  const [availableStudents, setAvailableStudents] = useState();
+  const [latestTwo, setLatestTwo] = useState<Session[]>([]);
+  const parentId = 1;
+
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('StudentContext is missing. Wrap the app in StudentProvider.');
+
+  const { parentDetails, setParentDetails } = parentCtx;
 
   const ctx = useContext(CreditContext);
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
-
-  const studentCtx = useContext(StudentContext);
-  if (!studentCtx)
-    throw new Error(
-      'StudentContext is missing. Wrap the app in StudentProvider.',
-    );
-
-  const { student, setStudent } = studentCtx;
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(
@@ -73,9 +82,13 @@ function Home() {
       .slice(0, 2);
   }
 
-  function addStudent() {
+  const addStudent = async () => {
     const firstName = (document.getElementById('firstName') as any)?.value;
     const lastName = (document.getElementById('lastName') as any)?.value;
+
+    if (!firstName || !lastName) {
+      return;
+    }
 
     const showSuccessAlert = () => {
       setIsAlertExiting(true);
@@ -86,60 +99,60 @@ function Home() {
       });
     };
 
-    if (!firstName || !lastName) {
-      return;
+    try {
+      const student = await TutortoiseClient.addStudent(parentId, firstName, lastName);
+      const newStudentList = [ ...parentDetails.students, student ]
+      setParentDetails({ ...parentDetails, students: newStudentList, selectedStudent: student });
+      showSuccessAlert();
+      // loadParentDetails();
+    } catch (err) {
+      console.error('Failed to add student:', err);
+    } finally {
+      setAddStudentModalIsOpen(false);
     }
-    TutortoiseClient.addStudent(1, firstName, lastName)
-      .then((res: Student) => {
-        setStudent(res);
-        showSuccessAlert();
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => {
-        setAddStudentModalIsOpen(false);
-      });
+  };
+
+  const loadParentDetails = async () => {
+    const parent: Parent = await TutortoiseClient.getParentDetails(parentId);
+    
+    setParentDetails({
+      ...parent,
+      selectedStudent: parentDetails.selectedStudent || parent.students[0]
+    })
+    addCredits(-credits + parent.creditBalance);
   }
 
-  // balance fetch
+  const loadSessions = async () => {
+    try {
+      const data = await TutortoiseClient.getAllSessions();
+      const allSessions: Session[] = Array.isArray(data)
+        ? data
+        : (data.sessions ?? []);
+      setAllSessions(allSessions);
+    } catch (err) {
+      console.error('Failed to load the sessions:', err);
+    }
+  };
+
+  const setStudentSpecificValuesFromSessions = (sessions: Session[]) => {
+    const completedSessions = getCompletedSessions(sessions, parentDetails.selectedStudent?.studentId);
+    const latest = getLatestTwo(completedSessions);
+    setCompletedSess(completedSessions);
+    setLatestTwo(latest);
+  };
+
+  // Fetch parent details and session details on start
   useEffect(() => {
-    TutortoiseClient.getParentDetails(1).then((res) => {
-      console.log(res);
-    });
-    TutortoiseClient.getBalance('1').then((res: number) => {
-      addCredits(-credits + res);
-    });
+    loadParentDetails();
+    loadSessions();
   }, []);
 
-  // sessions fetch
   useEffect(() => {
-    // const students = availableStudents =
-    const loadSessions = async () => {
-      try {
-        const data = await TutortoiseClient.getAllSessions();
-        const allSessions: Session[] = Array.isArray(data)
-          ? data
-          : (data.sessions ?? []);
+    setStudentSpecificValuesFromSessions(allSessions);
+  }, [allSessions, parentDetails.selectedStudent]);
 
-        const completedSessions = getCompletedSessions(
-          allSessions,
-          student?.studentId,
-        );
-        const latest = getLatestTwo(completedSessions);
-
-        setSessions(allSessions);
-        setCompletedSess(completedSessions);
-        setLatesTwo(latest);
-      } catch (err) {
-        console.error('Failed to load the sessions:', err);
-      }
-    };
-    loadSessions();
-  }, [student]);
 
   // Alert
-
   useEffect(() => {
     if (!isAlertVisible) return;
 
@@ -168,7 +181,7 @@ function Home() {
       <section className='dashboard__data-row'>
         <Databox
           title='Student'
-          value={student?.studentName?.split(' ')[0]}
+          value={parentDetails?.selectedStudent?.studentName?.split(' ')[0]}
           href='/student'
           cta='switch'
           topRightIcon={{
@@ -176,8 +189,16 @@ function Home() {
             alt: 'Add student button',
             onClick: () => setAddStudentModalIsOpen(true),
           }}
-          dropdownContent={[{ label: 'Zayn' }, { label: 'Robert' }]}
-          dropdownOnChange={setStudent}
+          dropdownContent={
+            parentDetails.students.map((s: Student) => (
+              {label: s?.studentName?.split(' ')[0], studentId: s.studentId}
+            ))
+          }
+          dropdownOnChange={(s) => {
+            setParentDetails({
+            ...parentDetails, selectedStudent: parentDetails?.students?.find((availableStudent: Student) => s.studentId === availableStudent.studentId)
+          });
+          }}
         />
         <Databox
           title='Sessions completed'
