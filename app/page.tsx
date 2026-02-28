@@ -14,13 +14,34 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const users = {
+    parent: {
+      email: "parentno1@email.com",
+      password: "password123",
+      name: "Samantha Villanueva",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    tutor: {
+      email: "tutor1no1@email.com",
+      password: "password123",
+      name: "Tortoise Tutor",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    admin: {
+      email: "john.admin@email.com",
+      password: "password123",
+      name: "Admin",
+      avatar: "/images/worm_with_glasses.png",
+    },
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
       role === "parent" &&
-      email === "parent@example.com" &&
-      password === "123456"
+      email === "parentno1@email.com" &&
+      password === "password123"
     ) {
       setUser({
         name: "Samantha Villanueva",
@@ -33,8 +54,8 @@ export default function LoginPage() {
 
     if (
       role === "tutor" &&
-      email === "tutor@example.com" &&
-      password === "123456"
+      email === "tutor1no1@email.com" &&
+      password === "password123"
     ) {
       setUser({
         name: "Tortoise Tutor",

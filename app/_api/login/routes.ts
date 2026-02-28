@@ -3,15 +3,21 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   const { email, password } = await req.json();
 
-  if (email === "parent@example.com" && password === "123456") {
+  if (email === "parentno1@email.com" && password === "password123") {
     return NextResponse.json({
       name: "Samantha Villanueva",
       avatar: "/images/worm_with_glasses.png",
     });
   }
-  if (email === "tutor@example.com" && password === "123456") {
+  if (email === "tutor1no1@email.com" && password === "password123") {
     return NextResponse.json({
       name: "Tortoise Tutor",
+      avatar: "/images/worm_with_glasses.png",
+    });
+  }
+  if (email === "john.admin@email.com" && password === "password123") {
+    return NextResponse.json({
+      name: "Admin",
       avatar: "/images/worm_with_glasses.png",
     });
   }
