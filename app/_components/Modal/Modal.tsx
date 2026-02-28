@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import './Modal.css';
 import { ModalContext } from './ModalContext';
 
-type ModalType = 'confirm' | 'add student';
+type ModalType = 'confirm' | 'add student' | 'book session';
 
 export interface ModalButton {
   text: string;
@@ -55,6 +55,27 @@ const Modal = ({
               {button.text}
             </button>
           )}
+        </div>
+      </div>
+    </div>
+    );
+  }
+
+  if (type === 'book session') {
+    return (
+      <div className='modal'>
+      <div className='modal-content'>
+        <p className='modal-text'>{text}</p>
+        <div id='modal__buttons-container'>
+          {buttons?.map((button, index) => (
+            <button
+              key={`modal-button-${index}`}
+              className={`modal-button ${button.className}`}
+              onClick={() => button.onClick()}
+            >
+              {button.text}
+            </button>
+          ))}
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import './AvailableSessionsTable.css';
 
-type SessionRow = {
+export type SessionRow = {
   id: number | string;
   date: string;
   tutor: string;

@@ -1,10 +1,11 @@
 // Make calls to the same origin to route requests through the proxy
-const PARENT_DETAILS_ENDPOINT = "/api/base/{id}";
+const PARENT_DETAILS_ENDPOINT = "/api/parent/{id}";
 const BALANCE_ENDPOINT = "/api/credits/balance/{id}";
 const TRANSACTION_HISTORY_ENDPOINT = "/api/credits/history/{id}";
 const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
 const ADD_STUDENT_ENDPOINT = "/api/student/add";
 const VIEW_SESSIONS_ENDPOINT = "/api/sessions";
+const BOOK_SESSION_ENDPOINT = "/api/session/book"
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -85,7 +86,7 @@ export const TutortoiseClient = {
       }) as any,
     })
       .then((res) => res.json())
-      .catch((err) => console.error("Buy credits API call failed", err));
+      .catch((err) => console.error("Add students API call failed", err));
   },
   getSessionHistory: async (): Promise<any> => {
     return await fetch(TutortoiseClient.getBasePath() + VIEW_SESSIONS_ENDPOINT)
@@ -94,4 +95,20 @@ export const TutortoiseClient = {
         console.error("Transaction History API call failed", err),
       );
   },
+  bookSession: async (parentId: number, studentId: number, sessionId: number): Promise<any> => {
+    return await fetch(TutortoiseClient.getBasePath() + BOOK_SESSION_ENDPOINT, {
+      method: "POST",
+      headers: {
+        accept: "*/*",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        parentId,
+        studentId,
+        sessionId
+      }) as any,
+    })
+      .then((res) => res.json())
+      .catch((err) => console.error("Book session API call failed", err));
+  }
 };
