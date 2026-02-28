@@ -9,43 +9,48 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAuth();
 
-  const [role, setRole] = useState<"parent" | "tutor">("parent");
+  const [role, setRole] = useState<"parent" | "tutor" | "admin">("parent");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const users = {
+    parent: {
+      email: "parent@example.com",
+      password: "123456",
+      name: "Samantha Villanueva",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    tutor: {
+      email: "tutor@example.com",
+      password: "123456",
+      name: "Tortoise Tutor",
+      avatar: "/images/worm_with_glasses.png",
+    },
+    admin: {
+      email: "admin@example.com",
+      password: "123456",
+      name: "Admin",
+      avatar: "/images/worm_with_glasses.png",
+    },
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      role === "parent" &&
-      email === "parent@example.com" &&
-      password === "123456"
-    ) {
-      setUser({
-        name: "Samantha Villanueva",
-        avatar: "/images/worm_with_glasses.png",
-        role: "parent",
-      });
-      router.push("parent/");
-      return;
-    }
+    const user = users[role];
 
-    if (
-      role === "tutor" &&
-      email === "tutor@example.com" &&
-      password === "123456"
-    ) {
+    if (email === user.email && password === user.password) {
       setUser({
-        name: "Tortoise Tutor",
-        avatar: "/images/worm_with_glasses.png",
-        role: "tutor",
+        name: user.name,
+        avatar: user.avatar,
+        role,
       });
-      router.push("tutor/");
-      return;
-    }
 
-    setError("Invalid credentials");
+      router.push(`/${role}`);
+    } else {
+      setError("Invalid credentials");
+    }
   };
 
   return (
@@ -102,6 +107,23 @@ export default function LoginPage() {
                 className="hidden"
               />
               Tutor
+            </label>
+            <label
+              className={`flex-1 text-center py-2 rounded-md text-sm cursor-pointer transition ${
+                role === "admin"
+                  ? "bg-white shadow text-(--Support)"
+                  : "text-gray-500"
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                checked={role === "admin"}
+                onChange={() => setRole("admin")}
+                className="hidden"
+              />
+              Admin
             </label>
           </div>
 

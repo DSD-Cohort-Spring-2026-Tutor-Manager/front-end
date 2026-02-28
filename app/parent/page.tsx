@@ -29,13 +29,13 @@ function Home() {
 
   const ctx = useContext(CreditContext);
   if (!ctx)
-    throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
+    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(
-      (s) => s.sessionStatus === "completed" && s.studentId === studentId,
+      (s) => s.sessionStatus === 'completed' && s.studentId === studentId,
     );
   }
 
@@ -139,21 +139,21 @@ function Home() {
   }, [isAlertVisible]);
 
   return (
-    <main className="dashboard overflow-x-hidden h-full">
+    <main className='dashboard overflow-x-hidden h-full'>
       <CreditsViewBar
         value={credits.toString()}
-        href="/parent/credits"
-        cta="Need more credits?"
+        href='/parent/credits'
+        cta='Need more credits?'
       />
-      <section className="dashboard__data-row">
+      <section className='dashboard__data-row'>
         <Databox
           title='Student'
           value={parentDetails?.selectedStudent?.studentName?.split(' ')[0]}
           href='/student'
           cta='switch'
           topRightIcon={{
-            src: "/icons/Add user icon.svg",
-            alt: "Add student button",
+            src: '/icons/Add user icon.svg',
+            alt: 'Add student button',
             onClick: () => setAddStudentModalIsOpen(true),
           }}
           dropdownContent={
@@ -168,37 +168,37 @@ function Home() {
           }}
         />
         <Databox
-          title="Sessions completed"
+          title='Sessions completed'
           value={completedSess.length.toString()}
-          href="/student"
-          cta="View"
+          href='/student'
+          cta='View'
         />
         <DataboxMed latest={latestTwo} />
         {isAddStudentModalOpen && (
           <Modal
-            type="add student"
-            text=""
+            type='add student'
+            text=''
             buttons={[
               {
-                className: "add-student-confirm-button",
-                text: "Add Student",
+                className: 'add-student-confirm-button',
+                text: 'Add Student',
                 onClick: () => addStudent(),
               },
               {
-                className: "add-student-cancel-button",
-                text: "Cancel",
+                className: 'add-student-cancel-button',
+                text: 'Cancel',
                 onClick: () => setAddStudentModalIsOpen(false),
               },
             ]}
           />
         )}
       </section>
-      <div className="alert-layer">
+      <div className='alert-layer'>
         {isAlertVisible && (
           <Alert
-            type="success"
-            text="Student Created!"
-            className={isAlertExiting ? "alert-exit" : "alert-enter"}
+            type='success'
+            text='Student Created!'
+            className={isAlertExiting ? 'alert-exit' : 'alert-enter'}
           />
         )}
       </div>
