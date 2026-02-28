@@ -1,19 +1,95 @@
 'use client';
 
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import CreditsViewBar from '@/app/_components/CreditsViewbar/CreditsViewBar';
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import AvailableSessionsTable from '@/app/_components/DataTable/AvailableSessionsTable/AvailableSessionsTable';
-import './../dashboard.css';
 import './tutoring.css';
+import { ParentContext } from '@/app/context/ParentContext';
+import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
+import { Session, Student } from '@/app/types/types';
+import Modal from '@/app/_components/Modal/Modal';
 
 function page() {
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
+  const parentId = 1;
+  const [availableSessions, setAvailableSessions] = useState<Session[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<Session | undefined>(undefined);
 
-  const { credits } = ctx;
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('ParentContext is missing. Wrap the app in StudentProvider.');
+
+  const { parentDetails, setParentDetails } = parentCtx;
+
+  const loadParentDetails = async () => {
+    const parent: any = await TutortoiseClient.getParentDetails(parentId);
+    
+    setParentDetails({
+      ...parent,
+      selectedStudent: parentDetails.selectedStudent || parent.students?.[0]
+    });
+  }
+
+  const loadAvailableSessions = async () => {
+    // Replace with available sessions API call
+    const sessions: Session[] = await TutortoiseClient.getAllSessions();
+    if (!Array.isArray(sessions)) {
+      return;
+    }
+
+    const filteredSessions = sessions.filter((s: Session) => s.parentId === parentId);
+    console.debug('Filtered sessions:', filteredSessions)
+    setAvailableSessions(filteredSessions);
+  }
+
+  const selectStudentFromDropdown = (student: any) => {
+    // Handle all the filtering here
+    console.debug('Selected student:', student.studentName);
+    setParentDetails({
+      ...parentDetails, selectedStudent: student
+    })
+  }
+
+  const convertSessionsToSessionRows = (sessions: Session[]) => sessions.map(session => {
+    return {
+      id: session.sessionId,
+      date: session.datetimeStarted,
+      tutor: session.tutorName,
+      subject: session.subject,
+      time: session.datetimeStarted
+    }
+  });
+
+  const bookSession = async () => {
+    console.debug('Book session:', selectedSession);
+    if (selectedSession === undefined) {
+      return;
+    }
+    const session = selectedSession;
+    setSelectedSession(undefined);
+
+    // Make API call to book session
+    await TutortoiseClient.bookSession(
+      parentId,
+      parentDetails.selectedStudent?.studentId,
+      session.sessionId
+    );
+    setShowModal(false);
+
+    // Refresh sessions
+    loadAvailableSessions();
+  };
+
+  const cancel = async () => {
+    setSelectedSession(undefined);
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    loadParentDetails();
+    loadAvailableSessions();
+  }, []);
 
   return (
     <main className='dashboard'>
@@ -21,25 +97,57 @@ function page() {
         <div className='tutoring__nav'>
           <label className='tutoring__selector' htmlFor='students'>
             Choose a student:{' '}
-            <select name='students' id='students'>
-              <option value='student'>Zayn</option>
-              <option value='student'>Leo</option>
-              <option value='student'>Scarlet</option>
+            <select name='students' id='students' onChange={(e) => selectStudentFromDropdown(e.target.value)}>
+              {parentDetails.students?.filter((s: Student) => s.studentId !== parentDetails.selectedStudent.studentId)
+                .map((s: any, index: number) => (
+                  <option key={`option-${index}`} value='student'>
+                    {s.studentName.split(' ')[0]}
+                  </option>
+                ))}
             </select>
           </label>
 
           <CreditsViewBar
-            value={credits.toString()}
+            value={parentDetails.creditBalance?.toString()}
             href='/parent/credits'
             cta='Need more credits?'
           />
         </div>
         <AvailableSessionsTable
+          // sessions={convertSessionsToSessionRows(availableSessions)}
           onJoin={(session) => {
-            console.log('Joining session:', session);
+            console.debug('Joining session:', session);
+            const matchingSession = availableSessions.find((s: Session) => s.sessionId === session.id);
+            console.debug('Found session matching session row object:', matchingSession);
+            setSelectedSession(matchingSession);
+            setShowModal(true);
           }}
         />
       </div>
+      {
+        showModal && 
+        <Modal
+          type='book session'
+          sessionData={{
+            tutorName: selectedSession?.tutorName || '[Tutor]',
+            date: selectedSession?.datetimeStarted || '[Date]',
+            subject: selectedSession?.subject || '[Subject]'
+          }
+          }
+          buttons={[
+            {
+              text: 'Confirm',
+              onClick: () => bookSession(),
+              className: 'add-student-confirm-button'
+            },
+            {
+              text: 'Cancel',
+              onClick: () => cancel()
+            }
+          ]}
+        />
+      }
+      
     </main>
   );
 }

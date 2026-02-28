@@ -9,41 +9,8 @@ import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
 import { ParentContext } from '../context/ParentContext';
+import { Parent, Session, Student } from '../types/types';
 
-type Student = {
-  studentId: number;
-  parentId: number;
-  studentName: string;
-  notes: string;
-  sessionsCompleted: number;
-  previousScore: number;
-  latestScore: number;
-  sessions: Session[];
-};
-
-type Parent = {
-  "status": string,
-  "operationStatus": string,
-  "message": string,
-  "parentId": number,
-  "parentName": string,
-  "parentEmail": string,
-  "sessionCount": number,
-  "creditBalance": number,
-  "students": Student[]
-}
-type Session = {
-  sessionId: number;
-  parentId: number;
-  studentId: number;
-  tutorId: number;
-  sessionStatus: string;
-  datetimeStarted: string;
-  durationHours: number;
-  assessmentPointsEarned: number;
-  assessmentPointsGoal: number;
-  assessmentPointsMax: number;
-};
 
 function Home() {
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
