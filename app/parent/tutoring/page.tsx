@@ -62,16 +62,18 @@ function page() {
   });
 
   const bookSession = async () => {
+    console.debug('Book session:', selectedSession);
     if (selectedSession === undefined) {
       return;
     }
+    const session = selectedSession;
+    setSelectedSession(undefined);
 
     // Make API call to book session
-    setSelectedSession(undefined);
     await TutortoiseClient.bookSession(
       parentId,
       parentDetails.selectedStudent?.studentId,
-      selectedSession.sessionId
+      session.sessionId
     );
     setShowModal(false);
 
@@ -114,7 +116,10 @@ function page() {
         <AvailableSessionsTable
           // sessions={convertSessionsToSessionRows(availableSessions)}
           onJoin={(session) => {
-            console.log('Joining session:', session);
+            console.debug('Joining session:', session);
+            const matchingSession = availableSessions.find((s: Session) => s.sessionId === session.id);
+            console.debug('Found session matching session row object:', matchingSession);
+            setSelectedSession(matchingSession);
             setShowModal(true);
           }}
         />
@@ -123,11 +128,17 @@ function page() {
         showModal && 
         <Modal
           type='book session'
-          text='Booking Confirmation'
+          sessionData={{
+            tutorName: selectedSession?.tutorName || '[Tutor]',
+            date: selectedSession?.datetimeStarted || '[Date]',
+            subject: selectedSession?.subject || '[Subject]'
+          }
+          }
           buttons={[
             {
               text: 'Confirm',
-              onClick: () => bookSession()
+              onClick: () => bookSession(),
+              className: 'add-student-confirm-button'
             },
             {
               text: 'Cancel',
