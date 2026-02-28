@@ -69,7 +69,7 @@ export default function DataTable({
 
       await onCompleteSession?.(sessionId, notes);
 
-      setSessions((prevSessions) => {
+      setSessions?.((prevSessions) => {
         console.log("Previous Sessions:", prevSessions);
 
         const updatedSessions = prevSessions.map((s) =>
