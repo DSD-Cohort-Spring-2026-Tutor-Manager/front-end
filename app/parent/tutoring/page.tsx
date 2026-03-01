@@ -32,15 +32,15 @@ function page() {
   }
 
   const loadAvailableSessions = async () => {
-    // Replace with available sessions API call
-    const sessions: Session[] = await TutortoiseClient.getAllSessions();
+    const sessions: Session[] = await TutortoiseClient.getOpenSessions();
     if (!Array.isArray(sessions)) {
       return;
     }
 
-    const filteredSessions = sessions.filter((s: Session) => s.parentId === parentId);
-    console.debug('Filtered sessions:', filteredSessions)
-    setAvailableSessions(filteredSessions);
+    // const filteredSessions = sessions.filter((s: Session) => s.parentId === parentId);
+    // console.debug('Filtered sessions:', filteredSessions);
+    // setAvailableSessions(filteredSessions);
+    setAvailableSessions(sessions);
   }
 
   const selectStudentFromDropdown = (student: any) => {
@@ -51,15 +51,37 @@ function page() {
     })
   }
 
+  const getFormattedDate = (date: Date) => date.toLocaleDateString('en-US');
+  const getFormattedTime = (date: Date) => {
+    const isAm = date.getHours() <= 11;
+    let newHours = date.getHours() % 12;
+    if (newHours === 0 ) newHours = 12;
+
+    return `${newHours}:${date.getMinutes()} ${isAm ? 'AM':'PM'}`;
+  }
+
   const convertSessionsToSessionRows = (sessions: Session[]) => sessions.map(session => {
+    // Expect ISO 8601 datetime string
+    const dateObj = new Date(session.datetimeStarted);
+    const dateString = getFormattedDate(dateObj);
+    const timeString = getFormattedTime(dateObj);
     return {
       id: session.sessionId,
-      date: session.datetimeStarted,
+      date: dateString,
       tutor: session.tutorName,
       subject: session.subject,
-      time: session.datetimeStarted
+      time: timeString
     }
   });
+
+  const getCombinedDateAndTimeString = (session: Session) => {
+    if (!session) return '[Invalid Date]';
+    const date = new Date(session.datetimeStarted);
+    const dateString = getFormattedDate(date);
+    const timeString = getFormattedTime(date);
+
+    return `${dateString} at ${timeString}`;
+  }
 
   const bookSession = async () => {
     console.debug('Book session:', selectedSession);
@@ -114,7 +136,7 @@ function page() {
           />
         </div>
         <AvailableSessionsTable
-          // sessions={convertSessionsToSessionRows(availableSessions)}
+          sessions={convertSessionsToSessionRows(availableSessions)}
           onJoin={(session) => {
             console.debug('Joining session:', session);
             const matchingSession = availableSessions.find((s: Session) => s.sessionId === session.id);
@@ -130,7 +152,7 @@ function page() {
           type='book session'
           sessionData={{
             tutorName: selectedSession?.tutorName || '[Tutor]',
-            date: selectedSession?.datetimeStarted || '[Date]',
+            date: getCombinedDateAndTimeString(selectedSession as Session),
             subject: selectedSession?.subject || '[Subject]'
           }
           }
