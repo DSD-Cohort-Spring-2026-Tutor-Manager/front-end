@@ -32,15 +32,15 @@ function page() {
   }
 
   const loadAvailableSessions = async () => {
-    // Replace with available sessions API call
-    const sessions: Session[] = await TutortoiseClient.getAllSessions();
+    const sessions: Session[] = await TutortoiseClient.getOpenSessions();
     if (!Array.isArray(sessions)) {
       return;
     }
 
-    const filteredSessions = sessions.filter((s: Session) => s.parentId === parentId);
-    console.debug('Filtered sessions:', filteredSessions)
-    setAvailableSessions(filteredSessions);
+    // const filteredSessions = sessions.filter((s: Session) => s.parentId === parentId);
+    // console.debug('Filtered sessions:', filteredSessions);
+    // setAvailableSessions(filteredSessions);
+    setAvailableSessions(sessions);
   }
 
   const selectStudentFromDropdown = (student: any) => {
@@ -51,13 +51,26 @@ function page() {
     })
   }
 
+  const getFormattedDate = (date: Date) => date.toLocaleDateString('en-US');
+  const getFormattedTime = (date: Date) => {
+    const isAm = date.getHours() <= 11;
+    let newHours = date.getHours() % 12;
+    if (newHours === 0 ) newHours = 12;
+
+    return `${newHours}:${date.getMinutes()} ${isAm ? 'AM':'PM'}`;
+  }
+
   const convertSessionsToSessionRows = (sessions: Session[]) => sessions.map(session => {
+    // Expect ISO 8601 datetime string
+    const dateObj = new Date(session.datetimeStarted);
+    const hourString = getFormattedTime(dateObj);
+    const timeString = getFormattedDate(dateObj);
     return {
       id: session.sessionId,
-      date: session.datetimeStarted,
+      date: hourString,
       tutor: session.tutorName,
       subject: session.subject,
-      time: session.datetimeStarted
+      time: timeString
     }
   });
 
@@ -114,7 +127,7 @@ function page() {
           />
         </div>
         <AvailableSessionsTable
-          // sessions={convertSessionsToSessionRows(availableSessions)}
+          sessions={convertSessionsToSessionRows(availableSessions)}
           onJoin={(session) => {
             console.debug('Joining session:', session);
             const matchingSession = availableSessions.find((s: Session) => s.sessionId === session.id);
