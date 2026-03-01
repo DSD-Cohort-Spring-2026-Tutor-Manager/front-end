@@ -15,7 +15,7 @@ function Home() {
   const tableSectionRef = useRef<HTMLElement>(null);
   const [bookedSessions, setBookedSessions] = useState<number>(0);
   const [weeklyCreditsSold, setWeeklyCreditsSold] = useState<number>(0);
-  const [parentId, setParentId] = useState<string>(0);
+  const [parentId, setParentId] = useState<string>("0");
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
