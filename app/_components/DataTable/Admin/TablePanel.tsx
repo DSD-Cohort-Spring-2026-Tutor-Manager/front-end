@@ -23,35 +23,16 @@ interface TabPanelProps {
 }
 
 export default function BasicTabs(props: any) {
-  const [completedSessions, setCompletedSessions] = useState<any[]>([]);
-  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [fullSessions, setFullSessions] = useState<any[]>([]);
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  const getSessionsByTab = () => {
-    switch (value) {
-      case 0:
-        return upcomingSessions;
-      case 1:
-        return completedSessions;
-
-      default:
-        return fullSessions;
-    }
-  };
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
-        setCompletedSessions(
-          sessions.filter((s) => s.sessionStatus === "completed"),
-        );
-        setUpcomingSessions(
-          sessions.filter((s) => s.sessionStatus === "scheduled"),
-        );
         setFullSessions(sessions);
       }
     });
@@ -68,14 +49,14 @@ export default function BasicTabs(props: any) {
       </Box>
 
       <CustomTabPanel value={value} index={0}>
-        <DataTable sessions={getSessionsByTab()} type="parent" />
+        <DataTable sessions={fullSessions} type="parent" />
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={1}>
-        <DataTable sessions={getSessionsByTab()} type="student" />
+        <DataTable sessions={fullSessions} type="student" />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <DataTable sessions={getSessionsByTab()} type="tutor" />
+        <DataTable sessions={fullSessions} type="tutor" />
       </CustomTabPanel>
     </Box>
   );

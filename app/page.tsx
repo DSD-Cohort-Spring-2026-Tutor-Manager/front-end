@@ -16,20 +16,20 @@ export default function LoginPage() {
 
   const users = {
     parent: {
-      email: "parent@example.com",
-      password: "123456",
+      email: "parentno1@email.com",
+      password: "password123",
       name: "Samantha Villanueva",
       avatar: "/images/worm_with_glasses.png",
     },
     tutor: {
-      email: "tutor@example.com",
-      password: "123456",
+      email: "tutor1no1@email.com",
+      password: "password123",
       name: "Tortoise Tutor",
       avatar: "/images/worm_with_glasses.png",
     },
     admin: {
-      email: "admin@example.com",
-      password: "123456",
+      email: "john.admin@email.com",
+      password: "password123",
       name: "Admin",
       avatar: "/images/worm_with_glasses.png",
     },
@@ -46,7 +46,6 @@ export default function LoginPage() {
         avatar: user.avatar,
         role,
       });
-
       router.push(`/${role}`);
     } else {
       setError("Invalid credentials");

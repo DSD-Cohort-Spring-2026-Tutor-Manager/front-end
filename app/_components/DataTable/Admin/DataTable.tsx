@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
@@ -7,15 +7,22 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import { grey } from "@mui/material/colors";
+import { TutortoiseClient } from "../../../_api/tutortoiseClient";
 
 interface Session {
   id: string;
   datetimeStarted: string;
   studentFirstName: string;
+  studentLastName: string;
+  studentId: string;
   subject: string;
   time: string;
+  sessionStatus: string;
+  tutorName: string;
+  tutorId: string;
+  notes: string;
+  parentId: string;
+  assessmentPointsEarned: BigInteger;
 }
 
 interface Props {
@@ -25,11 +32,12 @@ interface Props {
 
 export default function DataTable({ sessions, type }: Props) {
   const [page, setPage] = useState(0);
+  const [creditBalances, setCreditBalances] = useState<Record<string, number>>(
+    {},
+  );
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleChangePage = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+  const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -38,10 +46,38 @@ export default function DataTable({ sessions, type }: Props) {
     setPage(0);
   };
 
-  const paginatedSessions = sessions.slice(
+  const dedupedRows = (() => {
+    if (type === "parent") {
+      return Array.from(
+        new Map(
+          sessions.map((s) => [`${s.parentId}-${s.studentId}`, s]),
+        ).values(),
+      );
+    }
+    if (type === "tutor") {
+      return Array.from(
+        new Map(
+          sessions.map((s) => [`${s.tutorId}-${s.studentId}`, s]),
+        ).values(),
+      );
+    }
+    return Array.from(new Map(sessions.map((s) => [s.studentId, s])).values());
+  })();
+
+  const paginatedRows = dedupedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
+  useEffect(() => {
+    const uniqueParentIds = [
+      ...new Set(sessions.map((s) => s.parentId).filter(Boolean)),
+    ];
+    uniqueParentIds.forEach((parentId) => {
+      TutortoiseClient.getBalance(parentId).then((balance) => {
+        setCreditBalances((prev) => ({ ...prev, [parentId]: balance }));
+      });
+    });
+  }, [sessions]);
 
   return (
     <Paper>
@@ -51,22 +87,16 @@ export default function DataTable({ sessions, type }: Props) {
             <TableRow>
               {type === "parent" && (
                 <>
-                  <TableCell>Parent</TableCell>
-                  <TableCell>Student</TableCell>
+                  <TableCell>Parent Name</TableCell>
+                  <TableCell>Student Name</TableCell>
                   <TableCell>Credits</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Options</TableCell>
                 </>
               )}
               {type === "tutor" && (
                 <>
-                  <TableCell>Date</TableCell>
                   <TableCell>Tutor</TableCell>
-                  <TableCell>Student</TableCell>
-                  <TableCell>Upcoming Session</TableCell>
-                  <TableCell>Today Session</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Options</TableCell>
+                  <TableCell>Subject</TableCell>
                 </>
               )}
               {type === "student" && (
@@ -75,67 +105,78 @@ export default function DataTable({ sessions, type }: Props) {
                   <TableCell>Parent</TableCell>
                   <TableCell>Tutor</TableCell>
                   <TableCell>Notes</TableCell>
+                  <TableCell>Subject</TableCell>
                   <TableCell>Grade</TableCell>
-                  <TableCell>Options</TableCell>
                 </>
               )}
             </TableRow>
           </TableHead>
 
           <TableBody>
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                No sessions available
-              </TableCell>
-            </TableRow>
-            {/* {sessions.length === 0 ? (
+            {dedupedRows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
                   No sessions available
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedSessions.map((session) => (
-                <TableRow key={session.id}>
-                  <TableCell>
-                    {session.datetimeStarted?.split("T")[0]}
-                  </TableCell>
-                  <TableCell>{session.studentFirstName}</TableCell>
-                  <TableCell>{session.subject}</TableCell>
-                  <TableCell>
-                    {session.datetimeStarted?.split("T")[1]}
-                  </TableCell>
-                  <TableCell>
-                    {type === "upcoming" && (
-                      <Button
-                        variant="contained"
-                        color="success"
-                        size="small"
-                        onClick={() => console.log("View session:", session.id)}
-                      >
-                        View
-                      </Button>
-                    )}
-                  </TableCell>
+              paginatedRows.map((session) => (
+                <TableRow
+                  key={
+                    type === "parent"
+                      ? `${session.parentId}-${session.studentId}`
+                      : type === "tutor"
+                        ? `${session.tutorId}-${session.studentId}`
+                        : session.studentId
+                  }
+                >
+                  {type === "parent" && (
+                    <>
+                      <TableCell>{session.studentLastName}</TableCell>
+                      <TableCell>{session.studentFirstName}</TableCell>
+                      <TableCell>
+                        {creditBalances[session.parentId] ?? "—"}
+                      </TableCell>
+                      <TableCell>{session.sessionStatus}</TableCell>
+                    </>
+                  )}
+                  {type === "tutor" && (
+                    <>
+                      <TableCell>{session.tutorName}</TableCell>
+                      <TableCell>{session.subject}</TableCell>
+                    </>
+                  )}
+                  {type === "student" && (
+                    <>
+                      <TableCell>{session.studentFirstName}</TableCell>
+                      <TableCell>{session.studentLastName}</TableCell>
+                      <TableCell>{session.tutorName}</TableCell>
+                      <TableCell>{session.notes}</TableCell>
+                      <TableCell>{session.subject}</TableCell>
+                      <TableCell>
+                        {String(session.assessmentPointsEarned)}
+                      </TableCell>
+                    </>
+                  )}
                 </TableRow>
               ))
-            )} */}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* {sessions.length > 10 && (
+      {dedupedRows.length > 10 && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={sessions.length}
+          count={dedupedRows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           style={{ color: "#595959" }}
         />
-      )} */}
+      )}
     </Paper>
   );
 }

@@ -13,13 +13,16 @@ function Home() {
   const [students, setStudents] = useState<any[]>([]);
   const [tutors, setTutors] = useState<any[]>([]);
   const tableSectionRef = useRef<HTMLElement>(null);
+  const [bookedSessions, setBookedSessions] = useState<number>(0);
+  const [weeklyCreditsSold, setWeeklyCreditsSold] = useState<number>(0);
+  const [parentId, setParentId] = useState<string>(0);
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
-        console.log(sessions);
         setStudents([...new Set(sessions.map((s) => s.studentId))]);
         setTutors([...new Set(sessions.map((s) => s.tutorId))]);
+        setParentId(sessions.find((s) => s.parentId)?.parentId);
         setUpcomingSessions(
           sessions.filter((s) => s.sessionStatus === "scheduled"),
         );
@@ -33,26 +36,30 @@ function Home() {
         );
       }
     });
+    TutortoiseClient.getAdminDetails().then((details) => {
+      if (details) {
+        setBookedSessions(details.weeklySessionsBooked);
+        setWeeklyCreditsSold(details.weeklyCreditSold);
+        console.log(details);
+      }
+    });
   }, []);
 
   return (
     <main className="dashboard">
       <section className="dashboard__data-row" style={{ margin: "20px 20px" }}>
-        <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-          <Databox title="Total Students" value={students.length} />
-        </div>
-        <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-          <Databox title="Total Tutors" value={tutors.length} />
-        </div>
-        <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-          <Databox title="Total Session" value={fullSessions.length} />
-        </div>
-        <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-          <Databox title="Upcoming Session" value={upcomingSessions.length} />
-        </div>
-        <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
-          <Databox title="Today Session" value={todaySessions.length} />
-        </div>
+        <Databox
+          title="Credits Bought"
+          subtitle="This Week"
+          value={weeklyCreditsSold}
+        />
+        <Databox
+          title="Sessions Full"
+          subtitle="This Week"
+          value={bookedSessions}
+        />
+        <Databox title="Total Students" value={students.length} />
+        <Databox title="Total Session" value={fullSessions.length} />
       </section>
 
       <section ref={tableSectionRef} id="table" style={{ margin: "20px 0" }}>

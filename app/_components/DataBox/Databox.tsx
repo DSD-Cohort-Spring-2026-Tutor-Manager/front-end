@@ -16,11 +16,13 @@ function Databox({
   topRightIcon,
   dropdownContent,
   dropdownOnChange,
+  subtitle,
 }: {
   title: string;
   value: string | number;
   cta?: string;
   href?: string;
+  subtitle?: string;
   onClick?: () => void;
   topRightIcon?: TopRightIcon;
   dropdownContent?: any[];
@@ -30,6 +32,7 @@ function Databox({
     <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
       <h2 className="databox__title">{title}</h2>
       <p className="databox__title-value">{value}</p>
+      {subtitle ? <h3 className="databox__subtitle">{subtitle}</h3> : ""}
       {cta &&
         (dropdownContent?.length ? (
           <div className="dropdown databox_btn">
