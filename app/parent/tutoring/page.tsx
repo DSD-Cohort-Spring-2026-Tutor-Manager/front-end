@@ -63,16 +63,25 @@ function page() {
   const convertSessionsToSessionRows = (sessions: Session[]) => sessions.map(session => {
     // Expect ISO 8601 datetime string
     const dateObj = new Date(session.datetimeStarted);
-    const hourString = getFormattedTime(dateObj);
-    const timeString = getFormattedDate(dateObj);
+    const dateString = getFormattedDate(dateObj);
+    const timeString = getFormattedTime(dateObj);
     return {
       id: session.sessionId,
-      date: hourString,
+      date: dateString,
       tutor: session.tutorName,
       subject: session.subject,
       time: timeString
     }
   });
+
+  const getCombinedDateAndTimeString = (session: Session) => {
+    if (!session) return '[Invalid Date]';
+    const date = new Date(session.datetimeStarted);
+    const dateString = getFormattedDate(date);
+    const timeString = getFormattedTime(date);
+
+    return `${dateString} at ${timeString}`;
+  }
 
   const bookSession = async () => {
     console.debug('Book session:', selectedSession);
@@ -143,7 +152,7 @@ function page() {
           type='book session'
           sessionData={{
             tutorName: selectedSession?.tutorName || '[Tutor]',
-            date: selectedSession?.datetimeStarted || '[Date]',
+            date: getCombinedDateAndTimeString(selectedSession as Session),
             subject: selectedSession?.subject || '[Subject]'
           }
           }
