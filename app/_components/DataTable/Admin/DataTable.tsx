@@ -30,6 +30,12 @@ interface Props {
   type: "parent" | "student" | "tutor";
 }
 
+const COLUMN_CONFIGS: Record<string, string[]> = {
+  parent: ["Parent Name", "Student Name", "Credits", "Status"],
+  tutor: ["Tutor", "Subject"],
+  student: ["Student", "Parent", "Tutor", "Notes", "Subject", "Grade"],
+};
+
 export default function DataTable({ sessions, type }: Props) {
   const [page, setPage] = useState(0);
   const [creditBalances, setCreditBalances] = useState<Record<string, number>>(
@@ -64,10 +70,46 @@ export default function DataTable({ sessions, type }: Props) {
     return Array.from(new Map(sessions.map((s) => [s.studentId, s])).values());
   })();
 
+  const getRowKey = (session: Session): string => {
+    if (type === "parent") return `${session.parentId}-${session.studentId}`;
+    if (type === "tutor") return `${session.tutorId}-${session.studentId}`;
+    return session.studentId;
+  };
   const paginatedRows = dedupedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
+
+  const renderCells = (session: Session) => {
+    if (type === "parent") {
+      return (
+        <>
+          <TableCell>{session.studentLastName}</TableCell>
+          <TableCell>{session.studentFirstName}</TableCell>
+          <TableCell>{creditBalances[session.parentId] ?? "—"}</TableCell>
+          <TableCell>{session.sessionStatus}</TableCell>
+        </>
+      );
+    }
+    if (type === "tutor") {
+      return (
+        <>
+          <TableCell>{session.tutorName}</TableCell>
+          <TableCell>{session.subject}</TableCell>
+        </>
+      );
+    }
+    return (
+      <>
+        <TableCell>{session.studentFirstName}</TableCell>
+        <TableCell>{session.studentLastName}</TableCell>
+        <TableCell>{session.tutorName}</TableCell>
+        <TableCell>{session.notes}</TableCell>
+        <TableCell>{session.subject}</TableCell>
+        <TableCell>{String(session.assessmentPointsEarned)}</TableCell>
+      </>
+    );
+  };
   useEffect(() => {
     const uniqueParentIds = [
       ...new Set(sessions.map((s) => s.parentId).filter(Boolean)),
@@ -85,79 +127,23 @@ export default function DataTable({ sessions, type }: Props) {
         <Table sx={{ minWidth: 700 }}>
           <TableHead>
             <TableRow>
-              {type === "parent" && (
-                <>
-                  <TableCell>Parent Name</TableCell>
-                  <TableCell>Student Name</TableCell>
-                  <TableCell>Credits</TableCell>
-                  <TableCell>Status</TableCell>
-                </>
-              )}
-              {type === "tutor" && (
-                <>
-                  <TableCell>Tutor</TableCell>
-                  <TableCell>Subject</TableCell>
-                </>
-              )}
-              {type === "student" && (
-                <>
-                  <TableCell>Student</TableCell>
-                  <TableCell>Parent</TableCell>
-                  <TableCell>Tutor</TableCell>
-                  <TableCell>Notes</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Grade</TableCell>
-                </>
-              )}
+              {COLUMN_CONFIGS[type].map((col) => (
+                <TableCell key={col}>{col}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
 
           <TableBody>
             {dedupedRows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={COLUMN_CONFIGS[type].length} align="center">
                   No sessions available
                 </TableCell>
               </TableRow>
             ) : (
               paginatedRows.map((session) => (
-                <TableRow
-                  key={
-                    type === "parent"
-                      ? `${session.parentId}-${session.studentId}`
-                      : type === "tutor"
-                        ? `${session.tutorId}-${session.studentId}`
-                        : session.studentId
-                  }
-                >
-                  {type === "parent" && (
-                    <>
-                      <TableCell>{session.studentLastName}</TableCell>
-                      <TableCell>{session.studentFirstName}</TableCell>
-                      <TableCell>
-                        {creditBalances[session.parentId] ?? "—"}
-                      </TableCell>
-                      <TableCell>{session.sessionStatus}</TableCell>
-                    </>
-                  )}
-                  {type === "tutor" && (
-                    <>
-                      <TableCell>{session.tutorName}</TableCell>
-                      <TableCell>{session.subject}</TableCell>
-                    </>
-                  )}
-                  {type === "student" && (
-                    <>
-                      <TableCell>{session.studentFirstName}</TableCell>
-                      <TableCell>{session.studentLastName}</TableCell>
-                      <TableCell>{session.tutorName}</TableCell>
-                      <TableCell>{session.notes}</TableCell>
-                      <TableCell>{session.subject}</TableCell>
-                      <TableCell>
-                        {String(session.assessmentPointsEarned)}
-                      </TableCell>
-                    </>
-                  )}
+                <TableRow key={getRowKey(session)}>
+                  {renderCells(session)}
                 </TableRow>
               ))
             )}
