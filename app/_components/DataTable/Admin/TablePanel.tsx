@@ -21,7 +21,11 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
-
+const TAB_CONFIG: { label: string; type: "parent" | "student" | "tutor" }[] = [
+  { label: "Parents", type: "parent" },
+  { label: "Students", type: "student" },
+  { label: "Tutors", type: "tutor" },
+];
 export default function BasicTabs(props: any) {
   const [fullSessions, setFullSessions] = useState<any[]>([]);
   const [value, setValue] = React.useState(0);
@@ -48,16 +52,11 @@ export default function BasicTabs(props: any) {
         </Tabs>
       </Box>
 
-      <CustomTabPanel value={value} index={0}>
-        <DataTable sessions={fullSessions} type="parent" />
-      </CustomTabPanel>
-
-      <CustomTabPanel value={value} index={1}>
-        <DataTable sessions={fullSessions} type="student" />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <DataTable sessions={fullSessions} type="tutor" />
-      </CustomTabPanel>
+      {TAB_CONFIG.map((tab, index) => (
+        <CustomTabPanel key={tab.type} value={value} index={index}>
+          <DataTable sessions={fullSessions} type={tab.type} />
+        </CustomTabPanel>
+      ))}
     </Box>
   );
 }
