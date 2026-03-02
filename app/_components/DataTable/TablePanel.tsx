@@ -31,21 +31,41 @@ export default function BasicTabs(props: any) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  const getSessionsByTab = () => {
-    switch (value) {
-      case 0:
-        return upcomingSessions;
-      case 1:
-        return completedSessions;
+  const handleCompleteSession = async (sessionId: string, notes: string) => {
+    const storedSessions = JSON.parse(
+      sessionStorage.getItem("sessions") || "[]",
+    );
 
-      default:
-        return fullSessions;
-    }
+    const updatedSessions = storedSessions.map((s: any) =>
+      s.sessionId === sessionId
+        ? {
+            ...s,
+            sessionStatus: "completed",
+            notes: notes,
+          }
+        : s,
+    );
+    sessionStorage.setItem("sessions", JSON.stringify(updatedSessions));
+    setCompletedSessions(
+      updatedSessions.filter(
+        (s: any) =>
+          s.sessionStatus === "completed" && s.tutorName === "Tutor1 No1",
+      ),
+    );
+
+    setUpcomingSessions(
+      updatedSessions.filter(
+        (s: any) =>
+          s.sessionStatus === "scheduled" && s.tutorName === "Tutor1 No1",
+      ),
+    );
+
+    setFullSessions(updatedSessions);
   };
-
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
+        sessionStorage.setItem("sessions", JSON.stringify(sessions));
         setCompletedSessions(
           sessions.filter(
             (s) =>
@@ -73,11 +93,16 @@ export default function BasicTabs(props: any) {
       </Box>
 
       <CustomTabPanel value={value} index={0}>
-        <DataTable sessions={getSessionsByTab()} type="upcoming" />
+        <DataTable
+          sessions={upcomingSessions}
+          type="upcoming"
+          onCompleteSession={handleCompleteSession}
+          setSessions={setUpcomingSessions}
+        />
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={1}>
-        <DataTable sessions={getSessionsByTab()} type="completed" />
+        <DataTable sessions={completedSessions} type="completed" />
       </CustomTabPanel>
     </Box>
   );
