@@ -103,6 +103,7 @@
 
 .sessions-table__join-btn:hover {
   opacity: 0.92;
+  background-color: #F39C34;
 }
 
 .sessions-table__join-btn:active {
