@@ -60,7 +60,7 @@ export const theme: Theme = createTheme({
     subtitle2: { fontWeight: 500, fontSize: "0.875rem" },
     body1: { fontSize: "1rem", lineHeight: 1.6 },
     body2: { fontSize: "0.875rem", lineHeight: 1.57 },
-    button: { fontWeight: 600, textTransform: "none" },
+    button: { fontWeight: 700, textTransform: "none" },
     caption: { fontSize: "0.75rem" },
     overline: { fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.08em" },
   },
@@ -70,9 +70,21 @@ export const theme: Theme = createTheme({
     MuiButton: {
       defaultProps: { disableElevation: true },
       styleOverrides: {
-        root: { borderRadius: 8, padding: "8px 20px", fontWeight: 600 },
-        sizeLarge: { padding: "12px 28px", fontSize: "1rem" },
-        sizeSmall: { padding: "4px 12px", fontSize: "0.8125rem" },
+        root: {
+          borderRadius: 8,
+          padding: "8px 20px",
+          fontWeight: 700,
+          color: tokens.color.textPrimary,
+        },
+        sizeLarge: { padding: "12px 28px", fontSize: "1.25rem" },
+        sizeSmall: { padding: "4px 12px", fontSize: "1rem" },
+        contained: {
+          backgroundColor: tokens.color.primary,
+          "&:hover": {
+            backgroundColor: tokens.color.primary,
+            opacity: 0.8,
+          },
+        },
       },
     },
     MuiCard: {
@@ -100,7 +112,7 @@ export const theme: Theme = createTheme({
           padding: "6px 16px",
           borderRadius: 7,
           fontWeight: 400,
-          fontSize: "0.875rem",
+          fontSize: "0.95rem",
           textTransform: "none",
           color: "var(--color-textPrimary)",
           transition:
@@ -112,6 +124,7 @@ export const theme: Theme = createTheme({
           "&.Mui-selected": {
             color: "var(--color-text-primary)",
             fontWeight: 700,
+            fontSize: "1rem",
             backgroundColor: "var(--color-bg-paper)",
             boxShadow: "var(--shadow-sm)",
           },
@@ -149,8 +162,8 @@ export const theme: Theme = createTheme({
           },
           "& .MuiTableCell-head": {
             color: "var(--color-text-primary)",
-            fontWeight: 600,
-            fontSize: "0.75rem",
+            fontWeight: 700,
+            fontSize: "0.85rem",
             textTransform: "uppercase",
             letterSpacing: "0.05em",
             borderBottom: "1px solid var(--color-border)",
@@ -172,6 +185,15 @@ export const theme: Theme = createTheme({
           "&.Mui-selected": {
             backgroundColor: "var(--color-primary-light) !important",
           },
+          "& td:first-of-type": {
+            borderTopLeftRadius: 12,
+            borderBottomLeftRadius: 12,
+          },
+          "& td:last-of-type": {
+            borderTopRightRadius: 12,
+            borderBottomRightRadius: 12,
+          },
+          fontSize: "1rem",
         },
       },
     },
@@ -187,7 +209,7 @@ export const theme: Theme = createTheme({
           "& .MuiTableCell-body": {
             color: "var(--color-text-secondary)",
             fontWeight: "bold",
-            fontSize: "0.875rem",
+            fontSize: "1rem",
             padding: "14px 16px",
             borderBottom: "1px solid var(--color-border-subtle)",
           },
