@@ -9,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAuth();
 
-  const [role, setRole] = useState<"parent" | "tutor">("parent");
+  const [role, setRole] = useState<"parent" | "tutor" | "admin">("parent");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,35 +38,18 @@ export default function LoginPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      role === "parent" &&
-      email === "parentno1@email.com" &&
-      password === "password123"
-    ) {
-      setUser({
-        name: "Samantha Villanueva",
-        avatar: "/images/worm_with_glasses.png",
-        role: "parent",
-      });
-      router.push("parent/");
-      return;
-    }
+    const user = users[role];
 
-    if (
-      role === "tutor" &&
-      email === "tutor1no1@email.com" &&
-      password === "password123"
-    ) {
+    if (email === user.email && password === user.password) {
       setUser({
-        name: "Tortoise Tutor",
-        avatar: "/images/worm_with_glasses.png",
-        role: "tutor",
+        name: user.name,
+        avatar: user.avatar,
+        role,
       });
-      router.push("tutor/");
-      return;
+      router.push(`/${role}`);
+    } else {
+      setError("Invalid credentials");
     }
-
-    setError("Invalid credentials");
   };
 
   return (
@@ -123,6 +106,23 @@ export default function LoginPage() {
                 className="hidden"
               />
               Tutor
+            </label>
+            <label
+              className={`flex-1 text-center py-2 rounded-md text-sm cursor-pointer transition ${
+                role === "admin"
+                  ? "bg-white shadow text-(--Support)"
+                  : "text-gray-500"
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                checked={role === "admin"}
+                onChange={() => setRole("admin")}
+                className="hidden"
+              />
+              Admin
             </label>
           </div>
 

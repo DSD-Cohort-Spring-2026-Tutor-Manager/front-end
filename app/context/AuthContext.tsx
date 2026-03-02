@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 interface User {
   name: string;
   avatar: string;
-  role: "parent" | "tutor";
+  role: "parent" | "tutor" | "admin";
 }
 
 const AuthContext = createContext<{
@@ -16,20 +16,18 @@ const AuthContext = createContext<{
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  // Load from localStorage on first render
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
     }
-  }, []);
-
-  // Save when user changes
+    return null;
+  });
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
     }
   }, [user]);
 

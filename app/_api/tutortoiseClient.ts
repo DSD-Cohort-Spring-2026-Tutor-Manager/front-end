@@ -6,7 +6,9 @@ const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
 const ADD_STUDENT_ENDPOINT = "/api/student/add";
 const ALL_SESSIONS_ENDPOINT = "/api/sessions";
 const OPEN_SESSIONS_ENDPOINT = "/api/sessions/open";
-const BOOK_SESSION_ENDPOINT = "/api/parent/book/{sessionId}/{parentId}/{studentId}"
+const BOOK_SESSION_ENDPOINT =
+  "/api/parent/book/{sessionId}/{parentId}/{studentId}";
+const ADMIN_ENDPOINT = "/api/admin/dashboard";
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -102,9 +104,15 @@ export const TutortoiseClient = {
         console.error("Transaction History API call failed", err),
       );
   },
-  bookSession: async (parentId: number, studentId: number, sessionId: number): Promise<any> => {
-    const updated_endpoint = BOOK_SESSION_ENDPOINT
-      .replace("{sessionId}", String(sessionId))
+  bookSession: async (
+    parentId: number,
+    studentId: number,
+    sessionId: number,
+  ): Promise<any> => {
+    const updated_endpoint = BOOK_SESSION_ENDPOINT.replace(
+      "{sessionId}",
+      String(sessionId),
+    )
       .replace("{parentId}", String(parentId))
       .replace("{studentId}", String(studentId));
     return await fetch(TutortoiseClient.getBasePath() + updated_endpoint, {
@@ -116,10 +124,15 @@ export const TutortoiseClient = {
       body: JSON.stringify({
         parentId,
         studentId,
-        sessionId
+        sessionId,
       }) as any,
     })
       .then((res) => res.json())
       .catch((err) => console.error("Book session API call failed", err));
-  }
+  },
+  getAdminDetails: async () => {
+    return await fetch(TutortoiseClient.getBasePath() + ADMIN_ENDPOINT)
+      .then((res) => res.json())
+      .catch((err) => console.error("Sessions API call failed:", err));
+  },
 };
