@@ -140,9 +140,12 @@ const api = axios.create({
 });
 
 // Request interceptor: attach JWT
+// Guard localStorage access for SSR safety (matches AuthContext.tsx pattern)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('accessToken');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
