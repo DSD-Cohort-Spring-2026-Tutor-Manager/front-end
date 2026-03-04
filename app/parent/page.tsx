@@ -1,196 +1,221 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/authStore";
-import { TutortoiseClient } from "../_api/tutortoiseClient";
-import {
-  GraduationCap,
-  CalendarDays,
-  Clock,
-  BookOpen,
-  ChevronRight,
-  Search,
-  Users,
-  Bell,
-  Lightbulb,
-} from "lucide-react";
-import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import { CreditContext } from "@/app/_components/CreditContext/CreditContext";
+import Databox from "../_components/DataBox/Databox";
+import DataboxMed from "../_components/DataBox/DataboxMed";
+import CreditsViewBar from "../_components/CreditsViewbar/CreditsViewBar";
 import "./dashboard.css";
+import { TutortoiseClient } from "../_api/tutortoiseClient";
+import Modal from "../_components/Modal/Modal";
+import Alert from "../_components/Alert/Alert";
+import { StudentContext } from "../context/StudentContext";
 
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-}
+type Student = {
+  studentId: number;
+  parentId: number;
+  studentName: string;
+  notes: string;
+  sessionsCompleted: number;
+  previousScore: number;
+  latestScore: number;
+  sessions: Session[];
+};
 
-function StatCard({ title, value, icon, color }: StatCardProps) {
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-      <span
-        className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}
-      >
-        {icon}
-      </span>
-      <div>
-        <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">
-          {title}
-        </p>
-        <p className="text-2xl font-bold text-[--Support]">{value}</p>
-      </div>
-    </div>
-  );
-}
+type Session = {
+  sessionId: number;
+  parentId: number;
+  studentId: number;
+  tutorId: number;
+  sessionStatus: string;
+  datetimeStarted: string;
+  durationHours: number;
+  assessmentPointsEarned: number;
+  assessmentPointsGoal: number;
+  assessmentPointsMax: number;
+};
 
-interface ActionCardProps {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ReactNode;
-}
+function Home() {
+  const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isAlertExiting, setIsAlertExiting] = useState(false);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [completedSess, setCompletedSess] = useState<Session[]>([]);
+  const [latestTwo, setLatesTwo] = useState<Session[]>([]);
+  const [availableStudents, setAvailableStudents] = useState();
 
-function ActionCard({ title, description, href, icon }: ActionCardProps) {
-  return (
-    <Link
-      href={href}
-      className="group bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:border-[--Highlight] hover:shadow-md transition-all duration-200 flex items-center justify-between"
-    >
-      <div className="flex items-center gap-4">
-        <span className="w-10 h-10 rounded-xl bg-[--Primary] flex items-center justify-center text-[--Outlines]">
-          {icon}
-        </span>
-        <div>
-          <p className="font-semibold text-[--Support] text-sm">{title}</p>
-          <p className="text-xs text-gray-400">{description}</p>
-        </div>
-      </div>
-      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[--Highlight] transition-colors" />
-    </Link>
-  );
-}
+  const ctx = useContext(CreditContext);
+  if (!ctx)
+    throw new Error("CreditContext is missing. Wrap app in CreditProvider.");
 
-export default function ParentDashboard() {
-  const user = useAuthStore((s) => s.user);
-  const firstName = user?.name?.split(" ")[0] ?? "Parent";
+  const { credits, addCredits } = ctx;
 
-  const [upcomingSessions, setUpcomingSessions] = useState(0);
-  const [completedSessions, setCompletedSessions] = useState(0);
-  const [activeTutors, setActiveTutors] = useState(0);
+  const studentCtx = useContext(StudentContext);
+  if (!studentCtx)
+    throw new Error(
+      "StudentContext is missing. Wrap the app in StudentProvider.",
+    );
 
+  const { student, setStudent } = studentCtx;
+
+  function getCompletedSessions(sessions: Session[], studentId: number) {
+    return sessions.filter(
+      (s) => s.sessionStatus === "completed" && s.studentId === studentId,
+    );
+  }
+
+  function getLatestTwo(sessions: Session[]) {
+    return [...sessions]
+      .sort(
+        (a, b) =>
+          new Date(b.datetimeStarted).getTime() -
+          new Date(a.datetimeStarted).getTime(),
+      )
+      .slice(0, 2);
+  }
+
+  function addStudent() {
+    const firstName = (document.getElementById("firstName") as any)?.value;
+    const lastName = (document.getElementById("lastName") as any)?.value;
+
+    const showSuccessAlert = () => {
+      setIsAlertExiting(true);
+      setIsAlertVisible(true);
+
+      requestAnimationFrame(() => {
+        setIsAlertExiting(false);
+      });
+    };
+
+    if (!firstName || !lastName) {
+      return;
+    }
+    TutortoiseClient.addStudent(1, firstName, lastName)
+      .then((res: Student) => {
+        setStudent(res);
+        showSuccessAlert();
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setAddStudentModalIsOpen(false);
+      });
+  }
+
+  // balance fetch
   useEffect(() => {
-    TutortoiseClient.getAllSessions().then((data) => {
-      const allSessions = Array.isArray(data) ? data : (data?.sessions ?? []);
-      setUpcomingSessions(
-        allSessions.filter((s: any) => s.sessionStatus === "scheduled").length
-      );
-      setCompletedSessions(
-        allSessions.filter((s: any) => s.sessionStatus === "completed").length
-      );
-      setActiveTutors(new Set(allSessions.map((s: any) => s.tutorId)).size);
+    TutortoiseClient.getParentDetails(1).then((res) => {
+      console.log(res);
+    });
+    TutortoiseClient.getBalance("1").then((res: number) => {
+      addCredits(-credits + res);
     });
   }, []);
 
+  // sessions fetch
+  useEffect(() => {
+    // const students = availableStudents =
+    const loadSessions = async () => {
+      try {
+        const data = await TutortoiseClient.getAllSessions();
+        const allSessions: Session[] = Array.isArray(data)
+          ? data
+          : (data.sessions ?? []);
+
+        const completedSessions = getCompletedSessions(
+          allSessions,
+          student?.studentId,
+        );
+        const latest = getLatestTwo(completedSessions);
+
+        setSessions(allSessions);
+        setCompletedSess(completedSessions);
+        setLatesTwo(latest);
+      } catch (err) {
+        console.error("Failed to load the sessions:", err);
+      }
+    };
+    loadSessions();
+  }, [student]);
+
+  // Alert
+
+  useEffect(() => {
+    if (!isAlertVisible) return;
+
+    const stayTimer = setTimeout(() => {
+      setIsAlertExiting(true);
+    }, 3000);
+
+    const removeTimer = setTimeout(() => {
+      setIsAlertVisible(false);
+      setIsAlertExiting(false);
+    }, 3400);
+
+    return () => {
+      clearTimeout(stayTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [isAlertVisible]);
+
   return (
-    <main className="dashboard p-6 space-y-6 max-w-6xl mx-auto w-full">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-[--Support]">
-          Welcome back, {firstName}
-        </h1>
-        <p className="text-gray-400 text-sm mt-1">
-          Manage your child&apos;s learning journey
-        </p>
-      </div>
-
-      {/* Stat Cards */}
-      <section className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard
-          title="Active Tutors"
-          value={activeTutors}
-          icon={<GraduationCap className="w-6 h-6" />}
-          color="bg-[--Primary] text-[--Outlines]"
+    <main className="dashboard overflow-x-hidden h-full">
+      <CreditsViewBar
+        value={credits.toString()}
+        href="/parent/credits"
+        cta="Need more credits?"
+      />
+      <section className="dashboard__data-row">
+        <Databox
+          title="Student"
+          value={student?.studentName?.split(" ")[0]}
+          href="/student"
+          cta="switch"
+          topRightIcon={{
+            src: "/icons/Add user icon.svg",
+            alt: "Add student button",
+            onClick: () => setAddStudentModalIsOpen(true),
+          }}
+          dropdownContent={[{ label: "Zayn" }, { label: "Student2" }]}
+          dropdownOnChange={setStudent}
         />
-        <StatCard
-          title="Upcoming Sessions"
-          value={upcomingSessions}
-          icon={<CalendarDays className="w-6 h-6" />}
-          color="bg-blue-50 text-blue-600"
+        <Databox
+          title="Sessions completed"
+          value={completedSess.length.toString()}
+          href="/student"
+          cta="View"
         />
-        <StatCard
-          title="Hours This Month"
-          value={`${completedSessions * 1}h`}
-          icon={<Clock className="w-6 h-6" />}
-          color="bg-orange-50 text-orange-500"
-        />
-        <StatCard
-          title="Subjects Enrolled"
-          value="4"
-          icon={<BookOpen className="w-6 h-6" />}
-          color="bg-purple-50 text-purple-600"
-        />
+        <DataboxMed latest={latestTwo} />
+        {isAddStudentModalOpen && (
+          <Modal
+            type="add student"
+            text=""
+            buttons={[
+              {
+                className: "add-student-confirm-button",
+                text: "Add Student",
+                onClick: () => addStudent(),
+              },
+              {
+                className: "add-student-cancel-button",
+                text: "Cancel",
+                onClick: () => setAddStudentModalIsOpen(false),
+              },
+            ]}
+          />
+        )}
       </section>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <section className="lg:col-span-2 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Quick Actions
-          </h2>
-          <ActionCard
-            title="Find a Tutor"
-            description="Search verified tutors across 50+ subjects"
-            href="/parent/search"
-            icon={<Search className="w-5 h-5" />}
+      <div className="alert-layer">
+        {isAlertVisible && (
+          <Alert
+            type="success"
+            text="Student Created!"
+            className={isAlertExiting ? "alert-exit" : "alert-enter"}
           />
-          <ActionCard
-            title="My Bookings"
-            description="View and manage upcoming session bookings"
-            href="/parent/sessions"
-            icon={<CalendarDays className="w-5 h-5" />}
-          />
-          <ActionCard
-            title="My Children"
-            description="Manage student profiles and progress"
-            href="/parent/children"
-            icon={<Users className="w-5 h-5" />}
-          />
-        </section>
-
-        {/* Notes Panel */}
-        <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-            Updates
-          </h2>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-start gap-3">
-              <Bell className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-600">
-                You have{" "}
-                <span className="font-semibold text-[--Support]">
-                  1 session tomorrow
-                </span>{" "}
-                at 3:00 PM
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <BookOpen className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-600">
-                Tutor{" "}
-                <span className="font-semibold text-[--Support]">
-                  John Smith
-                </span>{" "}
-                submitted a progress report
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <Lightbulb className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-600">
-                <span className="font-semibold text-[--Support]">Tip:</span>{" "}
-                Book sessions in advance for best availability
-              </span>
-            </div>
-          </div>
-        </section>
+        )}
       </div>
     </main>
   );
 }
+
+export default Home;
