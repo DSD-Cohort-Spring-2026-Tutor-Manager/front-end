@@ -1,0 +1,243 @@
+.notes-page-wrapper {
+  padding: 40px;
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.notes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.notes-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.notes-page__page-title {
+  margin-bottom: 8px;
+}
+
+.notes-page__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--Outlines);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.notes-page__subtitle {
+  font-size: 0.95rem;
+  color: var(--color-text-disabled);
+  margin: 8px 0 0 0;
+  line-height: 1.5;
+}
+
+.notes-page__controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.notes-page__search-wrapper {
+  flex: 1;
+  min-width: 240px;
+  max-width: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notes-page__search-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--color-text-disabled);
+  pointer-events: none;
+}
+
+.notes-page__search-input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--Support);
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.notes-page__search-input:focus {
+  outline: 3px solid rgba(47, 125, 79, 0.6);
+  outline-offset: 2px;
+  border-color: var(--Highlight);
+}
+
+.notes-page__search-input::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.notes-page__filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: var(--color-border-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--Support);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.notes-page__filter-toggle:hover {
+  background-color: var(--color-border);
+  border-color: var(--Highlight);
+}
+
+.notes-page__filter-toggle--active {
+  background-color: var(--Highlight);
+  color: var(--Support);
+  border-color: var(--Highlight);
+}
+
+.notes-page__filter-toggle:focus-visible {
+  outline: 3px solid rgba(47, 125, 79, 0.6);
+  outline-offset: 2px;
+}
+
+.notes-page__filter-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .notes-page__filter-label {
+    display: inline;
+  }
+}
+
+.notes-page__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.notes-page__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 24px;
+  background-color: var(--Primary);
+  border-radius: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notes-page__stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.notes-page__stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--Outlines);
+}
+
+.notes-page__content {
+  min-height: 200px;
+}
+
+@media (max-width: 900px) {
+  .notes-page {
+    gap: 24px;
+  }
+
+  .notes-page__header {
+    gap: 20px;
+  }
+
+  .notes-page__controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .notes-page__search-wrapper {
+    max-width: 100%;
+  }
+
+  .notes-page__title {
+    font-size: 1.9rem;
+  }
+
+  .notes-page__stats {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .notes-page__stat {
+    padding: 16px 20px;
+  }
+
+  .notes-page__stat-value {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .notes-page-wrapper {
+    padding: 20px;
+  }
+
+  .notes-page {
+    gap: 20px;
+  }
+
+  .notes-page__controls {
+    gap: 8px;
+  }
+
+  .notes-page__search-wrapper {
+    width: 100%;
+  }
+
+  .notes-page__search-input {
+    font-size: 1rem; /* Prevent zoom on iOS */
+  }
+
+  .notes-page__filter-toggle {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .notes-page__title {
+    font-size: 1.75rem;
+  }
+
+  .notes-page__stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .notes-page__stat {
+    padding: 14px 16px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .notes-page__stat-label {
+    font-size: 0.75rem;
+  }
+
+  .notes-page__stat-value {
+    font-size: 1.5rem;
+  }
+}

@@ -1,0 +1,188 @@
+.student-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.student-notes-list--empty,
+.student-notes-list--loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 40px 24px;
+  background-color: var(--color-bg);
+  border-radius: 28px;
+  border: 1px solid var(--color-border);
+}
+
+.student-notes-list__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--Highlight);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.student-notes-list__empty-icon {
+  color: var(--color-text-disabled);
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.student-notes-list__empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--Outlines);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.student-notes-list__empty-text {
+  font-size: 0.875rem;
+  color: var(--color-text-disabled);
+  text-align: center;
+  max-width: 300px;
+}
+
+.student-notes-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.student-notes-list__item:hover {
+  border-color: var(--Highlight);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+}
+
+.student-notes-list__item:focus-within {
+  outline: 3px solid rgba(47, 125, 79, 0.6);
+  outline-offset: 2px;
+}
+
+.student-notes-list__item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.student-notes-list__item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-notes-list__item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--Outlines);
+  margin: 0;
+  word-break: break-word;
+}
+
+.student-notes-list__item-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.student-notes-list__item-timestamp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-disabled);
+}
+
+.student-notes-list__item-badges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.student-notes-list__badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.student-notes-list__badge--booked {
+  background-color: var(--Highlight);
+  color: var(--Support);
+}
+
+.student-notes-list__badge--unbooked {
+  background-color: var(--color-border);
+  color: var(--color-text-disabled);
+}
+
+.student-notes-list__item-preview {
+  padding: 12px 16px;
+  background-color: var(--color-bg);
+  border-radius: 12px;
+  border-left: 3px solid var(--Highlight);
+}
+
+.student-notes-list__item-preview-text {
+  font-size: 0.875rem;
+  color: var(--Support);
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+@media (max-width: 900px) {
+  .student-notes-list__item {
+    padding: 16px 20px;
+  }
+
+  .student-notes-list__item-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .student-notes-list__item-badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .student-notes-list {
+    gap: 12px;
+  }
+
+  .student-notes-list__item {
+    padding: 14px 16px;
+  }
+
+  .student-notes-list__item-name {
+    font-size: 0.95rem;
+  }
+
+  .student-notes-list__empty-title {
+    font-size: 1.1rem;
+  }
+}

@@ -1,14 +1,16 @@
 // Make calls to the same origin to route requests through the proxy
-const PARENT_DETAILS_ENDPOINT = "/api/parent/{id}";
-const BALANCE_ENDPOINT = "/api/credits/balance/{id}";
-const TRANSACTION_HISTORY_ENDPOINT = "/api/credits/history/{id}";
-const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
-const ADD_STUDENT_ENDPOINT = "/api/student/add";
-const ALL_SESSIONS_ENDPOINT = "/api/sessions";
-const OPEN_SESSIONS_ENDPOINT = "/api/sessions/open";
+const PARENT_DETAILS_ENDPOINT = '/api/parent/{id}';
+const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
+const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
+const BUY_CREDITS_ENDPOINT = '/api/credits/buy';
+const ADD_STUDENT_ENDPOINT = '/api/student/add';
+const ALL_SESSIONS_ENDPOINT = '/api/sessions';
+const OPEN_SESSIONS_ENDPOINT = '/api/sessions/open';
 const BOOK_SESSION_ENDPOINT =
-  "/api/parent/book/{sessionId}/{parentId}/{studentId}";
-const ADMIN_ENDPOINT = "/api/admin/dashboard";
+  '/api/parent/book/{sessionId}/{parentId}/{studentId}';
+const ADMIN_ENDPOINT = '/api/admin/dashboard';
+const STUDENT_NOTE_ENDPOINT = '/api/students/{studentId}/notes';
+const TUTOR_STUDENTS_ENDPOINT = '/api/tutor/{tutorId}/students';
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -16,45 +18,45 @@ export const TutortoiseClient = {
   getParentDetails: async (id: number): Promise<any> => {
     return await fetch(
       TutortoiseClient.getBasePath() +
-        PARENT_DETAILS_ENDPOINT.replace("{id}", String(id)),
+        PARENT_DETAILS_ENDPOINT.replace('{id}', String(id)),
     )
       .then((res) => res.json())
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   getBalance: async (id: string): Promise<number> => {
     return await fetch(
-      TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace("{id}", id),
+      TutortoiseClient.getBasePath() + BALANCE_ENDPOINT.replace('{id}', id),
       {
         headers: {
-          accept: "*/*",
-          "content-type": "application/json",
+          accept: '*/*',
+          'content-type': 'application/json',
         },
       },
     )
       .then((res) => res.json())
-      .catch((err) => console.error("Balance API call failed:", err));
+      .catch((err) => console.error('Balance API call failed:', err));
   },
 
   getOpenSessions: async () => {
     return await fetch(TutortoiseClient.getBasePath() + OPEN_SESSIONS_ENDPOINT)
       .then((res) => res.json())
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   getAllSessions: async () => {
     return await fetch(TutortoiseClient.getBasePath() + ALL_SESSIONS_ENDPOINT)
       .then((res) => res.json())
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   getTransactionHistory: async (id: string): Promise<any> => {
     return await fetch(
       TutortoiseClient.getBasePath() +
-        TRANSACTION_HISTORY_ENDPOINT.replace("{id}", id),
+        TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id),
     )
       .then((res) => res.json())
-      .catch((err) => console.error("Transaction History API call failed"));
+      .catch((err) => console.error('Transaction History API call failed'));
   },
 
   buyCredits: async (
@@ -63,10 +65,10 @@ export const TutortoiseClient = {
     amount: number,
   ): Promise<any> => {
     return await fetch(TutortoiseClient.getBasePath() + BUY_CREDITS_ENDPOINT, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "*/*",
-        "content-type": "application/json",
+        accept: '*/*',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         parentId: id,
@@ -75,7 +77,7 @@ export const TutortoiseClient = {
       }) as any,
     })
       .then((res) => res.text())
-      .catch((err) => console.error("Buy credits API call failed", err));
+      .catch((err) => console.error('Buy credits API call failed', err));
   },
   addStudent: async (
     parentId: number,
@@ -83,10 +85,10 @@ export const TutortoiseClient = {
     lastName: string,
   ): Promise<any> => {
     return await fetch(TutortoiseClient.getBasePath() + ADD_STUDENT_ENDPOINT, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "*/*",
-        "content-type": "application/json",
+        accept: '*/*',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         parentId,
@@ -95,13 +97,13 @@ export const TutortoiseClient = {
       }) as any,
     })
       .then((res) => res.json())
-      .catch((err) => console.error("Add students API call failed", err));
+      .catch((err) => console.error('Add students API call failed', err));
   },
   getSessionHistory: async (): Promise<any> => {
     return await fetch(TutortoiseClient.getBasePath() + ALL_SESSIONS_ENDPOINT)
       .then((res) => res.json())
       .catch((err) =>
-        console.error("Transaction History API call failed", err),
+        console.error('Transaction History API call failed', err),
       );
   },
   bookSession: async (
@@ -110,16 +112,16 @@ export const TutortoiseClient = {
     sessionId: number,
   ): Promise<any> => {
     const updated_endpoint = BOOK_SESSION_ENDPOINT.replace(
-      "{sessionId}",
+      '{sessionId}',
       String(sessionId),
     )
-      .replace("{parentId}", String(parentId))
-      .replace("{studentId}", String(studentId));
+      .replace('{parentId}', String(parentId))
+      .replace('{studentId}', String(studentId));
     return await fetch(TutortoiseClient.getBasePath() + updated_endpoint, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        accept: "*/*",
-        "content-type": "application/json",
+        accept: '*/*',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
         parentId,
@@ -128,11 +130,61 @@ export const TutortoiseClient = {
       }) as any,
     })
       .then((res) => res.json())
-      .catch((err) => console.error("Book session API call failed", err));
+      .catch((err) => console.error('Book session API call failed', err));
   },
   getAdminDetails: async () => {
     return await fetch(TutortoiseClient.getBasePath() + ADMIN_ENDPOINT)
       .then((res) => res.json())
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
+  },
+
+  getStudentNote: async (tutorId: number, studentId: number): Promise<any> => {
+    const endpoint = STUDENT_NOTE_ENDPOINT.replace(
+      '{studentId}',
+      String(studentId),
+    );
+    return await fetch(TutortoiseClient.getBasePath() + endpoint)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error('Get student note API call failed:', err);
+        return { notes: '' };
+      });
+  },
+
+  updateStudentNote: async (
+    tutorId: number,
+    studentId: number,
+    notes: string,
+  ): Promise<any> => {
+    const endpoint = STUDENT_NOTE_ENDPOINT.replace(
+      '{studentId}',
+      String(studentId),
+    );
+    return await fetch(TutortoiseClient.getBasePath() + endpoint, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ notes }) as any,
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error('Update student note API call failed:', err);
+        return null;
+      });
+  },
+
+  getTutorStudents: async (tutorId: number): Promise<any> => {
+    const endpoint = TUTOR_STUDENTS_ENDPOINT.replace(
+      '{tutorId}',
+      String(tutorId),
+    );
+    return await fetch(TutortoiseClient.getBasePath() + endpoint)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error('Get tutor students API call failed:', err);
+        return [];
+      });
   },
 };

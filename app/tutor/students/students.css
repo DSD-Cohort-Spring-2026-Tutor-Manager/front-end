@@ -1,0 +1,186 @@
+.students-page {
+  padding: 20px 40px 40px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--Off-white);
+  min-height: 100%;
+}
+
+.students-page__header {
+  margin-bottom: 32px;
+}
+
+.students-page__title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--Outlines);
+  margin: 0 0 4px;
+}
+
+.students-page__subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-disabled);
+  margin: 0;
+}
+
+/* ── Student List ── */
+
+.students-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+}
+
+/* ── Student Card ── */
+
+.student-card {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  overflow: hidden;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.student-card:hover {
+  border-color: var(--Highlight);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.07),
+    0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.student-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: default;
+}
+
+.student-card__info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.student-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--Primary);
+  color: var(--Outlines);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  border: 2px solid var(--Highlight);
+}
+
+.student-card__details {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-card__name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--Support);
+}
+
+.student-card__meta {
+  font-size: 0.75rem;
+  color: var(--color-text-disabled);
+  margin-top: 2px;
+}
+
+.student-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-card__note-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--Primary);
+  color: var(--Support);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: none;
+  border-radius: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+  min-height: 44px;
+}
+
+.student-card__note-btn:hover {
+  background-color: var(--Highlight);
+}
+
+.student-card__note-btn:focus-visible {
+  outline: 3px solid rgba(47, 125, 79, 0.6);
+  outline-offset: 2px;
+}
+
+.student-card__note-btn--active {
+  background-color: var(--Highlight);
+  color: var(--Support);
+}
+
+.student-card__note-panel-wrapper {
+  padding: 0 24px 20px;
+}
+
+/* ── Empty & Loading States ── */
+
+.students-page__empty,
+.students-page__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+}
+
+.students-page__loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--Outlines);
+  border-radius: 50%;
+  animation: studentsSpin 0.6s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes studentsSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.students-page__empty-icon {
+  color: var(--color-text-disabled);
+  margin-bottom: 16px;
+}
+
+.students-page__empty-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--Support);
+  margin: 0 0 4px;
+}
+
+.students-page__empty-hint {
+  font-size: 0.875rem;
+  color: var(--color-text-disabled);
+  margin: 0;
+}
