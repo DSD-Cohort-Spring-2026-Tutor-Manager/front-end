@@ -57,9 +57,20 @@ export default function LoginForm() {
         return;
       }
 
-      // Redirect based on role
+      // Redirect based on role and (optional) redirect param
       const roleUpper = result.role!;
-      const destination = redirectPath || ROLE_REDIRECTS[roleUpper] || "/";
+      const defaultDestination = ROLE_REDIRECTS[roleUpper] || "/";
+
+      let destination = defaultDestination;
+
+      if (redirectPath) {
+        // Only trust redirectPath if it matches the role's allowed prefix.
+        // This avoids bouncing users back to a URL they don't have access to.
+        if (redirectPath.startsWith(defaultDestination)) {
+          destination = redirectPath;
+        }
+      }
+
       router.push(destination);
     } catch {
       setServerError("Unable to reach the server. Please try again.");
