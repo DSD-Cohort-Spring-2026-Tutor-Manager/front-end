@@ -62,6 +62,12 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.side-nav__item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .side-nav__item--active {
   background-color: rgba(127, 191, 77, 0.18);  /* --Highlight tint */
 }
@@ -103,12 +109,21 @@
   padding: 10px 6px;
   border-radius: 12px;
   cursor: pointer;
+  background: transparent;
+  border: none;
   gap: 4px;
   opacity: 0.6;
   transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
 .side-nav__logout:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.side-nav__logout:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
   background-color: rgba(255, 255, 255, 0.1);
   opacity: 1;
 }

@@ -57,9 +57,20 @@ export default function LoginForm() {
         return;
       }
 
-      // Redirect based on role
+      // Redirect based on role and (optional) redirect param
       const roleUpper = result.role!;
-      const destination = redirectPath || ROLE_REDIRECTS[roleUpper] || "/";
+      const defaultDestination = ROLE_REDIRECTS[roleUpper] || "/";
+
+      let destination = defaultDestination;
+
+      if (redirectPath) {
+        // Only trust redirectPath if it matches the role's allowed prefix.
+        // This avoids bouncing users back to a URL they don't have access to.
+        if (redirectPath.startsWith(defaultDestination)) {
+          destination = redirectPath;
+        }
+      }
+
       router.push(destination);
     } catch {
       setServerError("Unable to reach the server. Please try again.");
@@ -69,41 +80,36 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md">
       {/* Heading */}
-      <div className="mb-6 lg:mb-8 text-center lg:text-left">
-        <h1 className="text-3xl lg:text-[2.5rem] font-bold text-[var(--Support)] mb-1 leading-tight">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[--Support] mb-1">
           Welcome back
         </h1>
-        <p className="text-[var(--Support)]/60 text-sm">
+        <p className="text-gray-500 text-sm">
           Sign in to your Tutortoise account
         </p>
       </div>
 
-      {/* Role Selector */}
-      <div className="flex gap-2 mb-8 p-1 bg-[var(--Primary)]/20 rounded-[8px]">
-        {(["parent", "tutor", "admin"] as Role[]).map((role) => {
-          const isSelected = selectedRole === role;
-          return (
-            <button
-              key={role}
-              type="button"
-              onClick={() => {
-                setSelectedRole(role);
-                setServerError("");
-              }}
-              aria-pressed={isSelected}
-              aria-label={`${ROLE_LABELS[role]} role`}
-              style={isSelected ? { backgroundColor: "var(--Highlight)" } : undefined}
-              className={`flex-1 py-2 px-3 rounded-[14px] text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--Highlight)]/40 ${
-                isSelected
-                  ? "text-[var(--Support)] shadow-sm"
-                  : "text-[var(--Support)]/50 hover:text-[var(--Support)]/80 bg-transparent hover:bg-[var(--Primary)]/10"
-              }`}
-            >
-              {ROLE_LABELS[role]}
-            </button>
-          );
-        })}
-      </div>
+{/* Role Selector */}
+<div className="flex gap-2 mb-8 p-1 bg-gray-100 rounded-xl">
+  {(["parent", "tutor", "admin"] as Role[]).map((role) => (
+    <button
+      key={role}
+      type="button"
+      onClick={() => {
+        setSelectedRole(role);
+        setServerError("");
+      }}
+      style={
+        selectedRole === role
+          ? { backgroundColor:  "var(--Support)", color: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }
+          : { backgroundColor: "transparent", color: "#9ca3af" }
+      }
+      className="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer"
+    >
+      {ROLE_LABELS[role]}
+    </button>
+  ))}
+</div>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
@@ -111,7 +117,7 @@ export default function LoginForm() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-[var(--Support)] mb-1"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
             Email address
           </label>
@@ -120,10 +126,11 @@ export default function LoginForm() {
             type="email"
             autoComplete="email"
             {...register("email")}
-            className={`w-full px-4 py-3 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${errors.email
-              ? "border-red-400 bg-red-50"
-              : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
-              }`}
+            className={`w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[--Highlight] transition ${
+              errors.email
+                ? "border-red-400 bg-red-50"
+                : "border-gray-200 bg-white hover:border-gray-300"
+            }`}
             placeholder="you@example.com"
           />
           {errors.email && (
@@ -136,13 +143,13 @@ export default function LoginForm() {
           <div className="flex justify-between items-center mb-1">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-[var(--Support)]"
+              className="block text-sm font-medium text-gray-700"
             >
               Password
             </label>
             <a
               href="/login/forgot-password"
-              className="text-xs text-[var(--Highlight)] hover:text-[var(--Outlines)] font-medium"
+              className="text-xs text-[--Highlight] hover:text-[--Outlines] font-medium"
             >
               Forgot password?
             </a>
@@ -153,17 +160,17 @@ export default function LoginForm() {
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               {...register("password")}
-              className={`w-full px-4 py-3 pr-11 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${errors.password
-                ? "border-red-400 bg-red-50"
-                : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
-                }`}
+              className={`w-full px-4 py-3 pr-11 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[--Highlight] transition ${
+                errors.password
+                  ? "border-red-400 bg-red-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              }`}
               placeholder="Min. 8 characters"
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--Support)]/40 hover:text-[var(--Support)]/70 p-0 bg-transparent hover:bg-transparent"
-              tabIndex={-1}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0 bg-transparent hover:bg-transparent"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -184,7 +191,7 @@ export default function LoginForm() {
         {serverError && (
           <div
             role="alert"
-            className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-[14px] text-sm"
+            className="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm"
           >
             <span className="mt-0.5">⚠</span>
             <span>{serverError}</span>
@@ -195,9 +202,9 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--Highlight)] text-[var(--Support)] rounded-[14px] font-bold text-xl lg:text-2xl hover:bg-[var(--Accent)] active:scale-[0.99] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[--Support] text-white rounded-xl font-medium text-sm hover:bg-[--Outlines] active:scale-[0.99] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin text-[var(--Support)]" />}
+          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
           {isSubmitting
             ? "Signing in..."
             : `Sign in as ${ROLE_LABELS[selectedRole]}`}

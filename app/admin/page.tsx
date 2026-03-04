@@ -1,125 +1,72 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/authStore";
-import { TutortoiseClient } from "../_api/tutortoiseClient";
-import {
-  Users,
-  GraduationCap,
-  UserCheck,
-  CalendarDays,
-  AlertCircle,
-  FileBarChart2,
-  Activity,
-} from "lucide-react";
-import {
-  StatCard,
-  ActionCard,
-  DashboardLayout,
-} from "../_components/Dashboard";
 import "./dashboard.css";
 
-export default function AdminDashboard() {
-  const user = useAuthStore((s) => s.user);
-  const [students, setStudents] = useState<string[]>([]);
-  const [tutors, setTutors] = useState<string[]>([]);
-  const [totalSessions, setTotalSessions] = useState(0);
-  const [bookedSessions, setBookedSessions] = useState(0);
+import TablePanel from "../_components/DataTable/Admin/TablePanel";
+import { useEffect, useRef, useState } from "react";
+import { TutortoiseClient } from "../_api/tutortoiseClient";
+import Databox from "../_components/DataBox/Databox";
+
+function Home() {
+  const [todaySessions, setTodaySessions] = useState<any[]>([]);
+  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
+  const [fullSessions, setFullSessions] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [tutors, setTutors] = useState<any[]>([]);
+  const tableSectionRef = useRef<HTMLElement>(null);
+  const [bookedSessions, setBookedSessions] = useState<number>(0);
+  const [weeklyCreditsSold, setWeeklyCreditsSold] = useState<number>(0);
+  const [parentId, setParentId] = useState<string>("0");
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
-        setStudents([...new Set(sessions.map((s: any) => s.studentId))]);
-        setTutors([...new Set(sessions.map((s: any) => s.tutorId))]);
-        setTotalSessions(sessions.length);
+        setStudents([...new Set(sessions.map((s) => s.studentId))]);
+        setTutors([...new Set(sessions.map((s) => s.tutorId))]);
+        setParentId(sessions.find((s) => s.parentId)?.parentId);
+        setUpcomingSessions(
+          sessions.filter((s) => s.sessionStatus === "scheduled"),
+        );
+        setFullSessions(sessions.filter((s) => s));
+        setTodaySessions(
+          sessions.filter(
+            (s) =>
+              s.datetimeStarted?.split("T")[0] ===
+              new Date().toISOString().split("T")[0],
+          ),
+        );
       }
     });
     TutortoiseClient.getAdminDetails().then((details) => {
-      if (details) setBookedSessions(details.weeklySessionsBooked ?? 0);
+      if (details) {
+        setBookedSessions(details.weeklySessionsBooked);
+        setWeeklyCreditsSold(details.weeklyCreditSold);
+        console.log(details);
+      }
     });
   }, []);
 
   return (
-    <DashboardLayout
-      title="Admin Dashboard"
-      subtitle="Manage the Tutortoise platform"
-      stats={
-        <>
-          <StatCard
-            title="Total Users"
-            value={students.length + tutors.length}
-            icon={<Users className="w-6 h-6" />}
-            color="bg-blue-50 text-blue-600"
-          />
-          <StatCard
-            title="Active Tutors"
-            value={tutors.length}
-            icon={<GraduationCap className="w-6 h-6" />}
-            color="bg-[--Primary] text-[--Outlines]"
-          />
-          <StatCard
-            title="Active Parents"
-            value={students.length}
-            icon={<UserCheck className="w-6 h-6" />}
-            color="bg-orange-50 text-orange-500"
-          />
-          <StatCard
-            title="Sessions This Month"
-            value={totalSessions}
-            icon={<CalendarDays className="w-6 h-6" />}
-            color="bg-purple-50 text-purple-600"
-          />
-        </>
-      }
-      actions={
-        <>
-          <ActionCard
-            title="Manage Users"
-            description="View, edit, and approve user accounts"
-            href="/admin/users"
-            icon={<Users className="w-5 h-5" />}
-          />
-          <ActionCard
-            title="View All Sessions"
-            description="Browse session history and schedules"
-            href="/admin/sessions"
-            icon={<CalendarDays className="w-5 h-5" />}
-          />
-          <ActionCard
-            title="Platform Reports"
-            description="Analytics, earnings, and usage reports"
-            href="/admin/reports"
-            icon={<FileBarChart2 className="w-5 h-5" />}
-          />
-        </>
-      }
-      notesTitle="Platform Notes"
-      notes={
-        <>
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0" />
-            <span className="text-gray-600">
-              New registrations pending approval:{" "}
-              <span className="font-semibold text-[--Support]">3</span>
-            </span>
-          </div>
-          <div className="flex items-start gap-3">
-            <FileBarChart2 className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-            <span className="text-gray-600">
-              Reports generated this week:{" "}
-              <span className="font-semibold text-[--Support]">12</span>
-            </span>
-          </div>
-          <div className="flex items-start gap-3">
-            <Activity className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-            <span className="text-gray-600">
-              System health:{" "}
-              <span className="font-semibold text-green-600">
-                All services operational
-              </span>
-            </span>
-          </div>
-        </>
-      }
-    />
+    <main className="dashboard">
+      <section className="dashboard__data-row" style={{ margin: "20px 20px" }}>
+        <Databox
+          title="Credits Bought"
+          subtitle="This Week"
+          value={weeklyCreditsSold}
+        />
+        <Databox
+          title="Sessions Full"
+          subtitle="This Week"
+          value={bookedSessions}
+        />
+        <Databox title="Total Students" value={students.length} />
+        <Databox title="Total Session" value={fullSessions.length} />
+      </section>
+
+      <section ref={tableSectionRef} id="table" style={{ margin: "20px 0" }}>
+        <TablePanel />
+      </section>
+    </main>
   );
 }
+
+export default Home;

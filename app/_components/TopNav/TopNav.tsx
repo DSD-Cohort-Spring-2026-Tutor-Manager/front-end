@@ -28,11 +28,19 @@ const TopNav = ({
 
         <div className='topnav__user-container'>
           {/* Notification */}
-          <img
-            className='topnav-notification'
-            src='/icons/notification.svg'
-            alt='Notifications'
-          />
+          <button
+            type="button"
+            className="topnav-notification"
+            aria-label="Open notifications"
+          >
+            <img
+              src="/icons/notification.svg"
+              alt=""
+              aria-hidden="true"
+              width={26}
+              height={26}
+            />
+          </button>
 
           {/* Role badge */}
           {role && (

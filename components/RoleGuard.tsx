@@ -22,10 +22,17 @@ export default function RoleGuard({ role, children, fallback = null }: RoleGuard
   const isAllowed = currentRole !== null && role.includes(currentRole);
 
   useEffect(() => {
-    if (currentRole !== null && !isAllowed) {
+    if (currentRole === null) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!isAllowed) {
       router.replace("/unauthorized");
     }
   }, [currentRole, isAllowed, router]);
+
+  if (currentRole === null) return null;
 
   if (!isAllowed) return <>{fallback}</>;
 

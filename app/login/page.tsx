@@ -16,31 +16,24 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  {
-    icon: GraduationCap,
-    text: "Find verified tutors across 50+ subjects",
-  },
-  {
-    icon: CalendarDays,
-    text: "Flexible scheduling that fits your lifestyle",
-  },
-  {
-    icon: BarChart3,
-    text: "Track progress with real-time session reports",
-  },
+  { icon: GraduationCap, text: "Find verified tutors across 50+ subjects" },
+  { icon: CalendarDays,  text: "Flexible scheduling that fits your lifestyle" },
+  { icon: BarChart3,     text: "Track progress with real-time session reports" },
 ];
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex-1 flex flex-col lg:flex-row">
-      {/* ── Left Panel (40%) — Branding ── */}
-        <div className="flex w-full lg:w-[35%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
+
+      {/* ── Left Panel (35%) — Branding ── */}
+      <div className="flex w-full lg:w-[35%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
+
         {/* Decorative background circles (large screens only) */}
         <div className="hidden lg:block absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/5" />
         <div className="hidden lg:block absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
         <div className="hidden lg:block absolute top-1/2 -left-12 w-48 h-48 rounded-full bg-[var(--Highlight)]/10" />
 
-        {/* Logo + Wordmark + Tagline (grouped) */}
+        {/* Logo + Wordmark + Tagline (grouped, centered) */}
         <div className="relative z-10 w-full flex flex-col items-center gap-3">
           <div className="flex items-center gap-3">
             <Image
@@ -88,8 +81,25 @@ export default function LoginPage() {
 
       {/* ── Right Panel (60%) — Login Form ── */}
       <div className="flex-1 flex flex-col items-center justify-center bg-[var(--Off-white)] px-6 py-12 min-h-[500px]">
+
+        {/* Mobile-only logo */}
+        <div className="flex lg:hidden items-center gap-2 mb-10">
+          <Image
+            src="/images/worm_with_glasses.png"
+            alt="Tutortoise logo"
+            width={36}
+            height={36}
+            className="rounded-[10px]"
+          />
+          <span className="text-lg font-bold text-[var(--Support)]">Tutortoise</span>
+        </div>
+
         <div className="w-full max-w-md flex flex-col items-center justify-center">
-          <Suspense fallback={<div className="w-full max-w-md animate-pulse h-96 bg-white rounded-[28px]" />}>
+          <Suspense
+            fallback={
+              <div className="w-full max-w-md animate-pulse h-96 bg-white rounded-[28px]" />
+            }
+          >
             <LoginForm />
           </Suspense>
 
@@ -98,6 +108,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
     </div>
   );
 }
