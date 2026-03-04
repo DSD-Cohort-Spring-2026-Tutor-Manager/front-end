@@ -9,8 +9,6 @@ const ROLE_HOME: Record<string, string> = {
 }
 
 export function middleware(request: NextRequest) {
-  console.log('🍪 ALL COOKIES:', request.cookies.getAll())  // ← add this
-  console.log('🔑 tt_role:', request.cookies.get('tt_role')?.value) 
   const { pathname } = request.nextUrl
   const queryParamString = request.nextUrl.searchParams.size
     ? `?${request.nextUrl.searchParams.toString()}`
