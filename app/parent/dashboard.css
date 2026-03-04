@@ -13,3 +13,10 @@
   gap: 20px;
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .dashboard__data-row {
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+}

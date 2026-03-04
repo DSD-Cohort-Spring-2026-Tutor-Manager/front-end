@@ -17,8 +17,14 @@ export async function login(
   password: string,
   role: "parent" | "tutor" | "admin"
 ): Promise<LoginResponse> {
-  // IMPORTANT: credentials = btoa(email + ":" + password)
-  const credentials = btoa(`${email}:${password}`);
+  // IMPORTANT: credentials = base64(email + ":" + password) with UTF‑8 support
+  const encoder = new TextEncoder();
+  const utf8 = encoder.encode(`${email}:${password}`);
+  let binary = "";
+  utf8.forEach((b) => {
+    binary += String.fromCharCode(b);
+  });
+  const credentials = btoa(binary);
 
   const response = await axiosInstance.post<LoginResponse>("/api/login", {
     email,

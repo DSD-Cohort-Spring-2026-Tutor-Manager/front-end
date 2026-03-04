@@ -68,7 +68,16 @@ function SideNav() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const role = user?.role || (pathname.startsWith("/tutor") ? "tutor" : pathname.startsWith("/parent") ? "parent" : pathname.startsWith("/admin") ? "admin" : null);
+  const derivedRoleFromPath =
+    pathname.startsWith("/tutor")
+      ? "tutor"
+      : pathname.startsWith("/parent")
+        ? "parent"
+        : pathname.startsWith("/admin")
+          ? "admin"
+          : null;
+
+  const role = (user?.role ?? derivedRoleFromPath)?.toLowerCase() || null;
 
   const navItems =
     role === "tutor"
@@ -99,7 +108,10 @@ function SideNav() {
         {/* Nav items */}
         <ul className="side-nav__list">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              (pathname.startsWith(item.href + "/") &&
+                item.href !== "/");
             return (
               <li key={item.href}>
                 <Link
@@ -119,14 +131,18 @@ function SideNav() {
         </ul>
 
         {/* Logout */}
-        <div className="side-nav__logout" onClick={handleLogout}>
+        <button
+          type="button"
+          className="side-nav__logout"
+          onClick={handleLogout}
+        >
           <img
             className="side-nav__icon-img"
             src="/icons/logout.svg"
             alt="logout icon"
           />
           <span className="side-nav__icon-label">Logout</span>
-        </div>
+        </button>
       </nav>
     </aside>
   );

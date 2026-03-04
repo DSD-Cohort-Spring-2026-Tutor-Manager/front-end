@@ -48,6 +48,12 @@
   opacity: 1;
 }
 
+.topnav-notification:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--Highlight);
+  outline-offset: 2px;
+}
+
 /* Role badge */
 .topnav-role-badge {
   font-size: 10px;

@@ -29,7 +29,9 @@
   border-radius: 14px;
 }
 
-.databox__btn {
+/* Shared button base for databox actions */
+.databox__btn,
+.dropbtn {
   padding: 10px 15px;
   background-color: var(--Support);
   color: #fff;
@@ -58,15 +60,6 @@
   display: inline-block;
 }
 
-.dropbtn {
-  padding: 10px 15px;
-  background-color: var(--Support);
-  color: #fff;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 400;
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
@@ -85,6 +78,12 @@
 
 .dropdown-content a:hover {background-color: #ddd;}
 
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+  display: block;
+}
 
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
+.dropdown:hover .dropbtn,
+.dropbtn:focus-visible {
+  background-color: #3e8e41;
+}
