@@ -1,15 +1,15 @@
 .dashboard {
   width: 100%;
-  max-width: 1120px;
   display: flex;
   flex-direction: column;
   padding: 0 40px 40px;
   position: relative;
-  /* overflow-x: hidden; */
+  box-sizing: border-box;
 }
 
 .dashboard__data-row {
   display: flex;
+  flex-wrap: nowrap;
   gap: 20px;
   width: 100%;
 }

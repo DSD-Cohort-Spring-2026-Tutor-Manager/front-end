@@ -14,9 +14,11 @@ export default function DashboardLayout({
       <SideNav />
       <div className="shell__body">
         <TopNavWrapper />
-        <CreditProvider>
-          <StudentProvider>{children}</StudentProvider>
-        </CreditProvider>
+        <div className="shell__content">
+          <CreditProvider>
+            <StudentProvider>{children}</StudentProvider>
+          </CreditProvider>
+        </div>
       </div>
     </>
   );

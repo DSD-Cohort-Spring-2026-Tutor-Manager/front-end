@@ -34,6 +34,9 @@
   background-color: var(--Support);
   color: #fff;
   border-radius: 14px;
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: none;
 }
 
 .databox__tr-image {
@@ -53,6 +56,15 @@
 .dropdown {
   position: relative;
   display: inline-block;
+}
+
+.dropbtn {
+  padding: 10px 15px;
+  background-color: var(--Support);
+  color: #fff;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .dropdown-content {
