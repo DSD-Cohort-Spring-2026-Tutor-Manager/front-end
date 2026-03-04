@@ -10,7 +10,8 @@
   --Accent:     #f39c34;   /* Orange          */
   --Support:    #243a5e;   /* Navy blue       */
   --Highlight:  #7fbf4d;   /* Bright green    */
-  --Off-white:  #f2f5f0;   /* Light grey-green bg */
+  --Off-white:  #F8FAF7;   /* Page background (design token) */
+  --color-border: #E2E8F0;  /* Subtle container/input borders */
   --Nav-Border: #e0e5de;   /* Subtle border   */
 }
 
@@ -67,7 +68,7 @@ body {
 /* ── Global button defaults ── */
 button {
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   background-color: var(--Support);
   color: #fff;
   border: none;
@@ -94,9 +95,9 @@ button:hover {
 /* Green CTA buttons */
 .btn-highlight {
   background-color: var(--Highlight);
-  color: #fff;
+  color: var(--Support);
 }
 
 .btn-highlight:hover {
-  background-color: var(--Outlines);
+  background-color: var(--Accent);
 }
