@@ -32,47 +32,48 @@ const features = [
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen w-full flex-1 flex flex-col lg:flex-row">
       {/* ── Left Panel (40%) — Branding ── */}
-      <div className="flex w-full lg:w-[40%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
+        <div className="flex w-full lg:w-[35%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
         {/* Decorative background circles (large screens only) */}
         <div className="hidden lg:block absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/5" />
         <div className="hidden lg:block absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
         <div className="hidden lg:block absolute top-1/2 -left-12 w-48 h-48 rounded-full bg-[var(--Highlight)]/10" />
 
-        {/* Logo + Wordmark */}
-        <div className="relative z-10 flex items-center gap-3">
-          <Image
-            src="/images/worm_with_glasses.png"
-            alt="Tutortoise logo"
-            width={44}
-            height={44}
-            className="rounded-[10px]"
-          />
-          <span className="text-xl font-bold tracking-tight">Tutortoise</span>
-        </div>
+        {/* Logo + Wordmark + Tagline (grouped) */}
+        <div className="relative z-10 w-full flex flex-col items-center gap-3">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/images/worm_with_glasses.png"
+              alt="Tutortoise logo"
+              width={44}
+              height={44}
+              className="rounded-[10px]"
+            />
+            <span className="text-xl font-bold tracking-tight">Tutortoise</span>
+          </div>
 
-        {/* Tagline + Features */}
-        <div className="relative z-10">
-          <h2 className="text-2xl lg:text-[2rem] font-bold leading-tight mb-2">
-            Connecting learners with the right tutors
-          </h2>
-          <p className="text-white/60 text-sm mb-6 lg:mb-10">
-            Trusted by families and educators across the country.
-          </p>
+          <div className="text-center">
+            <h2 className="text-2xl lg:text-[2rem] font-bold leading-tight mb-2">
+              Connecting learners with the right tutors
+            </h2>
+            <p className="text-white/60 text-sm mb-8">
+              Trusted by families and educators across the country.
+            </p>
 
-          <ul className="hidden lg:block space-y-5">
-            {features.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-start gap-4">
-                <span className="flex-shrink-0 w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center mt-0.5">
-                  <Icon className="w-5 h-5 text-[var(--Highlight)]" />
-                </span>
-                <span className="text-sm text-white/80 leading-relaxed">
-                  {text}
-                </span>
-              </li>
-            ))}
-          </ul>
+            <ul className="hidden lg:block space-y-5">
+              {features.map(({ icon: Icon, text }) => (
+                <li key={text} className="flex items-start gap-4">
+                  <span className="flex-shrink-0 w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center mt-0.5">
+                    <Icon className="w-5 h-5 text-[var(--Highlight)]" />
+                  </span>
+                  <span className="text-sm text-white/80 leading-relaxed">
+                    {text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Trust badge */}

@@ -80,22 +80,29 @@ export default function LoginForm() {
 
       {/* Role Selector */}
       <div className="flex gap-2 mb-8 p-1 bg-[var(--Primary)]/20 rounded-[8px]">
-        {(["parent", "tutor", "admin"] as Role[]).map((role) => (
-          <button
-            key={role}
-            type="button"
-            onClick={() => {
-              setSelectedRole(role);
-              setServerError("");
-            }}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${selectedRole === role
-              ? "bg-white shadow-sm text-[var(--Support)]"
-              : "text-[var(--Support)]/50 hover:text-[var(--Support)]/80 bg-transparent"
+        {(["parent", "tutor", "admin"] as Role[]).map((role) => {
+          const isSelected = selectedRole === role;
+          return (
+            <button
+              key={role}
+              type="button"
+              onClick={() => {
+                setSelectedRole(role);
+                setServerError("");
+              }}
+              aria-pressed={isSelected}
+              aria-label={`${ROLE_LABELS[role]} role`}
+              style={isSelected ? { backgroundColor: "var(--Highlight)" } : undefined}
+              className={`flex-1 py-2 px-3 rounded-[14px] text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--Highlight)]/40 ${
+                isSelected
+                  ? "text-[var(--Support)] shadow-sm"
+                  : "text-[var(--Support)]/50 hover:text-[var(--Support)]/80 bg-transparent hover:bg-[var(--Primary)]/10"
               }`}
-          >
-            {ROLE_LABELS[role]}
-          </button>
-        ))}
+            >
+              {ROLE_LABELS[role]}
+            </button>
+          );
+        })}
       </div>
 
       {/* Form */}
