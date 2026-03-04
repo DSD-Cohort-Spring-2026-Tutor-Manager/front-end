@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source not "../.agent";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    globals.css — base resets + design tokens + shell layout
