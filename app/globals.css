@@ -97,7 +97,3 @@ button:hover {
   background-color: var(--Highlight);
   color: var(--Support);
 }
-
-.btn-highlight:hover {
-  background-color: var(--Accent);
-}

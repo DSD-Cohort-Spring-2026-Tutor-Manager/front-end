@@ -69,8 +69,8 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md">
       {/* Heading */}
-      <div className="mb-8">
-        <h1 className="text-[2.5rem] font-bold text-[var(--Support)] mb-1 leading-tight">
+      <div className="mb-6 lg:mb-8 text-center lg:text-left">
+        <h1 className="text-3xl lg:text-[2.5rem] font-bold text-[var(--Support)] mb-1 leading-tight">
           Welcome back
         </h1>
         <p className="text-[var(--Support)]/60 text-sm">
@@ -88,11 +88,10 @@ export default function LoginForm() {
               setSelectedRole(role);
               setServerError("");
             }}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-              selectedRole === role
-                ? "bg-white shadow-sm text-[var(--Support)]"
-                : "text-[var(--Support)]/50 hover:text-[var(--Support)]/80 bg-transparent"
-            }`}
+            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${selectedRole === role
+              ? "bg-white shadow-sm text-[var(--Support)]"
+              : "text-[var(--Support)]/50 hover:text-[var(--Support)]/80 bg-transparent"
+              }`}
           >
             {ROLE_LABELS[role]}
           </button>
@@ -114,11 +113,10 @@ export default function LoginForm() {
             type="email"
             autoComplete="email"
             {...register("email")}
-            className={`w-full px-4 py-3 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${
-              errors.email
-                ? "border-red-400 bg-red-50"
-                : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
-            }`}
+            className={`w-full px-4 py-3 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${errors.email
+              ? "border-red-400 bg-red-50"
+              : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
+              }`}
             placeholder="you@example.com"
           />
           {errors.email && (
@@ -137,7 +135,7 @@ export default function LoginForm() {
             </label>
             <a
               href="/login/forgot-password"
-                className="text-xs text-[var(--Highlight)] hover:text-[var(--Outlines)] font-medium"
+              className="text-xs text-[var(--Highlight)] hover:text-[var(--Outlines)] font-medium"
             >
               Forgot password?
             </a>
@@ -148,11 +146,10 @@ export default function LoginForm() {
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               {...register("password")}
-              className={`w-full px-4 py-3 pr-11 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${
-                errors.password
-                  ? "border-red-400 bg-red-50"
-                  : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
-              }`}
+              className={`w-full px-4 py-3 pr-11 border rounded-[8px] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--Highlight)]/60 focus:ring-offset-1 transition ${errors.password
+                ? "border-red-400 bg-red-50"
+                : "border-[var(--color-border)] bg-white hover:border-[var(--Outlines)]"
+                }`}
               placeholder="Min. 8 characters"
             />
             <button
@@ -191,7 +188,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--Highlight)] text-[var(--Support)] rounded-[14px] font-bold text-2xl hover:bg-[var(--Accent)] active:scale-[0.99] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--Highlight)] text-[var(--Support)] rounded-[14px] font-bold text-xl lg:text-2xl hover:bg-[var(--Accent)] active:scale-[0.99] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSubmitting && <Loader2 className="w-4 h-4 animate-spin text-[var(--Support)]" />}
           {isSubmitting

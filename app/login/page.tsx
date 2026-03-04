@@ -32,13 +32,13 @@ const features = [
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* ── Left Panel (40%) — Branding ── */}
-      <div className="hidden lg:flex lg:w-[40%] flex-col justify-between bg-[var(--Support)] text-white p-10 relative overflow-hidden">
-        {/* Decorative background circles */}
-        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/5" />
-        <div className="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
-        <div className="absolute top-1/2 -left-12 w-48 h-48 rounded-full bg-[var(--Highlight)]/10" />
+      <div className="flex w-full lg:w-[40%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
+        {/* Decorative background circles (large screens only) */}
+        <div className="hidden lg:block absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/5" />
+        <div className="hidden lg:block absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
+        <div className="hidden lg:block absolute top-1/2 -left-12 w-48 h-48 rounded-full bg-[var(--Highlight)]/10" />
 
         {/* Logo + Wordmark */}
         <div className="relative z-10 flex items-center gap-3">
@@ -54,14 +54,14 @@ export default function LoginPage() {
 
         {/* Tagline + Features */}
         <div className="relative z-10">
-          <h2 className="text-[2rem] font-bold leading-tight mb-2">
+          <h2 className="text-2xl lg:text-[2rem] font-bold leading-tight mb-2">
             Connecting learners with the right tutors
           </h2>
-          <p className="text-white/60 text-sm mb-10">
+          <p className="text-white/60 text-sm mb-6 lg:mb-10">
             Trusted by families and educators across the country.
           </p>
 
-          <ul className="space-y-5">
+          <ul className="hidden lg:block space-y-5">
             {features.map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-start gap-4">
                 <span className="flex-shrink-0 w-9 h-9 rounded-[10px] bg-white/10 flex items-center justify-center mt-0.5">
@@ -76,7 +76,7 @@ export default function LoginPage() {
         </div>
 
         {/* Trust badge */}
-        <div className="relative z-10 flex items-center gap-3 p-4 bg-white/10 rounded-[14px] border border-white/10 backdrop-blur-sm">
+        <div className="hidden lg:flex relative z-10 items-center gap-3 p-4 bg-white/10 rounded-[14px] border border-white/10 backdrop-blur-sm">
           <CheckCircle2 className="w-5 h-5 text-[var(--Highlight)] flex-shrink-0" />
           <p className="text-xs text-white/70 leading-relaxed">
             <span className="text-white font-semibold">10,000+ sessions</span>{" "}
@@ -86,26 +86,16 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right Panel (60%) — Login Form ── */}
-      <div className="flex-1 flex flex-col items-center justify-center bg-[var(--Off-white)] px-6 py-12">
-        {/* Mobile-only logo */}
-        <div className="flex lg:hidden items-center gap-2 mb-10">
-          <Image
-            src="/images/worm_with_glasses.png"
-            alt="Tutortoise logo"
-            width={36}
-            height={36}
-            className="rounded-[10px]"
-          />
-          <span className="text-lg font-bold text-[var(--Support)]">Tutortoise</span>
+      <div className="flex-1 flex flex-col items-center justify-center bg-[var(--Off-white)] px-6 py-12 min-h-[500px]">
+        <div className="w-full max-w-md flex flex-col items-center justify-center">
+          <Suspense fallback={<div className="w-full max-w-md animate-pulse h-96 bg-white rounded-[28px]" />}>
+            <LoginForm />
+          </Suspense>
+
+          <p className="mt-8 text-xs text-slate-400" suppressHydrationWarning>
+            © {new Date().getFullYear()} Tutortoise. All rights reserved.
+          </p>
         </div>
-
-        <Suspense fallback={<div className="w-full max-w-md animate-pulse h-96 bg-white rounded-[28px]" />}>
-          <LoginForm />
-        </Suspense>
-
-        <p className="mt-8 text-xs text-slate-400">
-          © {new Date().getFullYear()} Tutortoise. All rights reserved.
-        </p>
       </div>
     </div>
   );
