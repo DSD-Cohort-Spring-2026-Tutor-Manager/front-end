@@ -24,19 +24,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isAuthenticated: false,
 
+  // Store the server-validated role and token only in memory.
+  // Do not write tt_role to a client-writable cookie; middleware
+  // should rely on the HttpOnly cookie set by the server.
   setAuth: (user, role, token) => {
-    // Set a lightweight cookie for middleware route enforcement (not the JWT itself).
-    if (typeof document !== "undefined") {
-      document.cookie = `tt_role=${role}; path=/; SameSite=Lax`;
-    }
     set({ user, role, token, isAuthenticated: true });
   },
 
   clearAuth: () => {
-    // Clear the role cookie
-    if (typeof document !== "undefined") {
-      document.cookie = "tt_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    }
     set({ user: null, role: null, token: null, isAuthenticated: false });
   },
 }));
+

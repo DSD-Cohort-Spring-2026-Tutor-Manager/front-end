@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
       path: '/',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24,
-      httpOnly: false,
+      // HttpOnly + Secure ensure this cookie is integrity-protected and
+      // cannot be modified via document.cookie from the browser.
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
     })
   }
 
