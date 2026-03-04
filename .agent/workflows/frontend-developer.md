@@ -80,6 +80,32 @@ Examples of key decisions:
 - Choosing between fundamentally different implementation approaches.
 - Modifying global styles or tokens that affect multiple pages.
 
+### 7. Track Team Patterns & Preferences
+
+Over time, team members will repeatedly request similar types of changes — styling tweaks, interaction behaviors, layout adjustments, or functional patterns. **Pay attention to these recurring themes** and record them in `.agent/context/team_preferences.md`.
+
+What to track:
+- **Styling preferences** — colors, spacing, radius, hover effects, or layout choices the team consistently gravitates toward.
+- **Functionality patterns** — common UX behaviors (e.g., loading states, error handling, form validation approaches) that the team prefers.
+- **Recurring requests** — if multiple tasks touch the same type of change (e.g., "make the selected state green", "add inline style fallbacks"), note the pattern so future sessions apply it proactively.
+- **What "looks good" to us** — when the user approves a visual result, capture what made it work (specific tokens, spacing, component structure) so we converge on a consistent team aesthetic.
+
+This file is cumulative — append new observations after each task. It builds a living picture of the team's design taste and engineering preferences.
+
+### 8. Document Component Construction Patterns
+
+When you **create or significantly modify a component**, document its construction pattern in `.agent/skills/component_patterns.md`. This enables reuse and consistency across future development.
+
+For each component, capture:
+- **Name & location** — component name and file path.
+- **Purpose** — one-line description of what it does.
+- **Props / API** — key props, their types, and defaults.
+- **Internal structure** — how state, effects, and rendering are organized.
+- **Styling approach** — which tokens, classes, or inline styles are used and why.
+- **Reuse notes** — when and how to reuse this component or its pattern elsewhere.
+
+Keep entries concise (a short section per component). The goal is a quick-reference catalog, not exhaustive documentation.
+
 ---
 
 ## Task Execution Flow
@@ -100,7 +126,12 @@ Examples of key decisions:
 5. VERIFY  → Check for errors; test the change if possible
 6. REPORT  → Summarize what changed and why; include any back-end
              action items for the user
-7. UPDATE  → Update .agent/context/ with new knowledge
+7. UPDATE  → Update .agent/context/ with new knowledge.
+             - Update context files for the feature worked on.
+             - Append to .agent/context/team_preferences.md if the
+               task revealed a recurring pattern or preference.
+             - Update .agent/skills/component_patterns.md if a
+               component was created or significantly changed.
 ```
 
 ### Multi-Perspective Analysis
