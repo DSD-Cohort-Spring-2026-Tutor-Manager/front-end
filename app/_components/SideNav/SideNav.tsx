@@ -68,7 +68,7 @@ function SideNav() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const role = user?.role;
+  const role = user?.role || (pathname.startsWith("/tutor") ? "tutor" : pathname.startsWith("/parent") ? "parent" : pathname.startsWith("/admin") ? "admin" : null);
 
   const navItems =
     role === "tutor"
