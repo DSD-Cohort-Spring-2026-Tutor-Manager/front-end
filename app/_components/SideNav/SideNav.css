@@ -1,86 +1,123 @@
+/* ═══════════════════════════════════════════════
+   SideNav — compact ~80px dark-navy icon sidebar
+   matching the design screenshots
+═══════════════════════════════════════════════ */
+
 .side-nav {
-  max-width: 100px;
+  width: 82px;
+  min-width: 82px;
+  flex-shrink: 0;
+  background-color: var(--Support);   /* #243a5e navy */
 }
 
 .side-nav__container {
   box-sizing: border-box;
-  padding: 10px 20px 20px;
+  padding: 20px 10px 24px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.side-nav__logo-container {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
   align-items: center;
-  padding: 0;
-  margin-bottom: 60px;
 }
 
+/* ── Logo ── */
+.side-nav__logo-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.side-nav__logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+/* ── Nav list ── */
 .side-nav__list {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 8px;
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .side-nav__item {
   display: flex;
   flex-direction: column;
-  width: 100%;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding: 10px 6px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+  gap: 4px;
+}
+
+.side-nav__item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.side-nav__item--active {
+  background-color: rgba(127, 191, 77, 0.18);  /* --Highlight tint */
 }
 
 .side-nav__icon-img {
-  box-sizing: border-box;
-  padding-bottom: 4px;
-  opacity: 0.7;
-  transition: 0.2s ease-in;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  opacity: 0.72;
+  transition: opacity 0.15s ease;
 }
 
-.side-nav__icon-img:hover {
+.side-nav__item:hover .side-nav__icon-img,
+.side-nav__item--active .side-nav__icon-img {
   opacity: 1;
 }
 
 .side-nav__icon-label {
-  width: 100%;
-  color: var(--Off-white);
-  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 9.5px;
   font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 
+.side-nav__item--active .side-nav__icon-label {
+  color: var(--Highlight);   /* bright green for active */
+}
+
+/* ── Logout (pinned to bottom) ── */
 .side-nav__logout {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   width: 100%;
+  padding: 10px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  gap: 4px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-@media (max-height: 950px) {
-  .side-nav__icon-img {
-    width: 35px;
-    height: 39px;
-  }
-
-  .side-nav__list {
-    gap: 40px;
-  }
+.side-nav__logout:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
 }
 
-@media (max-height: 700px) {
-  .side-nav__icon-img {
-    width: 25px;
-    height: 29px;
-  }
+.side-nav__logout .side-nav__icon-img {
+  width: 22px;
+  height: 22px;
+}
 
-  .side-nav__list {
-    gap: 20px;
-  }
-  .side-nav__icon-label {
-    font-size: 14px;
-  }
+.side-nav__logout .side-nav__icon-label {
+  font-size: 9px;
 }

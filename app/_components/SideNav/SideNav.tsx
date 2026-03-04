@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { logout } from "@/lib/authService";
 
 import "./SideNav.css";
 
@@ -19,7 +20,7 @@ const parentNavItems = [
     icon: "/icons/tutor.svg",
     iconActive: "/icons/tutor-act.svg",
   },
-  { href: "/student", label: "Student", icon: "/icons/student.svg" },
+  { href: "/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
   {
     href: "/parent/credits",
     label: "Credits",
@@ -41,14 +42,14 @@ const adminNavItems = [
     icon: "/icons/tutor.svg",
     iconActive: "/icons/tutor-act.svg",
   },
-  { href: "/admin/student", label: "Student", icon: "/icons/student.svg" },
+  { href: "/admin/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
   {
     href: "/admin/credits",
     label: "Credits",
     icon: "/icons/shop.svg",
     iconActive: "/icons/Shop-act.svg",
   },
-  { href: "/admin/classes", label: "Classes", icon: "/icons/tutor.svg" },
+  { href: "/admin/classes", label: "Classes", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
 ];
 
 const tutorNavItems = [
@@ -58,14 +59,14 @@ const tutorNavItems = [
     icon: "/icons/home.svg",
     iconActive: "/icons/Home-act.svg",
   },
-  { href: "/tutor/classes", label: "Classes", icon: "/icons/tutor.svg" },
-  { href: "/tutor/students", label: "Students", icon: "/icons/student.svg" },
+  { href: "/tutor/classes", label: "Classes", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
+  { href: "/tutor/students", label: "Students", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
 ];
 
 function SideNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { setUser, user } = useAuth();
+  const { user } = useAuth();
 
   const role = user?.role;
 
@@ -78,15 +79,15 @@ function SideNav() {
           ? adminNavItems
           : [];
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("user"); // clear persisted login
-    router.push("/"); // redirect to login page
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
   };
 
   return (
     <aside className="side-nav bg-(--Support)">
       <nav className="side-nav__container">
+        {/* Logo */}
         <div className="side-nav__logo-container">
           <img
             className="side-nav__logo"
@@ -94,13 +95,17 @@ function SideNav() {
             alt="Tutortoise logo"
           />
         </div>
+
+        {/* Nav items */}
         <ul className="side-nav__list">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
-
             return (
               <li key={item.href}>
-                <Link className="side-nav__item" href={item.href}>
+                <Link
+                  className={`side-nav__item ${isActive ? "side-nav__item--active" : ""}`}
+                  href={item.href}
+                >
                   <img
                     className="side-nav__icon-img"
                     src={isActive ? item.iconActive : item.icon}
@@ -112,6 +117,8 @@ function SideNav() {
             );
           })}
         </ul>
+
+        {/* Logout */}
         <div className="side-nav__logout" onClick={handleLogout}>
           <img
             className="side-nav__icon-img"

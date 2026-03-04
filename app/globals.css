@@ -1,41 +1,100 @@
 @import "tailwindcss";
+@source not "../.agent";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   globals.css — base resets only.
-   CSS custom properties (:root) are generated automatically from tokens.ts
-   via ThemeProvider. Do NOT add --color-* variables here manually.
+   globals.css — base resets + design tokens + shell layout
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --Primary: #cde8b5; /* Mint green */
-  --Outlines: #2e6f5e; /* Dark Green */
-  --Accent: #f39c34; /* Orange */
-  --Support: #243a5e; /* Navy blue */
-  --Highlight: #7fbf4d; /* Bright Green */
-  --Off-white: #f8faf7; /* Slightly darker white */
-  --Nav-Border: #d5d5d5; /* Dark Gray */
+  --Primary:    #cde8b5;   /* Mint green      */
+  --Outlines:   #2e6f5e;   /* Dark green      */
+  --Accent:     #f39c34;   /* Orange          */
+  --Support:    #243a5e;   /* Navy blue       */
+  --Highlight:  #7fbf4d;   /* Bright green    */
+  --Off-white:  #F8FAF7;   /* Page background (design token) */
+  --color-border: #E2E8F0;  /* Subtle container/input borders */
+  --Nav-Border: #e0e5de;   /* Subtle border   */
 }
 
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--Off-white);
+  color: var(--Support);
+}
+
+/* ── App shell: sidebar + main column ── */
 body {
   display: flex;
+  flex-direction: row;
 }
 
+/* Right-hand column: topnav on top, scrollable content below */
 .shell__body {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100vw;
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Global Convenience Styles */
+/* Scrollable content area */
+.shell__content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--Off-white);
+}
 
+/* ── Dashboard page wrapper ── */
+.dashboard {
+  width: 100%;
+  padding: 28px 32px;
+  box-sizing: border-box;
+}
+
+.dashboard__data-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+/* ── Global button defaults ── */
 button {
-  padding: 10px 15px;
+  padding: 8px 16px;
   border-radius: 14px;
-  background-color: #243a5e;
+  background-color: var(--Support);
   color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 button:hover {
-  cursor: pointer;
+  background-color: var(--Outlines);
+}
+
+/* Accent / orange CTA buttons */
+.btn-accent {
+  background-color: var(--Accent);
+  color: #fff;
+}
+
+.btn-accent:hover {
+  background-color: #d4851e;
+}
+
+/* Green CTA buttons */
+.btn-highlight {
+  background-color: var(--Highlight);
+  color: var(--Support);
 }

@@ -1,21 +1,54 @@
 import React from 'react';
 import './TopNav.css';
 
+const ROLE_LABELS: Record<string, string> = {
+  parent: 'Parent',
+  tutor: 'Tutor',
+  admin: 'Admin',
+};
+
 const TopNav = ({
   name,
   avatarIconSrc,
+  role,
 }: {
   name: string;
   avatarIconSrc: string;
+  role?: string;
 }) => {
   return (
     <header className='topnav'>
       <div className='topnav__container'>
-        <img className='topnav-logo' src='/icons/Tutortoise-horiz-logo.svg' />
+        {/* Horizontal logo */}
+        <img
+          className='topnav-logo'
+          src='/icons/Tutortoise-horiz-logo.svg'
+          alt='Tutortoise'
+        />
 
         <div className='topnav__user-container'>
-          <img className='topnav-notification' src='/icons/notification.svg' />
-          <img className='topnav-avatar' src={avatarIconSrc} />
+          {/* Notification */}
+          <img
+            className='topnav-notification'
+            src='/icons/notification.svg'
+            alt='Notifications'
+          />
+
+          {/* Role badge */}
+          {role && (
+            <span className='topnav-role-badge'>
+              {ROLE_LABELS[role] ?? role}
+            </span>
+          )}
+
+          {/* Avatar */}
+          <img
+            className='topnav-avatar'
+            src={avatarIconSrc}
+            alt={`${name} avatar`}
+          />
+
+          {/* Username */}
           <h3 className='topnav-username'>{name}</h3>
         </div>
       </div>
