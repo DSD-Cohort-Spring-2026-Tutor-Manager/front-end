@@ -1,38 +1,49 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { logout } from "@/lib/authService";
 
-interface User {
+interface LegacyUser {
   name: string;
   avatar: string;
   role: "parent" | "tutor" | "admin";
 }
 
+/**
+ * AuthContext — kept for backward compatibility with SideNav, TopNav, and other
+ * components that consume useAuth(). Data now flows from Zustand (memory-only).
+ * No localStorage — JWT and role live in the Zustand store.
+ */
 const AuthContext = createContext<{
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: LegacyUser | null;
+  setUser: (user: LegacyUser | null) => void;
 }>({
   user: null,
   setUser: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      return storedUser ? JSON.parse(storedUser) : null;
+  // Derive legacy user shape from Zustand store
+  const zustandUser = useAuthStore((s) => s.user);
+  const zustandRole = useAuthStore((s) => s.role);
+
+  const legacyUser: LegacyUser | null =
+    zustandUser && zustandRole
+      ? {
+          name: zustandUser.name,
+          avatar: "/images/worm_with_glasses.png",
+          role: zustandRole.toLowerCase() as LegacyUser["role"],
+        }
+      : null;
+
+  const setUser = async (user: LegacyUser | null) => {
+    if (!user) {
+      await logout();
     }
-    return null;
-  });
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("user");
-    }
-  }, [user]);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user: legacyUser, setUser }}>
       {children}
     </AuthContext.Provider>
   );

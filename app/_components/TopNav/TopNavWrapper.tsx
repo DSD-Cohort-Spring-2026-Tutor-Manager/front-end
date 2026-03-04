@@ -7,5 +7,11 @@ export default function TopNavWrapper() {
 
   if (!user) return null;
 
-  return <TopNav name={user.name} avatarIconSrc={user.avatar} />;
+  return (
+    <TopNav
+      name={user.name}
+      avatarIconSrc={user.avatar}
+      role={user.role}
+    />
+  );
 }
