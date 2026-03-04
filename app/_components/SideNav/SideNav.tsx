@@ -4,61 +4,25 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { logout } from "@/lib/authService";
-
 import "./SideNav.css";
 
 const parentNavItems = [
-  {
-    href: "/parent",
-    label: "Home",
-    icon: "/icons/home.svg",
-    iconActive: "/icons/Home-act.svg",
-  },
-  {
-    href: "/parent/tutoring",
-    label: "Tutoring",
-    icon: "/icons/tutor.svg",
-    iconActive: "/icons/tutor-act.svg",
-  },
+  { href: "/parent", label: "Home", icon: "/icons/home.svg", iconActive: "/icons/Home-act.svg" },
+  { href: "/parent/tutoring", label: "Tutoring", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
   { href: "/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
-  {
-    href: "/parent/credits",
-    label: "Credits",
-    icon: "/icons/shop.svg",
-    iconActive: "/icons/Shop-act.svg",
-  },
+  { href: "/parent/credits", label: "Credits", icon: "/icons/shop.svg", iconActive: "/icons/Shop-act.svg" },
 ];
 
 const adminNavItems = [
-  {
-    href: "/admin",
-    label: "Home",
-    icon: "/icons/home.svg",
-    iconActive: "/icons/Home-act.svg",
-  },
-  {
-    href: "/admin/tutoring",
-    label: "Tutoring",
-    icon: "/icons/tutor.svg",
-    iconActive: "/icons/tutor-act.svg",
-  },
+  { href: "/admin", label: "Home", icon: "/icons/home.svg", iconActive: "/icons/Home-act.svg" },
+  { href: "/admin/tutoring", label: "Tutoring", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
   { href: "/admin/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
-  {
-    href: "/admin/credits",
-    label: "Credits",
-    icon: "/icons/shop.svg",
-    iconActive: "/icons/Shop-act.svg",
-  },
+  { href: "/admin/credits", label: "Credits", icon: "/icons/shop.svg", iconActive: "/icons/Shop-act.svg" },
   { href: "/admin/classes", label: "Classes", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
 ];
 
 const tutorNavItems = [
-  {
-    href: "/tutor",
-    label: "Home",
-    icon: "/icons/home.svg",
-    iconActive: "/icons/Home-act.svg",
-  },
+  { href: "/tutor", label: "Home", icon: "/icons/home.svg", iconActive: "/icons/Home-act.svg" },
   { href: "/tutor/classes", label: "Classes", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
   { href: "/tutor/students", label: "Students", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
 ];
@@ -68,26 +32,21 @@ function SideNav() {
   const router = useRouter();
   const { user } = useAuth();
 
+  // ── Role resolution ──────────────────────────────────────────────────
   const derivedRoleFromPath =
-    pathname.startsWith("/tutor")
-      ? "tutor"
-      : pathname.startsWith("/parent")
-        ? "parent"
-        : pathname.startsWith("/admin")
-          ? "admin"
-          : null;
+    pathname.startsWith("/tutor")  ? "tutor"  :
+    pathname.startsWith("/parent") ? "parent" :
+    pathname.startsWith("/admin")  ? "admin"  : null;
 
+  // user?.role is source of truth; path is fallback for edge cases
   const role = (user?.role ?? derivedRoleFromPath)?.toLowerCase() || null;
 
   const navItems =
-    role === "tutor"
-      ? tutorNavItems
-      : role === "parent"
-        ? parentNavItems
-        : role === "admin"
-          ? adminNavItems
-          : [];
+    role === "tutor"  ? tutorNavItems  :
+    role === "parent" ? parentNavItems :
+    role === "admin"  ? adminNavItems  : [];
 
+  // ── Logout ───────────────────────────────────────────────────────────
   const handleLogout = async () => {
     await logout();
     router.push("/login");
@@ -96,6 +55,7 @@ function SideNav() {
   return (
     <aside className="side-nav bg-(--Support)">
       <nav className="side-nav__container">
+
         {/* Logo */}
         <div className="side-nav__logo-container">
           <img
@@ -108,10 +68,11 @@ function SideNav() {
         {/* Nav items */}
         <ul className="side-nav__list">
           {navItems.map((item) => {
+            // Active if exact match OR on a sub-route (but not "/" catch-all)
             const isActive =
               pathname === item.href ||
-              (pathname.startsWith(item.href + "/") &&
-                item.href !== "/");
+              (item.href !== "/" && pathname.startsWith(item.href + "/"));
+
             return (
               <li key={item.href}>
                 <Link
@@ -130,7 +91,7 @@ function SideNav() {
           })}
         </ul>
 
-        {/* Logout */}
+        {/* Logout — button for correct semantics + keyboard accessibility */}
         <button
           type="button"
           className="side-nav__logout"
@@ -143,6 +104,7 @@ function SideNav() {
           />
           <span className="side-nav__icon-label">Logout</span>
         </button>
+
       </nav>
     </aside>
   );

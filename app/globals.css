@@ -11,7 +11,8 @@
   --Accent:     #f39c34;   /* Orange          */
   --Support:    #243a5e;   /* Navy blue       */
   --Highlight:  #7fbf4d;   /* Bright green    */
-  --Off-white:  #f2f5f0;   /* Light grey-green bg */
+  --Off-white:  #F8FAF7;   /* Page background (design token) */
+  --color-border: #E2E8F0;  /* Subtle container/input borders */
   --Nav-Border: #e0e5de;   /* Subtle border   */
 }
 
@@ -22,7 +23,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--Off-white);
   color: var(--Support);
 }
@@ -50,25 +51,10 @@ body {
   background-color: var(--Off-white);
 }
 
-/* ── Dashboard page wrapper ── */
-.dashboard {
-  width: 100%;
-  padding: 28px 32px;
-  box-sizing: border-box;
-}
-
-.dashboard__data-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 28px;
-}
-
 /* ── Global button defaults ── */
 button {
   padding: 8px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   background-color: var(--Support);
   color: #fff;
   border: none;
@@ -95,9 +81,5 @@ button:hover {
 /* Green CTA buttons */
 .btn-highlight {
   background-color: var(--Highlight);
-  color: #fff;
-}
-
-.btn-highlight:hover {
-  background-color: var(--Outlines);
+  color: var(--Support);
 }
