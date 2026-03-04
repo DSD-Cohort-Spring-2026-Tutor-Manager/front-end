@@ -35,7 +35,8 @@
 - **Subtitle:** uses `text-[var(--Support)]/60` instead of `text-gray-500`.
 - **Role selector:**
   - Container: `bg-[var(--Primary)]/20 rounded-[8px]`.
-  - **Selected state:** solid green background (`bg-[var(--Highlight)]`), bold navy text, `shadow-sm`, `ring-2 ring-[var(--Highlight)]/40`. "Parent" is selected by default.
+  - **Selected state:** solid green background applied via **inline `style` prop** (`style={{ backgroundColor: "var(--Highlight)" }}`), bold navy text, `shadow-sm`. "Parent" is selected by default.
+    - ⚠️ Tailwind's `bg-[var(--Highlight)]` did not reliably generate the background-color declaration in this project's build — only the ring/border was rendered. Switched to an inline `style` prop as a workaround.
   - **Unselected state:** `text-[var(--Support)]/50`, `hover:bg-[var(--Primary)]/10`.
   - Added `aria-pressed` and `aria-label` for accessibility.
 - **Form labels:** `text-[var(--Support)]` instead of `text-gray-700`.
@@ -75,3 +76,4 @@ All CSS variable references in the login files were normalized from `bg-[--Suppo
 - Other pages (`/unauthorized`, `/tutor`, `/parent`, `/admin`) still use old `bg-[--...]` syntax — needs project-wide normalization.
 - Error banner still uses raw Tailwind red classes — migrate to `--color-error` token when exposed globally.
 - Run Lighthouse/axe on `/login` to confirm full WCAG compliance.
+- **Tailwind `bg-[var()]` bug:** `bg-[var(--Highlight)]` does not reliably produce `background-color` in some contexts. When a CSS-variable background is critical and Tailwind fails, use an inline `style` prop as a fallback. See role-selector buttons in `LoginForm.tsx` for the pattern.

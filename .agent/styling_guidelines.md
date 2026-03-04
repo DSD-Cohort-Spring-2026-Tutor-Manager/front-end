@@ -681,6 +681,8 @@ TutorToise is currently **desktop-first**. When adding mobile support:
 
 1. **CSS files:** Always reference brand colors via CSS variables (`var(--Primary)`, `var(--color-border)`). Never hard-code a hex value in a new `.css` file.
 2. **TSX / MUI files:** Use `theme` palette values or `sx` props that reference `theme.palette.*`. Avoid inline `style={{ color: '#243a5e' }}`.
+
+> ⚠️ **Tailwind `bg-[var()]` reliability issue:** In some build configurations, Tailwind's arbitrary-value syntax for background colors (`bg-[var(--Custom)]`) does not produce a `background-color` declaration — only border/ring utilities using the same variable work correctly. **Workaround:** When a CSS-variable background is critical and Tailwind fails, apply it via an inline `style` prop: `style={{ backgroundColor: "var(--Highlight)" }}`. This pattern is used for the login page role-selector buttons in `components/LoginForm.tsx`.
 3. **New colors:** Add to `tokens.color` → expose in `cssVars` → reference via `var(--color-*)`. Do not skip any step.
 4. **Spacing:** Use only values from the 8px-base scale (4, 8, 12, 16, 20, 24, 32, 40, 48, 64px). Document any exception here.
 5. **Border-radius assignments:** containers → `28px`, buttons → `14px`, pills → `18px`, inputs → `8px`, avatars → `50%`.
