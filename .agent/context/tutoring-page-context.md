@@ -21,6 +21,11 @@ The `/parent/tutoring/page.tsx` page uses a CSS grid layout (`className='tutorin
 
 ## Recent Fixes
 - **Context Type Error**: Resolved a build failure caused by attempting to destructure `setCredits` from the `CreditContext`. The fix safely utilizes the existing `addCredits(-1)` function to compute the new balance relative to the current amount, preventing unnecessary bloat on the global provider interface.
+- **SonarQube Quality Gate (React Hook Naming)**: Fixed a SonarQube error where the functional component was named with a lowercase letter (`function page()`). React requires components utilizing hooks (like `useState`, `useContext`) to be capitalized. Renamed to `function Page()`.
+
+## Key Learnings & Agent Constraints
+- **Testing Before Pushing**: Always verify changes by running a local build (`npm run build`) *before* pushing commits to avoid causing build failures or triggering CI/CD alerts prematurely, even for seemingly trivial fixes.
+- **GitHub PR Standards**: Strict PR title formatting (`^(chore|feat|fix): #\d+ .+$`) and specific markdown body templates are required. This process is now documented in `.agent/skills/tutortoise_github.md`.
 
 ## TODOs & Backlog
 - **[TODO] Dynamic Relationships**: The `bookSession` API currently hardcodes `parentId: 1` and `studentId: 1`. Once dynamic student selection states are hooked up to the top dropdown menu, parameterize this call to use the actively selected variables.
