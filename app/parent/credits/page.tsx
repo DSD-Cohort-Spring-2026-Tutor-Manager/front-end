@@ -10,7 +10,7 @@ import { CreditContext } from '../../_components/CreditContext/CreditContext';
 import { ParentContext } from '../../context/ParentContext';
 import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
-function page() {
+function Page() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [pendingAmount, setPendingAmount] = useState<number>(0);
@@ -96,4 +96,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
