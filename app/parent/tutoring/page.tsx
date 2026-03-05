@@ -4,6 +4,7 @@ import { useContext, useState } from 'react';
 
 import CreditsViewBar from '@/app/_components/CreditsViewbar/CreditsViewBar';
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
+import { ParentContext } from '../../context/ParentContext';
 import AvailableSessionsTable from '@/app/_components/DataTable/AvailableSessionsTable/AvailableSessionsTable';
 import Modal from '@/app/_components/Modal/Modal';
 import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
@@ -26,8 +27,16 @@ function Page() {
 
   const { credits, addCredits } = ctx;
 
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
+
+  const { parentDetails, setParentDetails } = parentCtx;
+
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<SessionRow | null>(null);
+  const [selectedSession, setSelectedSession] = useState<SessionRow | null>(
+    null,
+  );
 
   const handleJoinClick = (session: SessionRow) => {
     setSelectedSession(session);
@@ -41,7 +50,7 @@ function Page() {
 
   const handleConfirmBooking = async () => {
     if (!selectedSession) return;
-    
+
     // In a real app we'd get the actual selected studentId from state
     // For now we'll mock parentId and studentId as 1 to match existing hardcoded logic
     try {
@@ -78,27 +87,27 @@ function Page() {
 
       {isBookingModalOpen && selectedSession && (
         <Modal buttons={[]}>
-          <div className="flex flex-col items-center">
-            <h2 className="add-student-modal_header mb-4 text-center">
+          <div className='flex flex-col items-center'>
+            <h2 className='add-student-modal_header mb-4 text-center'>
               Booking Confirmation
             </h2>
-            <p className="text-lg text-gray-700 mb-4 text-center">
+            <p className='text-lg text-gray-700 mb-4 text-center'>
               You will be joining {selectedSession.tutor} on{' '}
               {selectedSession.date} at {selectedSession.time} to study{' '}
               {selectedSession.subject}
             </p>
-            <p className="text-lg text-gray-800 font-semibold mt-4 text-center">
+            <p className='text-lg text-gray-800 font-semibold mt-4 text-center'>
               Cost: 1 Token
             </p>
-            <div className="add-student-modal-buttons mt-4">
+            <div className='add-student-modal-buttons mt-4'>
               <button
-                className="modal-button add-student-confirm-button"
+                className='modal-button add-student-confirm-button'
                 onClick={handleConfirmBooking}
               >
                 Confirm
               </button>
               <button
-                className="modal-button add-student-cancel-button"
+                className='modal-button add-student-cancel-button'
                 onClick={closeBookingModal}
               >
                 Cancel

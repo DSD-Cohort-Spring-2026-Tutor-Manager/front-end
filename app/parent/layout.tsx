@@ -1,8 +1,9 @@
 // app/dashboard/layout.tsx
-import SideNav from "../_components/SideNav/SideNav";
-import TopNavWrapper from "../_components/TopNav/TopNavWrapper";
-import CreditProvider from "../_components/CreditContext/CreditProvider";
-import { StudentProvider } from "../context/StudentContext";
+import SideNav from '../_components/SideNav/SideNav';
+import TopNavWrapper from '../_components/TopNav/TopNavWrapper';
+import CreditProvider from '../_components/CreditContext/CreditProvider';
+import { StudentProvider } from '../context/StudentContext';
+import { ParentProvider } from '../context/ParentContext';
 
 export default function DashboardLayout({
   children,
@@ -12,11 +13,13 @@ export default function DashboardLayout({
   return (
     <>
       <SideNav />
-      <div className="shell__body">
+      <div className='shell__body'>
         <TopNavWrapper />
-        <div className="shell__content">
+        <div className='shell__content'>
           <CreditProvider>
-            <StudentProvider>{children}</StudentProvider>
+            <ParentProvider>
+              <StudentProvider>{children}</StudentProvider>
+            </ParentProvider>
           </CreditProvider>
         </div>
       </div>

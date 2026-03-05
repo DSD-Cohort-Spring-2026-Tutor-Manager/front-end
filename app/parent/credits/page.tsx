@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useContext } from 'react';
 
 import { CreditContext } from '../../_components/CreditContext/CreditContext';
+import { ParentContext } from '../../context/ParentContext';
 import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
 function page() {
@@ -44,6 +45,11 @@ function page() {
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
   const { credits, addCredits } = ctx;
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
+
+  const { parentDetails, setParentDetails } = parentCtx;
   return (
     <div className='credits'>
       <header className='credits__header'>
