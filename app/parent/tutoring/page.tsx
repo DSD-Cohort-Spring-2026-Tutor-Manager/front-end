@@ -19,7 +19,7 @@ type SessionRow = {
   time: string;
 };
 
-function page() {
+function Page() {
   const ctx = useContext(CreditContext);
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
@@ -111,4 +111,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
