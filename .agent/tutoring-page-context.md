@@ -17,7 +17,10 @@ The `/parent/tutoring/page.tsx` page uses a CSS grid layout (`className='tutorin
 ## Design Decisions
 1. **Extending `Modal.tsx` over Adding Types**: We used `children` injection in `Modal.tsx` instead of adding a new hardcoded `type="booking confirm"`. This keeps the base Component clean, prevents infinite logic branching, and maximizes code reuse since the customized data and layout are fully controlled by the specific consumer page.
 2. **Local State Preference**: Decided to manage the modal strictly within `parent/tutoring/page.tsx` instead of the global `ModalContext`. This directly couples the `selectedSession` detail object cleanly with the open/close state without bloating global stores.
-3. **Fail-Safe UI Flow**: On clicking "Confirm", the application calls `TutortoiseClient.bookSession(1, 1, sessionId)` (temporarily hardcoding relation IDs). If successful, 1 token is subtracted directly from `CreditContext`. The modal aggressively closes on both confirmation and failure to never trap users helplessly on the screen.
+3. **Fail-Safe UI Flow**: On clicking "Confirm", the application calls `TutortoiseClient.bookSession(1, 1, sessionId)` (temporarily hardcoding relation IDs). If successful, 1 token is subtracted directly from `CreditContext` (via the `addCredits(-1)` method). The modal aggressively closes on both confirmation and failure to never trap users helplessly on the screen.
+
+## Recent Fixes
+- **Context Type Error**: Resolved a build failure caused by attempting to destructure `setCredits` from the `CreditContext`. The fix safely utilizes the existing `addCredits(-1)` function to compute the new balance relative to the current amount, preventing unnecessary bloat on the global provider interface.
 
 ## TODOs & Backlog
 - **[TODO] Dynamic Relationships**: The `bookSession` API currently hardcodes `parentId: 1` and `studentId: 1`. Once dynamic student selection states are hooked up to the top dropdown menu, parameterize this call to use the actively selected variables.
