@@ -24,7 +24,7 @@ function page() {
   if (!ctx)
     throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
 
-  const { credits, setCredits } = ctx;
+  const { credits, addCredits } = ctx;
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionRow | null>(null);
@@ -46,7 +46,7 @@ function page() {
     // For now we'll mock parentId and studentId as 1 to match existing hardcoded logic
     try {
       await TutortoiseClient.bookSession(1, 1, Number(selectedSession.id));
-      setCredits(credits - 1);
+      addCredits(-1);
     } catch (error) {
       console.error('Failed to book session:', error);
     } finally {
