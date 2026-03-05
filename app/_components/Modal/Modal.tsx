@@ -14,10 +14,12 @@ const Modal = ({
   type,
   text,
   buttons,
+  children,
 }: {
   type?: ModalType | undefined;
-  text: string;
+  text?: string;
   buttons: ModalButton[];
+  children?: React.ReactNode;
 }) => {
   const { isOpen, setIsOpen } = useContext(ModalContext);
 
@@ -64,12 +66,12 @@ const Modal = ({
   return (
     <div className='modal'>
       <div className='modal-content'>
-        <p className='modal-text'>{text}</p>
+        {children || (text && <p className='modal-text'>{text}</p>)}
         <div id='modal__buttons-container'>
           {buttons?.map((button, index) => (
             <button
               key={`modal-button-${index}`}
-              className='modal-button'
+              className={`modal-button ${button.className || ''}`}
               onClick={() => button.onClick()}
             >
               {button.text}
