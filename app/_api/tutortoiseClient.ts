@@ -11,6 +11,7 @@ const OPEN_SESSIONS_ENDPOINT = "/api/sessions/open";
 const BOOK_SESSION_ENDPOINT =
   "/api/parent/book/{sessionId}/{parentId}/{studentId}";
 const ADMIN_ENDPOINT = "/api/admin/dashboard";
+const TUTOR_ASSIGN_GRADE_ENDPOINT = "/api/tutor/assign-grade";
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -111,6 +112,28 @@ export const TutortoiseClient = {
       .get(ADMIN_ENDPOINT)
       .then((res) => res.data)
       .catch((err) => console.error("Sessions API call failed:", err));
+  },
+
+  /**
+   * Assign a grade to a session and mark it completed (PUT /api/tutor/assign-grade).
+   * Backend completes the session and returns the updated session info.
+   */
+  assignGrade: async (
+    tutorId: number,
+    sessionId: number,
+    grade: number
+  ): Promise<any> => {
+    return await axiosInstance
+      .put(TUTOR_ASSIGN_GRADE_ENDPOINT, {
+        tutorId,
+        sessionId,
+        grade,
+      })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("Assign grade API call failed", err);
+        throw err;
+      });
   },
 };
 
