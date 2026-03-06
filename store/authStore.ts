@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Role = "ADMIN" | "TUTOR" | "PARENT";
 
@@ -18,21 +19,22 @@ interface AuthState {
   clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  role: null,
-  token: null,
-  isAuthenticated: false,
 
-  // Store the server-validated role and token only in memory.
-  // Do not write tt_role to a client-writable cookie; middleware
-  // should rely on the HttpOnly cookie set by the server.
-  setAuth: (user, role, token) => {
-    set({ user, role, token, isAuthenticated: true });
-  },
 
-  clearAuth: () => {
-    set({ user: null, role: null, token: null, isAuthenticated: false });
-  },
-}));
+export const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      role: null,
+      token: null,
+      isAuthenticated: false,
+      setAuth: (user: AuthUser, role: Role, token: string) => set({ user, role, token, isAuthenticated: true }),
+      clearAuth: () => set({ user: null,role: null, token: null , isAuthenticated: false }),
+    }),
+    {
+      name: "auth-storage",        // key in localStorage
+      // storage: cookieStorage    // swap to cookie if needed
+    }
+  )
+);
 

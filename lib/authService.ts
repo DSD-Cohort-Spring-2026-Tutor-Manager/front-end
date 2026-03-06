@@ -7,6 +7,11 @@ export interface LoginResponse {
   token?: string;
   role?: Role;
   user?: AuthUser;
+  /** From backend /api/login when no nested user: userId, firstName, lastName, email */
+  userId?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 }
 
 /**
@@ -34,8 +39,19 @@ export async function login(
 
   const data = response.data;
 
-  if (data.success && data.token && data.role && data.user) {
-    useAuthStore.getState().setAuth(data.user, data.role, data.token);
+  if (data.success && data.role) {
+    const user: AuthUser | null =
+      data.user ??
+      (data.userId != null || data.firstName != null || data.email
+        ? {
+            id: data.userId ?? 0,
+            email: data.email ?? "",
+            name: [data.firstName, data.lastName].filter(Boolean).join(" ").trim() || (data.email ?? "User"),
+          }
+        : null);
+    if (user) {
+      useAuthStore.getState().setAuth(user, data.role, data.token ?? "");
+    }
   }
 
   return data;

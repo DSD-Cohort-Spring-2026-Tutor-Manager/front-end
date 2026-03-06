@@ -5,6 +5,17 @@ import TablePanel from "../_components/DataTable/TablePanel";
 import { useEffect, useRef, useState } from "react";
 import { TutortoiseClient } from "../_api/tutortoiseClient";
 import Databox from "../_components/DataBox/Databox";
+import { useAuthStore } from "@/store/authStore";
+
+function filterTutorSessions(sessions: any[], tutorName: string) {
+  if (!Array.isArray(sessions) || !tutorName?.trim()) return { upcoming: [], completed: [], full: [] };
+  const forTutor = sessions.filter((s) => s.tutorName === tutorName.trim());
+  return {
+    upcoming:  forTutor.filter((s) => s.sessionStatus === "scheduled"),
+    completed: forTutor.filter((s) => s.sessionStatus === "completed"),
+    full:      forTutor,
+  };
+}
 
 function Home() {
   const [todaySessions, setTodaySessions] = useState<any[]>([]);
@@ -12,27 +23,28 @@ function Home() {
   const [fullSessions, setFullSessions] = useState<any[]>([]);
   const tableSectionRef = useRef<HTMLElement>(null);
 
+  const user      = useAuthStore((s) => s.user);
+  const tutorName = user?.name ?? "";
+
   useEffect(() => {
+    if (!tutorName) return;
+
     TutortoiseClient.getSessionHistory().then((sessions) => {
       if (Array.isArray(sessions)) {
-        setUpcomingSessions(
-          sessions.filter(
-            (s) =>
-              s.sessionStatus === "scheduled" && s.tutorName === "Tutor1 No1",
-          ),
-        );
-        setFullSessions(sessions.filter((s) => s.tutorName === "Tutor1 No1"));
+        const { upcoming, full } = filterTutorSessions(sessions, tutorName);
+
+        setUpcomingSessions(upcoming);
+        setFullSessions(full);
         setTodaySessions(
-          sessions.filter(
+          upcoming.filter(
             (s) =>
               s.datetimeStarted?.split("T")[0] ===
-                new Date().toISOString().split("T")[0] &&
-              s.tutorName === "Tutor1 No1",
+              new Date().toISOString().split("T")[0],
           ),
         );
       }
     });
-  }, []);
+  }, [tutorName]);
 
   return (
     <main className="dashboard">
