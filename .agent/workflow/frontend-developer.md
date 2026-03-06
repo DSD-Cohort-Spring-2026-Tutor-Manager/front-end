@@ -31,8 +31,9 @@ The `.agent/` folder is the single source of truth for project knowledge. It con
 
 ### 1. Reference Project Guidelines First
 
-- Always consult `.agent/styling_guidelines.md` for design tokens, component specs, spacing, and accessibility requirements before writing or modifying any UI code.
-- Always consult `.agent/implementation_plan.md` for the current feature roadmap and priorities.
+- Always consult `.agent/context/styling_guidelines.md` for design tokens, component specs, spacing, and accessibility requirements before writing or modifying any UI code.
+- Always consult `.agent/workflow/implementation_plan.md` for the current feature roadmap and priorities.
+- Always consult `.agent/context/api-contracts.md` before writing any code that calls the backend — it is the typed source of truth for all endpoint URLs, request bodies, response shapes, and frontend implementation status. Do not infer API shapes from `tutortoiseClient.ts` alone; that file has `any` types and swallowed errors.
 - Check `.agent/context/` for any existing context files related to the feature or page you are working on.
 
 ### 2. Keep Context Up to Date
