@@ -8,6 +8,7 @@ import {
   Dispatch,
   SetStateAction,
 } from 'react';
+import { useAuthStore } from '@/store/authStore';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import { Parent, Student } from '../types/types';
 
@@ -41,18 +42,32 @@ export function ParentProvider({ children }: Props) {
   const [parentDetails, setParentDetails] =
     useState<ParentDetails>(defaultParentDetails);
 
+  const userId = useAuthStore((state) => state.user?.id);
+
   useEffect(() => {
     async function fetchParentDetails() {
-      try {
-        const data = await TutortoiseClient.getParentDetails(1);
-        setParentDetails((prevDetails) => ({ ...prevDetails, ...data }));
-      } catch (error) {
-        console.error('Failed to fetch parent details:', error);
+      if (!userId) return;
+
+      const parentId = Number(userId);
+      if (Number.isNaN(parentId)) {
+        console.error('Invalid parent ID:', userId);
+        return;
       }
+
+      const data = await TutortoiseClient.getParentDetails(parentId);
+
+      if (data === undefined) {
+        console.error(
+          'Failed to fetch parent details: response was undefined.',
+        );
+        return;
+      }
+
+      setParentDetails((prevDetails) => ({ ...prevDetails, ...data }));
     }
 
     fetchParentDetails();
-  }, []);
+  }, [userId]);
 
   const addCredits = (amount: number) => {
     setParentDetails((prevDetails) => ({

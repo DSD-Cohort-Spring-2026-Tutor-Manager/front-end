@@ -52,13 +52,17 @@ function Page() {
   const handleConfirmBooking = async () => {
     if (!selectedSession) return;
 
-    const currentParentId = parentDetails.parentId || 1;
-    // Fallback to the first student's ID if no student is explicitly selected, otherwise default to 1
+    const currentParentId = parentDetails.parentId;
     const currentStudentId =
       parentDetails.selectedStudent?.studentId ||
       (parentDetails.students && parentDetails.students.length > 0
         ? parentDetails.students[0].studentId
-        : 1);
+        : undefined);
+
+    if (!currentParentId || !currentStudentId) {
+      console.error('Cannot book session: Missing parent or student ID');
+      return;
+    }
 
     try {
       await TutortoiseClient.bookSession(
@@ -83,13 +87,13 @@ function Page() {
         <div className='tutoring__nav'>
           <label className='tutoring__selector' htmlFor='students'>
             Choose a student:{' '}
-            <select 
-              name='students' 
+            <select
+              name='students'
               id='students'
               value={parentDetails.selectedStudent?.studentId || ''}
               onChange={(e) => {
                 const selectedStudent = parentDetails.students?.find(
-                  (s) => s.studentId === Number(e.target.value)
+                  (s) => s.studentId === Number(e.target.value),
                 );
                 if (selectedStudent) {
                   setParentDetails({ ...parentDetails, selectedStudent });
