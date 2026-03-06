@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+const BACKEND_URL =
+  process.env.BACKEND_URL ?? 'https://back-end-main.onrender.com'
+
 const ROLE_HOME: Record<string, string> = {
   ADMIN:  '/admin',
   TUTOR:  '/tutor',
@@ -21,12 +24,12 @@ export function proxy(request: NextRequest) {
   if (pathname.startsWith('/api/base')) {
     const path = pathname.substring(9)
     return NextResponse.rewrite(
-      new URL('https://back-end-main.onrender.com' + path + queryParamString)
+      new URL(BACKEND_URL + path + queryParamString)
     )
   }
   if (pathname.startsWith('/api')) {
     return NextResponse.rewrite(
-      new URL('https://back-end-main.onrender.com' + pathname + queryParamString)
+      new URL(BACKEND_URL + pathname + queryParamString)
     )
   }
 
