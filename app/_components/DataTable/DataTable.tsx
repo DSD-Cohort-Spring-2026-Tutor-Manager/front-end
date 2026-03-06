@@ -12,32 +12,33 @@ import Popover from "@mui/material/Popover";
 import { Box, TextField, CircularProgress } from "@mui/material";
 
 interface Session {
-  id: string;
+  id?: string;
   sessionId: string;
   datetimeStarted: string;
   studentFirstName: string;
   studentLastName: string;
   subject: string;
-  time: string;
-  notes: string;
+  time?: string;
+  notes?: string;
+  tutorId?: number;
 }
 
 interface Props {
   sessions: Session[];
   type: "upcoming" | "completed";
-  onCompleteSession?: (sessionId: string, notes: string) => Promise<void>;
+  onAssignGrade?: (sessionId: string | number, grade: number) => Promise<void>;
   setSessions?: React.Dispatch<React.SetStateAction<Session[]>>;
 }
 
 export default function DataTable({
   sessions,
   type,
-  onCompleteSession,
+  onAssignGrade,
   setSessions,
 }: Props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [gradeValues, setGradeValues] = useState<Record<string, string>>({});
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -57,40 +58,22 @@ export default function DataTable({
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
-  const handleConfirm = async (
-    sessionId: string,
+  const handleGradeSubmit = async (
+    sessionId: string | number,
     rowKey: string,
-    session: any,
   ) => {
+    const raw = gradeValues[rowKey]?.trim();
+    const grade = raw === "" ? NaN : parseInt(raw, 10);
+    if (Number.isNaN(grade) || grade < 0 || grade > 100) {
+      return;
+    }
     setLoadingSessionId(rowKey);
-
     try {
-      const notes = inputValues[rowKey] || "";
-
-      await onCompleteSession?.(sessionId, notes);
-
-      setSessions?.((prevSessions) => {
-        console.log("Previous Sessions:", prevSessions);
-
-        const updatedSessions = prevSessions.map((s) =>
-          s.sessionId === sessionId
-            ? {
-                ...s,
-                notes: notes,
-                sessionStatus: "completed",
-              }
-            : s,
-        );
-
-        console.log("Updated Sessions:", updatedSessions);
-
-        return updatedSessions;
-      });
-
+      await onAssignGrade?.(sessionId, grade);
       setOpenSessionId(null);
       setAnchorEl(null);
     } catch (error) {
-      console.error("Failed to complete session:", error);
+      console.error("Failed to assign grade:", error);
     } finally {
       setLoadingSessionId(null);
     }
@@ -146,16 +129,16 @@ export default function DataTable({
                             variant="contained"
                             color="success"
                             size="small"
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                               setAnchorEl(e.currentTarget);
                               setOpenSessionId(rowKey);
-                              setInputValues((prev) => ({
+                              setGradeValues((prev: Record<string, string>) => ({
                                 ...prev,
                                 [rowKey]: "",
                               }));
                             }}
                           >
-                            View
+                            Grade
                           </Button>
 
                           <Popover
@@ -177,20 +160,24 @@ export default function DataTable({
                                 width: 280,
                                 display: "flex",
                                 flexDirection: "column",
-                                gap: 1,
+                                gap: 1.5,
                               }}
                             >
                               <TextField
                                 size="small"
                                 fullWidth
                                 autoFocus
-                                multiline
-                                rows={3}
-                                label="Notes"
-                                placeholder="Enter session notes..."
-                                value={inputValues[rowKey] || ""}
-                                onChange={(e) =>
-                                  setInputValues((prev) => ({
+                                type="number"
+                                inputProps={{
+                                  min: 0,
+                                  max: 100,
+                                  step: 1,
+                                }}
+                                label="Grade (0–100)"
+                                placeholder="e.g. 85"
+                                value={gradeValues[rowKey] || ""}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                  setGradeValues((prev: Record<string, string>) => ({
                                     ...prev,
                                     [rowKey]: e.target.value,
                                   }))
@@ -218,16 +205,20 @@ export default function DataTable({
                                   size="small"
                                   disabled={
                                     loadingSessionId === rowKey ||
-                                    !inputValues[rowKey]?.trim()
+                                    (() => {
+                                      const v = gradeValues[rowKey]?.trim();
+                                      const n = v === "" ? NaN : parseInt(v, 10);
+                                      return (
+                                        Number.isNaN(n) || n < 0 || n > 100
+                                      );
+                                    })()
                                   }
-                                  onClick={() => {
-                                    console.log("session", session);
-                                    handleConfirm(
+                                  onClick={() =>
+                                    handleGradeSubmit(
                                       session?.sessionId,
                                       rowKey,
-                                      session,
-                                    );
-                                  }}
+                                    )
+                                  }
                                   startIcon={
                                     loadingSessionId === rowKey ? (
                                       <CircularProgress
@@ -239,7 +230,7 @@ export default function DataTable({
                                 >
                                   {loadingSessionId === rowKey
                                     ? "Saving..."
-                                    : "Confirm"}
+                                    : "Assign grade"}
                                 </Button>
                               </Box>
                             </Box>
