@@ -52,18 +52,30 @@ export function ParentProvider({ children, parentId }: Props) {
   })();
 
   useEffect(() => {
+    let active = true;
+
     async function fetchParentDetails(id: number) {
       try {
         const data = await TutortoiseClient.getParentDetails(id);
-        setParentDetails((prevDetails) => ({ ...prevDetails, ...data }));
+        if (active) {
+          // Reset to default first to avoid stale fields from a previous account bleeding in
+          setParentDetails({ ...defaultParentDetails, ...data });
+        }
       } catch (error) {
         console.error('Failed to fetch parent details:', error);
       }
     }
 
     if (typeof effectiveParentId === 'number' && !isNaN(effectiveParentId)) {
+      setParentDetails(defaultParentDetails); // clear stale state before fetch
       fetchParentDetails(effectiveParentId);
+    } else {
+      setParentDetails(defaultParentDetails);
     }
+
+    return () => {
+      active = false;
+    };
   }, [effectiveParentId]);
 
   const addCredits = (amount: number) => {

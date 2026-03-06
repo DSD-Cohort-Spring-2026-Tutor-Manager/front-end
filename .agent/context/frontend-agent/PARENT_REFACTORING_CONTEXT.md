@@ -234,9 +234,126 @@ front-end/
 3. **API Alignment:** Verify API responses include all 5 newly added Session properties
 4. **Consistency Check:** Consider using `types.ts` imports instead of local type declarations in future refactoring phases
 
+---
+
+## Session 2 Changes — March 6, 2026
+
+### `app/context/ParentContext.tsx`
+
+#### 1. Replaced `any` with typed contract
+
+- `ParentContextValue.parentDetails` — now typed as `ParentDetails` (a `Partial<Parent>` with required `creditBalance`, `students`, `selectedStudent`)
+- `setParentDetails` — now typed as `Dispatch<SetStateAction<ParentDetails>>`
+
+#### 2. Added `addCredits(amount: number): void` to context
+
+Allows consumers to update `creditBalance` directly through the context without relying on the now-removed `CreditContext`.
+
+#### 3. Made `parentId` prop optional — added `useAuthStore` fallback
+
+`ParentProvider` previously required a `parentId` prop that callers (e.g. `app/parent/layout.tsx`) never passed, causing `undefined` to reach the API and trigger a 500.
+
+**Fix:**
+
+- `parentId?: number` (optional prop)
+- Import `useAuthStore` from `store/authStore`
+- Compute `effectiveParentId` — prop takes precedence, falls back to `authStore.user.id` (handles both `number` and numeric `string`)
+- API call only fires when `effectiveParentId` is a valid finite number
+
+#### 4. Reset state on parent switch (CodeRabbit: data bleed fix)
+
+**Problem:** `{ ...prevDetails, ...data }` merged new API data onto stale previous-account fields. If the new response omitted any field, the old value persisted — risking cross-account data bleed.
+
+**Fix:**
+
+- Added `let active = true` + cleanup `return () => { active = false }` — prevents stale in-flight responses from overwriting state after identity change
+- `setParentDetails(defaultParentDetails)` immediately on id change — clears stale UI before fetch completes
+- `setParentDetails({ ...defaultParentDetails, ...data })` instead of `{ ...prevDetails, ...data }` — always resets to baseline before applying new data
+
+```typescript
+useEffect(() => {
+  let active = true;
+
+  async function fetchParentDetails(id: number) {
+    try {
+      const data = await TutortoiseClient.getParentDetails(id);
+      if (active) {
+        setParentDetails({ ...defaultParentDetails, ...data });
+      }
+    } catch (error) {
+      console.error('Failed to fetch parent details:', error);
+    }
+  }
+
+  if (typeof effectiveParentId === 'number' && !isNaN(effectiveParentId)) {
+    setParentDetails(defaultParentDetails);
+    fetchParentDetails(effectiveParentId);
+  } else {
+    setParentDetails(defaultParentDetails);
+  }
+
+  return () => {
+    active = false;
+  };
+}, [effectiveParentId]);
+```
+
+---
+
+### `app/parent/credits/page.tsx`
+
+- Removed `CreditContext` — was redundant with `ParentContext.creditBalance`
+- `creditBalance` now sourced from `ParentContext.parentDetails.creditBalance`
+- `addCredits` now sourced from `ParentContext.addCredits`
+
+---
+
+### `app/parent/tutoring/page.tsx`
+
+- Replaced hardcoded `parentId: 1` and `studentId: 1` with `parentDetails.parentId` and `parentDetails.selectedStudent?.studentId`
+- Guard added: booking skipped if either id is missing
+- `creditBalance` guard added before arithmetic: skips deduct if value is not a valid number
+
+---
+
+### `app/parent/page.tsx`
+
+- Removed `any` casts from DOM input reads — replaced with `HTMLInputElement | null`
+- `creditBalance` from `ParentContext` surfaced on dashboard
+
+---
+
+### `app/_api/tutortoiseClient.ts`
+
+#### Replaced `any` with proper return types
+
+| Method                  | Before               | After                |
+| ----------------------- | -------------------- | -------------------- |
+| `getParentDetails`      | `Promise<any>`       | `Promise<Parent>`    |
+| `getBalance`            | `Promise<number>` ✅ | unchanged            |
+| `getOpenSessions`       | untyped              | `Promise<Session[]>` |
+| `getAllSessions`        | untyped              | `Promise<Session[]>` |
+| `getTransactionHistory` | `Promise<any>`       | `Promise<Session[]>` |
+| `buyCredits`            | `Promise<any>`       | `Promise<number>`    |
+| `addStudent`            | `Promise<any>`       | `Promise<Student>`   |
+| `getSessionHistory`     | `Promise<any>`       | `Promise<Session[]>` |
+| `bookSession`           | `Promise<any>`       | `Promise<Session>`   |
+| `getAdminDetails`       | untyped              | `Promise<unknown>`   |
+| `assignGrade`           | `Promise<any>`       | `Promise<Session>`   |
+
+#### Errors no longer swallowed
+
+All `.catch` blocks that only called `console.error` and returned `undefined` now also `throw err`. This ensures callers receive a rejected `Promise` instead of silently getting `undefined` as data.
+
+#### `catch (error: any)` → `catch (error: unknown)`
+
+`getParentDetails` catch block updated to use `error: unknown` with `instanceof Error` guard.
+
+---
+
 ## Date
 
-**Updated:** March 5, 2026
-**Scope:** Parent Directory TypeScript Type Refactoring
-
+**Originally created:** March 5, 2026
+**Last updated:** March 6, 2026
+**Scope:** Parent Context Refactoring + API Type Safety + CodeRabbit fixes
 ````

@@ -1,4 +1,5 @@
 import axiosInstance from '@/lib/axios';
+import { Parent, Session, Student } from '../types/types';
 
 // Make calls to the same origin to route requests through the proxy
 const PARENT_DETAILS_ENDPOINT = '/api/parent/{id}';
@@ -16,7 +17,7 @@ const TUTOR_ASSIGN_GRADE_ENDPOINT = '/api/tutor/assign-grade';
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
 
-  getParentDetails: async (id: number): Promise<any> => {
+  getParentDetails: async (id: number): Promise<Parent> => {
     if (!id || typeof id !== 'number') {
       console.error('Invalid parent ID provided to getParentDetails:', id);
       throw new Error('Invalid parent ID');
@@ -27,14 +28,11 @@ export const TutortoiseClient = {
         PARENT_DETAILS_ENDPOINT.replace('{id}', String(id)),
       );
       return response.data;
-    } catch (error: any) {
-      console.error(
-        'Error fetching parent details:',
-        error.response?.data || error.message,
-      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error fetching parent details:', message);
       throw new Error(
-        error.response?.data?.message ||
-          'Failed to fetch parent details. Please try again later.',
+        'Failed to fetch parent details. Please try again later.',
       );
     }
   },
@@ -43,35 +41,47 @@ export const TutortoiseClient = {
     return await axiosInstance
       .get(BALANCE_ENDPOINT.replace('{id}', id))
       .then((res) => res.data)
-      .catch((err) => console.error('Balance API call failed:', err));
+      .catch((err: unknown) => {
+        console.error('Balance API call failed:', err);
+        throw err;
+      });
   },
 
-  getOpenSessions: async () => {
+  getOpenSessions: async (): Promise<Session[]> => {
     return await axiosInstance
       .get(OPEN_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error('Sessions API call failed:', err));
+      .catch((err: unknown) => {
+        console.error('Open sessions API call failed:', err);
+        throw err;
+      });
   },
 
-  getAllSessions: async () => {
+  getAllSessions: async (): Promise<Session[]> => {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error('Sessions API call failed:', err));
+      .catch((err: unknown) => {
+        console.error('All sessions API call failed:', err);
+        throw err;
+      });
   },
 
-  getTransactionHistory: async (id: string): Promise<any> => {
+  getTransactionHistory: async (id: string): Promise<Session[]> => {
     return await axiosInstance
       .get(TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id))
       .then((res) => res.data)
-      .catch((err) => console.error('Transaction History API call failed'));
+      .catch((err: unknown) => {
+        console.error('Transaction history API call failed:', err);
+        throw err;
+      });
   },
 
   buyCredits: async (
     id: string,
     credits: number,
     amount: number,
-  ): Promise<any> => {
+  ): Promise<number> => {
     return await axiosInstance
       .post(BUY_CREDITS_ENDPOINT, {
         parentId: id,
@@ -79,13 +89,16 @@ export const TutortoiseClient = {
         amount,
       })
       .then((res) => res.data)
-      .catch((err) => console.error('Buy credits API call failed', err));
+      .catch((err: unknown) => {
+        console.error('Buy credits API call failed:', err);
+        throw err;
+      });
   },
   addStudent: async (
     parentId: number,
     firstName: string,
     lastName: string,
-  ): Promise<any> => {
+  ): Promise<Student> => {
     return await axiosInstance
       .post(ADD_STUDENT_ENDPOINT, {
         parentId,
@@ -93,21 +106,25 @@ export const TutortoiseClient = {
         lastName,
       })
       .then((res) => res.data)
-      .catch((err) => console.error('Add students API call failed', err));
+      .catch((err: unknown) => {
+        console.error('Add student API call failed:', err);
+        throw err;
+      });
   },
-  getSessionHistory: async (): Promise<any> => {
+  getSessionHistory: async (): Promise<Session[]> => {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) =>
-        console.error('Transaction History API call failed', err),
-      );
+      .catch((err: unknown) => {
+        console.error('Session history API call failed:', err);
+        throw err;
+      });
   },
   bookSession: async (
     parentId: number,
     studentId: number,
     sessionId: number,
-  ): Promise<any> => {
+  ): Promise<Session> => {
     const updated_endpoint = BOOK_SESSION_ENDPOINT.replace(
       '{sessionId}',
       String(sessionId),
@@ -121,13 +138,19 @@ export const TutortoiseClient = {
         sessionId,
       })
       .then((res) => res.data)
-      .catch((err) => console.error('Book session API call failed', err));
+      .catch((err: unknown) => {
+        console.error('Book session API call failed:', err);
+        throw err;
+      });
   },
-  getAdminDetails: async () => {
+  getAdminDetails: async (): Promise<unknown> => {
     return await axiosInstance
       .get(ADMIN_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error('Sessions API call failed:', err));
+      .catch((err: unknown) => {
+        console.error('Admin details API call failed:', err);
+        throw err;
+      });
   },
 
   /**
@@ -138,7 +161,7 @@ export const TutortoiseClient = {
     tutorId: number,
     sessionId: number,
     grade: number,
-  ): Promise<any> => {
+  ): Promise<Session> => {
     return await axiosInstance
       .put(TUTOR_ASSIGN_GRADE_ENDPOINT, {
         tutorId,
@@ -146,8 +169,8 @@ export const TutortoiseClient = {
         grade,
       })
       .then((res) => res.data)
-      .catch((err) => {
-        console.error('Assign grade API call failed', err);
+      .catch((err: unknown) => {
+        console.error('Assign grade API call failed:', err);
         throw err;
       });
   },
