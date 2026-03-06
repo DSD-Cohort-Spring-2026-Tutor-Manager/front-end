@@ -4,6 +4,7 @@ import { useContext, useState } from 'react';
 
 import CreditsViewBar from '@/app/_components/CreditsViewbar/CreditsViewBar';
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
+import { ParentContext } from '../../context/ParentContext';
 import AvailableSessionsTable from '@/app/_components/DataTable/AvailableSessionsTable/AvailableSessionsTable';
 import Modal from '@/app/_components/Modal/Modal';
 import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
@@ -26,8 +27,17 @@ function Page() {
 
   const { credits, addCredits } = ctx;
 
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
+
+  const { parentDetails, setParentDetails } = parentCtx;
+  const { creditBalance } = parentDetails; // Extract creditBalance from parentDetails
+
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<SessionRow | null>(null);
+  const [selectedSession, setSelectedSession] = useState<SessionRow | null>(
+    null,
+  );
 
   const handleJoinClick = (session: SessionRow) => {
     setSelectedSession(session);
@@ -41,12 +51,29 @@ function Page() {
 
   const handleConfirmBooking = async () => {
     if (!selectedSession) return;
-    
-    // In a real app we'd get the actual selected studentId from state
-    // For now we'll mock parentId and studentId as 1 to match existing hardcoded logic
+
+    const currentParentId = parentDetails.parentId;
+    const currentStudentId =
+      parentDetails.selectedStudent?.studentId ||
+      (parentDetails.students && parentDetails.students.length > 0
+        ? parentDetails.students[0].studentId
+        : undefined);
+
+    if (!currentParentId || !currentStudentId) {
+      console.error('Cannot book session: Missing parent or student ID');
+      return;
+    }
+
     try {
-      await TutortoiseClient.bookSession(1, 1, Number(selectedSession.id));
+      await TutortoiseClient.bookSession(
+        currentParentId,
+        currentStudentId,
+        Number(selectedSession.id),
+      );
+
+      // Keep both CreditContext and ParentContext in sync
       addCredits(-1);
+      parentCtx.addCredits(-1);
     } catch (error) {
       console.error('Failed to book session:', error);
     } finally {
@@ -60,10 +87,30 @@ function Page() {
         <div className='tutoring__nav'>
           <label className='tutoring__selector' htmlFor='students'>
             Choose a student:{' '}
-            <select name='students' id='students'>
-              <option value='student'>Zayn</option>
-              <option value='student'>Leo</option>
-              <option value='student'>Scarlet</option>
+            <select
+              name='students'
+              id='students'
+              value={parentDetails.selectedStudent?.studentId || ''}
+              onChange={(e) => {
+                const selectedStudent = parentDetails.students?.find(
+                  (s) => s.studentId === Number(e.target.value),
+                );
+                if (selectedStudent) {
+                  setParentDetails({ ...parentDetails, selectedStudent });
+                }
+              }}
+            >
+              {parentDetails.students && parentDetails.students.length > 0 ? (
+                parentDetails.students.map((student) => (
+                  <option key={student.studentId} value={student.studentId}>
+                    {student.studentName}
+                  </option>
+                ))
+              ) : (
+                <option value='' disabled>
+                  No students available
+                </option>
+              )}
             </select>
           </label>
 
@@ -78,27 +125,28 @@ function Page() {
 
       {isBookingModalOpen && selectedSession && (
         <Modal buttons={[]}>
-          <div className="flex flex-col items-center">
-            <h2 className="add-student-modal_header mb-4 text-center">
+          <div className='flex flex-col items-center'>
+            <h2 className='add-student-modal_header mb-4 text-center'>
               Booking Confirmation
             </h2>
-            <p className="text-lg text-gray-700 mb-4 text-center">
+            <p className='text-lg text-gray-700 mb-4 text-center'>
               You will be joining {selectedSession.tutor} on{' '}
               {selectedSession.date} at {selectedSession.time} to study{' '}
               {selectedSession.subject}
             </p>
-            <p className="text-lg text-gray-800 font-semibold mt-4 text-center">
+            <p className='text-lg text-gray-800 font-semibold mt-4 text-center'>
               Cost: 1 Token
             </p>
-            <div className="add-student-modal-buttons mt-4">
+            <p>Available Credits: {creditBalance}</p>
+            <div className='add-student-modal-buttons mt-4'>
               <button
-                className="modal-button add-student-confirm-button"
+                className='modal-button add-student-confirm-button'
                 onClick={handleConfirmBooking}
               >
                 Confirm
               </button>
               <button
-                className="modal-button add-student-cancel-button"
+                className='modal-button add-student-cancel-button'
                 onClick={closeBookingModal}
               >
                 Cancel
