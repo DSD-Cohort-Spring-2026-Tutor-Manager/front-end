@@ -24,8 +24,8 @@ const AuthContext = createContext<{
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Derive legacy user shape from Zustand store
-  const zustandUser = useAuthStore((s) => s.user);
-  const zustandRole = useAuthStore((s) => s.role);
+  const zustandUser = useAuthStore((s:any) => s.user);
+  const zustandRole = useAuthStore((s:any) => s.role);
 
   const legacyUser: LegacyUser | null =
     zustandUser && zustandRole
