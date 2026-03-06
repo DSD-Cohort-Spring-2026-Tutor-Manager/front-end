@@ -1,54 +1,70 @@
-import axiosInstance from "@/lib/axios";
+import axiosInstance from '@/lib/axios';
 
 // Make calls to the same origin to route requests through the proxy
-const PARENT_DETAILS_ENDPOINT = "/api/parent/{id}";
-const BALANCE_ENDPOINT = "/api/credits/balance/{id}";
-const TRANSACTION_HISTORY_ENDPOINT = "/api/credits/history/{id}";
-const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
-const ADD_STUDENT_ENDPOINT = "/api/student/add";
-const ALL_SESSIONS_ENDPOINT = "/api/sessions";
-const OPEN_SESSIONS_ENDPOINT = "/api/sessions/open";
+const PARENT_DETAILS_ENDPOINT = '/api/parent/{id}';
+const BALANCE_ENDPOINT = '/api/credits/balance/{id}';
+const TRANSACTION_HISTORY_ENDPOINT = '/api/credits/history/{id}';
+const BUY_CREDITS_ENDPOINT = '/api/credits/buy';
+const ADD_STUDENT_ENDPOINT = '/api/student/add';
+const ALL_SESSIONS_ENDPOINT = '/api/sessions';
+const OPEN_SESSIONS_ENDPOINT = '/api/sessions/open';
 const BOOK_SESSION_ENDPOINT =
-  "/api/parent/book/{sessionId}/{parentId}/{studentId}";
-const ADMIN_ENDPOINT = "/api/admin/dashboard";
-const TUTOR_ASSIGN_GRADE_ENDPOINT = "/api/tutor/assign-grade";
+  '/api/parent/book/{sessionId}/{parentId}/{studentId}';
+const ADMIN_ENDPOINT = '/api/admin/dashboard';
+const TUTOR_ASSIGN_GRADE_ENDPOINT = '/api/tutor/assign-grade';
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
 
   getParentDetails: async (id: number): Promise<any> => {
-    return await axiosInstance
-      .get(PARENT_DETAILS_ENDPOINT.replace("{id}", String(id)))
-      .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+    if (!id || typeof id !== 'number') {
+      console.error('Invalid parent ID provided to getParentDetails:', id);
+      throw new Error('Invalid parent ID');
+    }
+
+    try {
+      const response = await axiosInstance.get(
+        PARENT_DETAILS_ENDPOINT.replace('{id}', String(id)),
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error(
+        'Error fetching parent details:',
+        error.response?.data || error.message,
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          'Failed to fetch parent details. Please try again later.',
+      );
+    }
   },
 
   getBalance: async (id: string): Promise<number> => {
     return await axiosInstance
-      .get(BALANCE_ENDPOINT.replace("{id}", id))
+      .get(BALANCE_ENDPOINT.replace('{id}', id))
       .then((res) => res.data)
-      .catch((err) => console.error("Balance API call failed:", err));
+      .catch((err) => console.error('Balance API call failed:', err));
   },
 
   getOpenSessions: async () => {
     return await axiosInstance
       .get(OPEN_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   getAllSessions: async () => {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   getTransactionHistory: async (id: string): Promise<any> => {
     return await axiosInstance
-      .get(TRANSACTION_HISTORY_ENDPOINT.replace("{id}", id))
+      .get(TRANSACTION_HISTORY_ENDPOINT.replace('{id}', id))
       .then((res) => res.data)
-      .catch((err) => console.error("Transaction History API call failed"));
+      .catch((err) => console.error('Transaction History API call failed'));
   },
 
   buyCredits: async (
@@ -63,7 +79,7 @@ export const TutortoiseClient = {
         amount,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Buy credits API call failed", err));
+      .catch((err) => console.error('Buy credits API call failed', err));
   },
   addStudent: async (
     parentId: number,
@@ -77,14 +93,14 @@ export const TutortoiseClient = {
         lastName,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Add students API call failed", err));
+      .catch((err) => console.error('Add students API call failed', err));
   },
   getSessionHistory: async (): Promise<any> => {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
       .catch((err) =>
-        console.error("Transaction History API call failed", err),
+        console.error('Transaction History API call failed', err),
       );
   },
   bookSession: async (
@@ -93,11 +109,11 @@ export const TutortoiseClient = {
     sessionId: number,
   ): Promise<any> => {
     const updated_endpoint = BOOK_SESSION_ENDPOINT.replace(
-      "{sessionId}",
+      '{sessionId}',
       String(sessionId),
     )
-      .replace("{parentId}", String(parentId))
-      .replace("{studentId}", String(studentId));
+      .replace('{parentId}', String(parentId))
+      .replace('{studentId}', String(studentId));
     return await axiosInstance
       .post(updated_endpoint, {
         parentId,
@@ -105,13 +121,13 @@ export const TutortoiseClient = {
         sessionId,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Book session API call failed", err));
+      .catch((err) => console.error('Book session API call failed', err));
   },
   getAdminDetails: async () => {
     return await axiosInstance
       .get(ADMIN_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => console.error('Sessions API call failed:', err));
   },
 
   /**
@@ -121,7 +137,7 @@ export const TutortoiseClient = {
   assignGrade: async (
     tutorId: number,
     sessionId: number,
-    grade: number
+    grade: number,
   ): Promise<any> => {
     return await axiosInstance
       .put(TUTOR_ASSIGN_GRADE_ENDPOINT, {
@@ -131,9 +147,8 @@ export const TutortoiseClient = {
       })
       .then((res) => res.data)
       .catch((err) => {
-        console.error("Assign grade API call failed", err);
+        console.error('Assign grade API call failed', err);
         throw err;
       });
   },
 };
-

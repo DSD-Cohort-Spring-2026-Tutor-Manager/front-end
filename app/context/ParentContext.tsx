@@ -1,12 +1,20 @@
 'use client';
 
-import { createContext, useMemo, useState, useEffect, Dispatch, SetStateAction } from 'react';
+import {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import { Parent, Student } from '../types/types';
+import { useAuthStore } from '../../store/authStore';
 
 type Props = {
   children: React.ReactNode;
-  parentId: number;
+  parentId?: number;
 };
 
 type ParentDetails = Partial<Parent> & {
@@ -32,18 +40,31 @@ export const ParentContext = createContext<ParentContextValue | null>(null);
 export function ParentProvider({ children, parentId }: Props) {
   const [parentDetails, setParentDetails] = useState(defaultParentDetails);
 
+  // read auth store for fallback parent id
+  const authUserId = useAuthStore((s) => s.user?.id);
+
+  const effectiveParentId = (() => {
+    if (typeof parentId === 'number' && !isNaN(parentId)) return parentId;
+    if (typeof authUserId === 'number' && !isNaN(authUserId)) return authUserId;
+    if (typeof authUserId === 'string' && /^\d+$/.test(authUserId))
+      return parseInt(authUserId, 10);
+    return undefined;
+  })();
+
   useEffect(() => {
-    async function fetchParentDetails() {
+    async function fetchParentDetails(id: number) {
       try {
-        const data = await TutortoiseClient.getParentDetails(parentId);
+        const data = await TutortoiseClient.getParentDetails(id);
         setParentDetails((prevDetails) => ({ ...prevDetails, ...data }));
       } catch (error) {
         console.error('Failed to fetch parent details:', error);
       }
     }
 
-    fetchParentDetails();
-  }, [parentId]);
+    if (typeof effectiveParentId === 'number' && !isNaN(effectiveParentId)) {
+      fetchParentDetails(effectiveParentId);
+    }
+  }, [effectiveParentId]);
 
   const addCredits = (amount: number) => {
     setParentDetails((prevDetails) => ({
