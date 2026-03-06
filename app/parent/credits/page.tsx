@@ -6,10 +6,10 @@ import CreditOpts from '../../_components/CreditOpts/CreditOpts';
 import { useRouter } from 'next/navigation';
 import { useState, useContext } from 'react';
 
-import { CreditContext } from '../../_components/CreditContext/CreditContext';
+import { ParentContext } from '../../context/ParentContext';
 import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
-function page() {
+function Page() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [pendingAmount, setPendingAmount] = useState<number>(0);
@@ -25,13 +25,15 @@ function page() {
       {
         text: 'Confirm',
         onClick: () => {
-          TutortoiseClient.buyCredits('1', pendingAmount, 15)
+          const parentId = parentDetails?.parentId;
+          if (!parentId) return;
+          TutortoiseClient.buyCredits(String(parentId), pendingAmount, 15)
             .then((res: number) => {
               addCredits(pendingAmount);
             })
             .finally(() => {
               setIsOpen(false);
-              // router.push('/'); // Redirect to home
+              setPendingAmount(0);
             });
         },
       },
@@ -39,18 +41,20 @@ function page() {
     ],
   };
 
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
+  const parentCtx = useContext(ParentContext);
+  if (!parentCtx)
+    throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
-  const { credits, addCredits } = ctx;
+  const { parentDetails, addCredits } = parentCtx;
+  const { creditBalance } = parentDetails;
+
   return (
     <div className='credits'>
       <header className='credits__header'>
         <h1 className='credits__header-title'>Credits</h1>
         <p className='credits__header-subtext'>
-          You have {credits} credits available.<br></br> 1 credit equals an hour
-          of tutoring for your child.
+          You have {creditBalance} credits available.<br></br> 1 credit equals
+          an hour of tutoring for your child.
         </p>
       </header>
       <section className='billing'>
@@ -68,7 +72,7 @@ function page() {
         </div>
       </section>
       <CreditOpts
-        currentCredit={credits}
+        currentCredit={creditBalance}
         isModalOpen={isOpen}
         modalDetails={modalDetails}
         onSelectOption={onPurchase}
@@ -90,4 +94,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
