@@ -85,6 +85,14 @@ export const theme: Theme = createTheme({
             opacity: 0.8,
           },
         },
+        outlined: {
+          color: tokens.color.textPrimary,  
+          backgroundColor: tokens.color.primary,
+          "&:hover": {
+            backgroundColor: tokens.color.primary,
+            opacity: 0.8,
+          },
+        },
       },
     },
     MuiCard: {
