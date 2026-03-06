@@ -52,11 +52,22 @@ function Page() {
   const handleConfirmBooking = async () => {
     if (!selectedSession) return;
 
-    // In a real app we'd get the actual selected studentId from state
-    // For now we'll mock parentId and studentId as 1 to match existing hardcoded logic
+    const parentId = parentDetails.parentId;
+    const studentId = parentDetails.selectedStudent?.studentId;
+
+    if (!parentId || !studentId) return;
+
+    if (typeof creditBalance !== 'number') {
+      throw new Error('Invalid credit balance');
+    }
+
     try {
-      await TutortoiseClient.bookSession(1, 1, Number(selectedSession.id));
-      addCredits(-1);
+      await TutortoiseClient.bookSession(
+        parentId,
+        studentId,
+        Number(selectedSession.id),
+      );
+      addCredits(-1); // Deduct one credit
     } catch (error) {
       console.error('Failed to book session:', error);
     } finally {

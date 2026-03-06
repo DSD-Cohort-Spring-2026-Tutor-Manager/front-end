@@ -1,21 +1,27 @@
 'use client';
 
-import { createContext, useMemo, useState, useEffect } from 'react';
+import { createContext, useMemo, useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
+import { Parent, Student } from '../types/types';
 
 type Props = {
   children: React.ReactNode;
+  parentId: number;
+};
+
+type ParentDetails = Partial<Parent> & {
+  creditBalance: number;
+  students: Student[];
+  selectedStudent?: Student;
 };
 
 export type ParentContextValue = {
-  parentDetails: any;
-  setParentDetails: (s: any) => void;
-  addCredits: (amount: number) => void; // Add addCredits method to the context value
+  parentDetails: ParentDetails;
+  setParentDetails: Dispatch<SetStateAction<ParentDetails>>;
+  addCredits: (amount: number) => void;
 };
 
-// A parent object with the added field 'selectedStudent' which will be used throughout the app
-const defaultParentDetails = {
-  // other fields populated from the API
+const defaultParentDetails: ParentDetails = {
   creditBalance: 0.0,
   students: [],
   selectedStudent: undefined,
@@ -23,13 +29,13 @@ const defaultParentDetails = {
 
 export const ParentContext = createContext<ParentContextValue | null>(null);
 
-export function ParentProvider({ children }: Props) {
+export function ParentProvider({ children, parentId }: Props) {
   const [parentDetails, setParentDetails] = useState(defaultParentDetails);
 
   useEffect(() => {
     async function fetchParentDetails() {
       try {
-        const data = await TutortoiseClient.getParentDetails(1);
+        const data = await TutortoiseClient.getParentDetails(parentId);
         setParentDetails((prevDetails) => ({ ...prevDetails, ...data }));
       } catch (error) {
         console.error('Failed to fetch parent details:', error);
@@ -37,12 +43,12 @@ export function ParentProvider({ children }: Props) {
     }
 
     fetchParentDetails();
-  }, []);
+  }, [parentId]);
 
   const addCredits = (amount: number) => {
     setParentDetails((prevDetails) => ({
       ...prevDetails,
-      creditBalance: prevDetails.creditBalance + amount,
+      creditBalance: (prevDetails.creditBalance || 0) + amount,
     }));
   };
 

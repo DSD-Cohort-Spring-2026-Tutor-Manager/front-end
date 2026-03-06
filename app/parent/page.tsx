@@ -87,8 +87,12 @@ function Home() {
   }
 
   function addStudent() {
-    const firstName = (document.getElementById('firstName') as any)?.value;
-    const lastName = (document.getElementById('lastName') as any)?.value;
+    const firstName = (
+      document.getElementById('firstName') as HTMLInputElement | null
+    )?.value.trim();
+    const lastName = (
+      document.getElementById('lastName') as HTMLInputElement | null
+    )?.value.trim();
 
     const showSuccessAlert = () => {
       setIsAlertExiting(true);

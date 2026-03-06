@@ -22,19 +22,20 @@ function Page() {
   const modalDetails = {
     text: `Purchase ${pendingAmount} credits?`,
     buttons: [
-      {
-        text: 'Confirm',
-        onClick: () => {
-          TutortoiseClient.buyCredits('1', pendingAmount, 15)
-            .then((res: number) => {
-              addCredits(pendingAmount);
-            })
-            .finally(() => {
-              setIsOpen(false);
-              // router.push('/'); // Redirect to home
-            });
-        },
-      },
+{
+  text: 'Confirm',
+  onClick: () => {
+    const parentId = parentDetails?.parentId;
+    if (!parentId) return;
+    TutortoiseClient.buyCredits(String(parentId), pendingAmount, 15)
+      .then((res: number) => {
+        addCredits(pendingAmount);
+      })
+      .finally(() => {
+        setIsOpen(false);
+      });
+  },
+},
       { text: 'Cancel', onClick: () => setIsOpen(false) },
     ],
   };
@@ -43,16 +44,16 @@ function Page() {
   if (!parentCtx)
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
-  const { parentDetails, addCredits } = parentCtx; // Destructure addCredits from ParentContext
-  const { creditBalance } = parentDetails; // Extract creditBalance from ParentContext
+  const { parentDetails, addCredits } = parentCtx; 
+  const { creditBalance } = parentDetails; 
 
   return (
     <div className='credits'>
       <header className='credits__header'>
         <h1 className='credits__header-title'>Credits</h1>
         <p className='credits__header-subtext'>
-          You have {creditBalance} credits available.<br></br> 1 credit equals an hour
-          of tutoring for your child.
+          You have {creditBalance} credits available.<br></br> 1 credit equals
+          an hour of tutoring for your child.
         </p>
       </header>
       <section className='billing'>
