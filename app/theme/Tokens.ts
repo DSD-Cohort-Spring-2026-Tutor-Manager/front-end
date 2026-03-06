@@ -32,7 +32,7 @@ export const tokens = {
 
     bg: "#F8FAFC",
     bgPaper: "#FFFFFF",
-    surface: "#2e6f5e;",
+    surface: "#2e6f5e",
     surfaceHover: "#F8FAFC",
 
     textPrimary: "#243A5E",
