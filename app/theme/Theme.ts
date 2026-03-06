@@ -85,6 +85,14 @@ export const theme: Theme = createTheme({
             opacity: 0.8,
           },
         },
+        outlined: {
+          color: tokens.color.textPrimary,  
+          backgroundColor: tokens.color.primary,
+          "&:hover": {
+            backgroundColor: tokens.color.primary,
+            opacity: 0.8,
+          },
+        },
       },
     },
     MuiCard: {
@@ -248,6 +256,19 @@ export const theme: Theme = createTheme({
           "&.Mui-active": {
             color: "var(--color-primary)",
             "& .MuiTableSortLabel-icon": { color: "var(--color-primary)" },
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: tokens.color.bg,   
+          opacity: 0.5,
+          transition: "opacity 0.15s ease",
+          "&:hover": {
+            opacity: 1,
+            backgroundColor: tokens.color.surface,
           },
         },
       },
