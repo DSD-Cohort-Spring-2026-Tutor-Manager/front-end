@@ -32,6 +32,7 @@ function Page() {
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
   const { parentDetails, setParentDetails } = parentCtx;
+  const { creditBalance } = parentDetails; // Extract creditBalance from parentDetails
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionRow | null>(
@@ -99,6 +100,7 @@ function Page() {
             <p className='text-lg text-gray-800 font-semibold mt-4 text-center'>
               Cost: 1 Token
             </p>
+            <p>Available Credits: {creditBalance}</p>
             <div className='add-student-modal-buttons mt-4'>
               <button
                 className='modal-button add-student-confirm-button'

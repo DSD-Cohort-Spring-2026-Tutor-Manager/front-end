@@ -68,6 +68,7 @@ function Home() {
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
   const { parentDetails, setParentDetails } = parentCtx;
+  const { creditBalance } = parentDetails; // Extract creditBalance from parentDetails
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(

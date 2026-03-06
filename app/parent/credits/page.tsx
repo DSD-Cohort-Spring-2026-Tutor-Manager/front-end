@@ -6,7 +6,6 @@ import CreditOpts from '../../_components/CreditOpts/CreditOpts';
 import { useRouter } from 'next/navigation';
 import { useState, useContext } from 'react';
 
-import { CreditContext } from '../../_components/CreditContext/CreditContext';
 import { ParentContext } from '../../context/ParentContext';
 import { TutortoiseClient } from '../../_api/tutortoiseClient';
 
@@ -40,22 +39,19 @@ function Page() {
     ],
   };
 
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
-
-  const { credits, addCredits } = ctx;
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
-  const { parentDetails, setParentDetails } = parentCtx;
+  const { parentDetails, addCredits } = parentCtx; // Destructure addCredits from ParentContext
+  const { creditBalance } = parentDetails; // Extract creditBalance from ParentContext
+
   return (
     <div className='credits'>
       <header className='credits__header'>
         <h1 className='credits__header-title'>Credits</h1>
         <p className='credits__header-subtext'>
-          You have {credits} credits available.<br></br> 1 credit equals an hour
+          You have {creditBalance} credits available.<br></br> 1 credit equals an hour
           of tutoring for your child.
         </p>
       </header>
@@ -74,7 +70,7 @@ function Page() {
         </div>
       </section>
       <CreditOpts
-        currentCredit={credits}
+        currentCredit={creditBalance}
         isModalOpen={isOpen}
         modalDetails={modalDetails}
         onSelectOption={onPurchase}
