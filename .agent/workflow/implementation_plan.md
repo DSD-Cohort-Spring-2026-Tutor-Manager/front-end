@@ -12,11 +12,8 @@
  front-end/
  ├── app/
  │   ├── _api/
--│   │   ├── login/routes.ts          ← Unclear purpose, not a proper Next.js route handler
-+│   │   ├── auth/
-+│   │   │   └── authClient.ts        ← Login/register/refresh API calls
- │   │   └── tutortoiseClient.ts      ← Keep, but refactor to use axios + auth interceptor
-+│   │   └── axiosInstance.ts         ← NEW: shared axios instance with JWT interceptor
+-│   │   ├── login/routes.ts          ← Still present — unclear purpose; review and remove or move to _api/auth/authClient.ts
+ │   │   └── tutortoiseClient.ts      ← Keep ✅ — refactored to use lib/axios.ts
  │   ├── _components/
  │   │   ├── Alert/
  │   │   ├── CreditContext/           ← Keep
@@ -26,33 +23,36 @@
  │   │   ├── DataBoxGrid/            ← Keep
  │   │   ├── DataTable/              ← Keep (has Admin/ and AvailableSessionsTable/ sub-dirs)
  │   │   ├── Modal/                  ← Keep
-+│   │   ├── ProtectedRoute/         ← NEW: route guard component
-+│   │   ├── ProgressChart/          ← NEW: recharts-based progress visualization
++│   │   ├── ProtectedRoute/         ← NEW: route guard component (not yet built)
++│   │   ├── ProgressChart/          ← NEW: recharts-based progress visualization (not yet built)
  │   │   ├── SideNav/                ← Keep
  │   │   └── TopNav/                 ← Keep
  │   ├── admin/                      ← Keep structure
-+│   │   ├── reports/page.tsx        ← NEW: manager reporting page
++│   │   ├── reports/page.tsx        ← NEW: manager reporting page (not yet built)
  │   ├── parent/                     ← Keep structure
-+│   │   ├── progress/page.tsx       ← NEW: ROI progress dashboard
++│   │   ├── progress/page.tsx       ← NEW: ROI progress dashboard (not yet built)
  │   ├── tutor/                      ← Keep structure
-+│   │   ├── notes/page.tsx          ← NEW: session notes management
++│   │   ├── notes/page.tsx          ← NEW: session notes management (not yet built)
  │   ├── context/
- │   │   ├── AuthContext.tsx          ← REFACTOR: JWT-based, not localStorage user object
+ │   │   ├── AuthContext.tsx          ← Refactored ✅ — sources from Zustand, no fake auth
  │   │   └── StudentContext.tsx       ← REFACTOR: remove hardcoded default, load from API
  │   ├── theme/                      ← Keep as-is (well-built)
-+│   ├── types/                      ← NEW: shared TypeScript interfaces
++│   ├── types/                      ← NEW: shared TypeScript interfaces (not yet built)
 +│   │   ├── session.ts
 +│   │   ├── student.ts
 +│   │   ├── credit.ts
 +│   │   └── user.ts
-+│   ├── hooks/                      ← NEW: custom hooks
-+│   │   ├── useAuth.ts
-+│   │   └── useApi.ts
  │   ├── globals.css                 ← Keep
  │   ├── layout.tsx                  ← Keep
- │   └── page.tsx                    ← REFACTOR: connect to backend auth endpoint
--├── proxy.ts                        ← FIX: rename function to `middleware`, fix /api/base bug
-+├── middleware.ts                   ← RENAMED: proper Next.js middleware export
+ │   └── page.tsx                    ← Connected to backend auth ✅
++├── lib/
++│   ├── axios.ts                    ← Shared axios instance with JWT interceptor ✅
++│   └── authService.ts              ← login/logout against real backend ✅
++├── store/
++│   └── authStore.ts                ← Zustand auth store (user, role, token, isAuthenticated) ✅
++├── hooks/                          ← Exists at root (not app/hooks/)
++│   └── useRole.ts                  ← ✅ built
+ ├── proxy.ts                        ← Keep (Next.js 16 proxy convention — see maintenance_log.md)
 ```
 
 ---
@@ -104,79 +104,43 @@
 
 ## State Management
 
-**Current state:** React Context API
-- `AuthContext` — stores `{ name, avatar, role }` in `localStorage`. **Fake auth.**
-- `StudentContext` — stores selected student. **Hardcoded default** `{ studentName: "Zayn", studentId: 7 }`.
-- `CreditContext` — manages credit display state.
+**Current state:** React Context API + Zustand
+- `AuthContext` — **Refactored.** Now derives from `store/authStore.ts` (Zustand + persist). JWT token and role live in memory/Zustand only. No localStorage fake-auth. `lib/authService.ts` handles real login against the backend.
+- `StudentContext` — still stores selected student with **hardcoded default** `{ studentName: "Zayn", studentId: 7 }` — not yet wired to API.
+- `CreditContext` — manages credit display state. Works; needs auth integration.
 
-**Recommendation:** Keep React Context for now. The app is not complex enough to warrant Redux/Zustand. However:
-1. `AuthContext` must be refactored to store JWT tokens, provide `isAuthenticated`, and expose `login/logout/refresh` methods.
-2. `StudentContext` must load the student list from the API based on the authenticated parent's ID.
-3. Consider adding a `SessionContext` if session state becomes shared across many components.
+**Remaining:**
+1. `StudentContext` must load student list from the API based on the authenticated parent's ID. Remove the hardcoded default.
+2. Consider adding a `SessionContext` if session state becomes shared across many components.
 
 ---
 
 ## API Client
 
-**Current state:** `tutortoiseClient.ts` — 10 methods using raw `fetch()`.
+**Current state:** `tutortoiseClient.ts` — axios-based via `lib/axios.ts`. The axios instance has a Bearer token interceptor (reads from Zustand store) and a 403 → `/unauthorized` redirect. Auth headers are sent with every request.
 
-**Problems:**
-1. No auth headers sent with any request
-2. Error handling is `console.error` + swallow
-3. `getSessionHistory()` and `getAllSessions()` hit the same endpoint (duplicate)
-4. Hardcoded `parentId` values in some calls
-5. No request/response interceptors
-6. Response types are `any` everywhere
+**Remaining problems:**
+1. Every method swallows errors with `console.error` — failures are invisible to callers and the UI
+2. Response types are `any` everywhere — no TypeScript safety
+3. `getAllSessions()` and `getOpenSessions()` hit different endpoints (`/api/sessions` vs `/api/sessions/open`) — confirm whether both are needed or consolidate
+4. Some calls still hardcode `parentId` values
+5. `app/_api/login/routes.ts` still exists with unclear purpose — should be reviewed and either removed or moved to `_api/auth/authClient.ts`
 
-**Recommended Pattern:**
-
-```typescript
-// app/_api/axiosInstance.ts
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' }
-});
-
-// Request interceptor: attach JWT
-// Guard localStorage access for SSR safety (matches AuthContext.tsx pattern)
-api.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('accessToken');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Response interceptor: handle 401, refresh token
-api.interceptors.response.use(
-  (response) => response.data,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Attempt token refresh
-    }
-    return Promise.reject(error);
-  }
-);
-
-export default api;
-```
-
-> ⚠️ GAP: `axios` is not in `package.json` — must be added.
+**`lib/axios.ts`** is the shared instance — do not create a second axios instance. Extend interceptors there if needed.
 
 ---
 
 ## Auth Implementation Notes
 
-**Current state:** Fake. `page.tsx` (login) matches email/password against hardcoded objects and sets `localStorage`.
+**Current state:** Real auth implemented.
+- ✅ `POST /api/login` called from `lib/authService.ts` — returns JWT token and role
+- ✅ Token stored in Zustand (`store/authStore.ts`) via `persist` middleware
+- ✅ `AuthContext` refactored — sources from Zustand, exposes `user`, `setUser` (logout path calls `lib/authService.logout()`)
+- ✅ `lib/axios.ts` attaches Bearer token to all requests via interceptor
 
-**What needs to be built:**
-1. `POST /api/auth/login` call from frontend → returns JWT access + refresh tokens
-2. Token storage in `localStorage` (or `httpOnly` cookies if SSR matters)
-3. `AuthContext` refactored: `{ user, isAuthenticated, login, logout, refresh }`
-4. `middleware.ts` (renamed from `proxy.ts`) — check for valid token before allowing access to role routes
-5. `ProtectedRoute` component — wraps role layouts, redirects to `/` if unauthenticated
+**Remaining:**
+- ❌ `proxy.ts` — extend with JWT token validation before allowing access to role routes
+- ❌ `ProtectedRoute` component — wraps role layouts, redirects to `/` if unauthenticated (see Component Map)
 
 ---
 
