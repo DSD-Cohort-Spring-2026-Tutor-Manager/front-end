@@ -52,11 +52,24 @@ function Page() {
   const handleConfirmBooking = async () => {
     if (!selectedSession) return;
 
-    // In a real app we'd get the actual selected studentId from state
-    // For now we'll mock parentId and studentId as 1 to match existing hardcoded logic
+    const currentParentId = parentDetails.parentId || 1;
+    // Fallback to the first student's ID if no student is explicitly selected, otherwise default to 1
+    const currentStudentId =
+      parentDetails.selectedStudent?.studentId ||
+      (parentDetails.students && parentDetails.students.length > 0
+        ? parentDetails.students[0].studentId
+        : 1);
+
     try {
-      await TutortoiseClient.bookSession(1, 1, Number(selectedSession.id));
+      await TutortoiseClient.bookSession(
+        currentParentId,
+        currentStudentId,
+        Number(selectedSession.id),
+      );
+
+      // Keep both CreditContext and ParentContext in sync
       addCredits(-1);
+      parentCtx.addCredits(-1);
     } catch (error) {
       console.error('Failed to book session:', error);
     } finally {
@@ -70,10 +83,30 @@ function Page() {
         <div className='tutoring__nav'>
           <label className='tutoring__selector' htmlFor='students'>
             Choose a student:{' '}
-            <select name='students' id='students'>
-              <option value='student'>Zayn</option>
-              <option value='student'>Leo</option>
-              <option value='student'>Scarlet</option>
+            <select 
+              name='students' 
+              id='students'
+              value={parentDetails.selectedStudent?.studentId || ''}
+              onChange={(e) => {
+                const selectedStudent = parentDetails.students?.find(
+                  (s) => s.studentId === Number(e.target.value)
+                );
+                if (selectedStudent) {
+                  setParentDetails({ ...parentDetails, selectedStudent });
+                }
+              }}
+            >
+              {parentDetails.students && parentDetails.students.length > 0 ? (
+                parentDetails.students.map((student) => (
+                  <option key={student.studentId} value={student.studentId}>
+                    {student.studentName}
+                  </option>
+                ))
+              ) : (
+                <option value='' disabled>
+                  No students available
+                </option>
+              )}
             </select>
           </label>
 

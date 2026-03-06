@@ -1,30 +1,45 @@
 'use client';
 
-import { createContext, useMemo, useState, useEffect } from 'react';
+import {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
+import { Parent, Student } from '../types/types';
 
 type Props = {
   children: React.ReactNode;
 };
 
+export type ParentDetails = Partial<Parent> & {
+  creditBalance: number;
+  students: Student[];
+  selectedStudent?: Student | null;
+};
+
 export type ParentContextValue = {
-  parentDetails: any;
-  setParentDetails: (s: any) => void;
+  parentDetails: ParentDetails;
+  setParentDetails: Dispatch<SetStateAction<ParentDetails>>;
   addCredits: (amount: number) => void; // Add addCredits method to the context value
 };
 
 // A parent object with the added field 'selectedStudent' which will be used throughout the app
-const defaultParentDetails = {
+const defaultParentDetails: ParentDetails = {
   // other fields populated from the API
   creditBalance: 0.0,
   students: [],
-  selectedStudent: undefined,
+  selectedStudent: null,
 };
 
 export const ParentContext = createContext<ParentContextValue | null>(null);
 
 export function ParentProvider({ children }: Props) {
-  const [parentDetails, setParentDetails] = useState(defaultParentDetails);
+  const [parentDetails, setParentDetails] =
+    useState<ParentDetails>(defaultParentDetails);
 
   useEffect(() => {
     async function fetchParentDetails() {
