@@ -12,7 +12,7 @@ const BOOK_SESSION_ENDPOINT =
   "/api/parent/book/{sessionId}/{parentId}/{studentId}";
 const ADMIN_ENDPOINT = "/api/admin/dashboard";
 const TUTOR_ASSIGN_GRADE_ENDPOINT = "/api/tutor/assign-grade";
-
+const STUDENT_NOTE_ENDPOINT = "/api/student/{studentId}/note";
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
 
@@ -134,6 +134,41 @@ export const TutortoiseClient = {
         console.error("Assign grade API call failed", err);
         throw err;
       });
+  },
+
+  getStudentNote: async (studentId: number, tutorId: number): Promise<any> => {
+    return await axiosInstance
+      .get(
+       STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)),
+        {
+          params: { tutorId }, 
+        },
+      )
+      .then((res) => res.data)
+      .catch((err) => console.error("Get student note API call failed", err));
+  },
+  updateStudentNote: async (
+    studentId: number,
+    tutorId: number,
+    firstName: string,
+    lastName: string,
+    note: string,
+  ): Promise<any> => {
+    return await axiosInstance
+      .put(
+       STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)),
+        {
+          studentId,
+          firstName,
+          lastName,
+          notes: note,
+        },
+        {
+          params: { tutorId },
+        },
+      )
+      .then((res) => res.data)
+      .catch((err) => console.error("Update student note API call failed", err));
   },
 };
 

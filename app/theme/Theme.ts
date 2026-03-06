@@ -252,5 +252,18 @@ export const theme: Theme = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: tokens.color.bg,   
+          opacity: 0.5,
+          transition: "opacity 0.15s ease",
+          "&:hover": {
+            opacity: 1,
+            backgroundColor: tokens.color.surface,
+          },
+        },
+      },
+    },
   },
 });

@@ -9,7 +9,15 @@ import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Popover from "@mui/material/Popover";
-import { Box, TextField, CircularProgress } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import { Edit as EditIcon } from "@mui/icons-material"; 
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import { Box, TextField, CircularProgress, Typography } from "@mui/material";
+import { TutortoiseClient } from "@/app/_api/tutortoiseClient";
+import { useAuthStore } from "@/store/authStore";
 
 interface Session {
   id?: string;
@@ -21,6 +29,8 @@ interface Session {
   time?: string;
   notes?: string;
   tutorId?: number;
+  studentId?: number;
+  tutorName?: string;
 }
 
 interface Props {
@@ -36,12 +46,23 @@ export default function DataTable({
   onAssignGrade,
   setSessions,
 }: Props) {
+  const user = useAuthStore((s:any) => s.user);
+  const tutorId = user?.id;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [gradeValues, setGradeValues] = useState<Record<string, string>>({});
   const [openSessionId, setOpenSessionId] = useState<string | null>(null);
   const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const [notesDialog, setNotesDialog]       = useState(false);
+  const [notesSession, setNotesSession]     = useState<Session | null>(null);
+  const [existingNotes, setExistingNotes]   = useState("");
+  const [editedNotes, setEditedNotes]       = useState("");
+  const [notesFetching, setNotesFetching]   = useState(false);
+  const [notesSaving, setNotesSaving]       = useState(false);
+  const [notesError, setNotesError]         = useState("");
+  const [notesSuccess, setNotesSuccess]     = useState(false);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -78,12 +99,71 @@ export default function DataTable({
       setLoadingSessionId(null);
     }
   };
+  const handleOpenNotes = async (session: Session) => {
+    setNotesSession(session);
+    setExistingNotes(session.notes || "");
+    setEditedNotes(session.notes || "");
+    setNotesError("");
+    setNotesSuccess(false);
+    setNotesDialog(true);
+    if (!session.studentId) return;
+
+    setNotesFetching(true);
+    try {
+      const data = await TutortoiseClient.getStudentNote(
+        Number(session.studentId),
+        tutorId,
+      );
+      const fetched = data?.lastName || data?.notes || session.notes || "";
+      setExistingNotes(fetched);
+      setEditedNotes(fetched);
+    } catch {
+      // fall back to session.notes already set
+    } finally {
+      setNotesFetching(false);
+    }
+  };
+
+  const handleSaveNotes = async () => {
+    if (!notesSession || !editedNotes.trim()) return;
+    setNotesSaving(true);
+    setNotesError("");
+    setNotesSuccess(false);
+  
+    try {
+      await TutortoiseClient.updateStudentNote(
+        Number(notesSession.studentId),
+        tutorId,
+        notesSession.studentFirstName,
+        notesSession.studentLastName,
+        editedNotes.trim(),
+      );
+      setExistingNotes(editedNotes.trim());
+      setNotesSuccess(true);
+      setNotesDialog(false);    
+      window.location.reload(); 
+      setSessions?.((prev) =>
+        prev.map((s) =>
+          s.sessionId === notesSession.sessionId
+            ? { ...s, notes: editedNotes.trim() }
+            : s
+        )
+      );
+    } catch (error: any) {
+      setNotesError(error?.message || "Could not save note. Please try again.");
+    } finally {
+      setNotesSaving(false);
+    }
+  };
+
+
   const handleClose = () => {
     setOpenSessionId(null);
     setAnchorEl(null);
   };
 
   return (
+    <>
     <Paper>
       <TableContainer>
         <Table sx={{ minWidth: 700 }}>
@@ -121,7 +201,19 @@ export default function DataTable({
                     <TableCell>
                       {session.datetimeStarted?.split("T")[1]}
                     </TableCell>
-                    <TableCell>{session.notes || "—"}</TableCell>
+                    <TableCell>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                          <span>{session.notes || "—"}</span>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleOpenNotes(session)}
+                            sx={{ opacity: 0.5, "&:hover": { opacity: 1 } }}
+                            aria-label="Edit notes"
+                          >
+                            <EditIcon fontSize="inherit" />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
                     <TableCell>
                       {type === "upcoming" && (
                         <>
@@ -259,5 +351,63 @@ export default function DataTable({
         />
       )}
     </Paper>
+          <Dialog open={notesDialog} onClose={() => setNotesDialog(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>
+            Edit Notes
+            {notesSession && (
+              <Typography variant="body2" color="text.secondary">
+                {notesSession.studentFirstName} {notesSession.studentLastName} — {notesSession.subject}
+              </Typography>
+            )}
+          </DialogTitle>
+  
+          <DialogContent dividers>
+            {notesFetching ? (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+                <CircularProgress size={24} />
+              </Box>
+            ) : (
+              <TextField
+                fullWidth
+                multiline
+                rows={5}
+                size="small"
+                label="Notes"
+                value={editedNotes}
+                onChange={(e) => {
+                  setEditedNotes(e.target.value);
+                  setNotesSuccess(false);
+                }}
+              />
+            )}
+  
+            {notesError && (
+              <Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+                {notesError}
+              </Typography>
+            )}
+            {notesSuccess && (
+              <Typography variant="caption" color="success.main" sx={{ mt: 1, display: "block" }}>
+                Notes saved successfully.
+              </Typography>
+            )}
+          </DialogContent>
+  
+          <DialogActions>
+            <Button variant="outlined" color="inherit" onClick={() => setNotesDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={notesSaving || !editedNotes.trim() || editedNotes === existingNotes}
+              onClick={handleSaveNotes}
+              startIcon={notesSaving ? <CircularProgress size={14} color="inherit" /> : null}
+            >
+              {notesSaving ? "Saving..." : "Save Notes"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+        </>
   );
 }
