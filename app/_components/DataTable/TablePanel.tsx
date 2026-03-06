@@ -36,7 +36,7 @@ export default function BasicTabs(props: any) {
   const [completedSessions, setCompletedSessions] = useState<any[]>([]);
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [value, setValue] = React.useState(0);
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s:any) => s.user);
   const tutorName = user?.name ?? "";
 
   const fetchSessions = useCallback(() => {

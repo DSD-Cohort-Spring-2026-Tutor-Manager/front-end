@@ -21,19 +21,20 @@ interface AuthState {
 
 
 
-export const useAuthStore = create(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
       role: null,
       token: null,
       isAuthenticated: false,
-      setAuth: (user: AuthUser, role: Role, token: string) => set({ user, role, token, isAuthenticated: true }),
-      clearAuth: () => set({ user: null,role: null, token: null , isAuthenticated: false }),
+      setAuth: (user: AuthUser, role: Role, token: string) =>
+        set({ user, role, token, isAuthenticated: true }),
+      clearAuth: () =>
+        set({ user: null, role: null, token: null, isAuthenticated: false }),
     }),
     {
-      name: "auth-storage",        // key in localStorage
-      // storage: cookieStorage    // swap to cookie if needed
+      name: "auth-storage",
     }
   )
 );
