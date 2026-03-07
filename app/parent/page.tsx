@@ -47,7 +47,7 @@ function Home() {
     if (parentDetails.students.length > 0 && !parentDetails.selectedStudent) {
       setParentDetails((prev) => ({
         ...prev,
-        selectedStudent: parentDetails.students[0],
+        selectedStudent: prev.students[0],
       }));
     }
   }, [parentDetails.students]);
