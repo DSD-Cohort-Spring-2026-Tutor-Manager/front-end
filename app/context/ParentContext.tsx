@@ -5,11 +5,11 @@ import {
   useMemo,
   useState,
   useEffect,
+  useCallback,
   Dispatch,
   SetStateAction,
 } from 'react';
 import { useAuthStore } from '@/store/authStore';
-import { usePathname } from 'next/navigation';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import { Parent, Student } from '../types/types';
 
@@ -26,12 +26,10 @@ export type ParentDetails = Partial<Parent> & {
 export type ParentContextValue = {
   parentDetails: ParentDetails;
   setParentDetails: Dispatch<SetStateAction<ParentDetails>>;
-  addCredits: (amount: number) => void; // Add addCredits method to the context value
+  addCredits: (amount: number) => void;
 };
 
-// A parent object with the added field 'selectedStudent' which will be used throughout the app
 const defaultParentDetails: ParentDetails = {
-  // other fields populated from the API
   creditBalance: 0.0,
   students: [],
   selectedStudent: null,
@@ -44,7 +42,6 @@ export function ParentProvider({ children }: Props) {
     useState<ParentDetails>(defaultParentDetails);
 
   const userId = useAuthStore((state) => state.user?.id);
-  const pathname = usePathname();
 
   useEffect(() => {
     async function fetchParentDetails() {
@@ -69,18 +66,18 @@ export function ParentProvider({ children }: Props) {
     }
 
     fetchParentDetails();
-  }, [userId, pathname]);
+  }, [userId]); 
 
-  const addCredits = (amount: number) => {
+  const addCredits = useCallback((amount: number) => {
     setParentDetails((prevDetails) => ({
       ...prevDetails,
       creditBalance: prevDetails.creditBalance + amount,
     }));
-  };
+  }, []); 
 
   const value = useMemo(
     () => ({ parentDetails, setParentDetails, addCredits }),
-    [parentDetails, setParentDetails],
+    [parentDetails, addCredits],
   );
 
   return (

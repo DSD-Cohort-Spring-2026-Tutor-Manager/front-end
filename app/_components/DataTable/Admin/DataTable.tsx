@@ -115,7 +115,7 @@ export default function DataTable({ sessions, type }: Props) {
       ...new Set(sessions.map((s) => s.parentId).filter(Boolean)),
     ];
     uniqueParentIds.forEach((parentId) => {
-      TutortoiseClient.getBalance(parentId).then((balance) => {
+      TutortoiseClient.getBalance(Number(parentId)).then((balance) => {
         setCreditBalances((prev) => ({ ...prev, [parentId]: balance }));
       });
     });

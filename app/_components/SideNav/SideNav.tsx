@@ -9,7 +9,7 @@ import "./SideNav.css";
 const parentNavItems = [
   { href: "/parent", label: "Home", icon: "/icons/home.svg", iconActive: "/icons/Home-act.svg" },
   { href: "/parent/tutoring", label: "Tutoring", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
-  { href: "/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
+  { href: "/parent/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
   { href: "/parent/credits", label: "Credits", icon: "/icons/shop.svg", iconActive: "/icons/Shop-act.svg" },
 ];
 
