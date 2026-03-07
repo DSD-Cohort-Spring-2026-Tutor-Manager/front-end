@@ -108,7 +108,10 @@ export const TutortoiseClient = {
         sessionId,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Book session API call failed", err));
+      .catch((err) => {
+        console.error("Book session API call failed", err);
+        throw err;
+      });
   },
   getAdminDetails: async () => {
     return await axiosInstance
