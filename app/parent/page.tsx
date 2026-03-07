@@ -33,8 +33,6 @@ function Home() {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [completedSess, setCompletedSess] = useState<Session[]>([]);
-  const [latestTwo, setLatesTwo] = useState<Session[]>([]);
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
@@ -120,15 +118,12 @@ function Home() {
     loadSessions();
   }, []);
 
-  // filter derived state — re-runs when student switches or the session list loads,
-  // no additional API call is made
-  useEffect(() => {
-    const studentId = parentDetails.selectedStudent?.studentId;
-    if (!studentId) return;
-    const completedSessions = getCompletedSessions(sessions, studentId);
-    setCompletedSess(completedSessions);
-    setLatesTwo(getLatestTwo(completedSessions));
-  }, [parentDetails.selectedStudent?.studentId, sessions]);
+  // Derived — recomputed inline on every render; no extra state or effect needed
+  const completedSess =
+    parentDetails.selectedStudent?.studentId != null
+      ? getCompletedSessions(sessions, parentDetails.selectedStudent.studentId)
+      : [];
+  const latestTwo = getLatestTwo(completedSess);
 
   // Alert
 
