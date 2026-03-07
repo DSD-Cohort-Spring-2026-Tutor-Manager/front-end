@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import CreditsViewBar from '@/app/_components/CreditsViewbar/CreditsViewBar';
 import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
@@ -8,6 +8,7 @@ import { ParentContext } from '../../context/ParentContext';
 import AvailableSessionsTable from '@/app/_components/DataTable/AvailableSessionsTable/AvailableSessionsTable';
 import Modal from '@/app/_components/Modal/Modal';
 import { TutortoiseClient } from '@/app/_api/tutortoiseClient';
+import { Session } from '../../types/types';
 import './../dashboard.css';
 import './tutoring.css';
 
@@ -19,6 +20,22 @@ type SessionRow = {
   subject: string;
   time: string;
 };
+
+function toSessionRow(session: Session): SessionRow {
+  const dt = session.datetimeStarted
+    ? new Date(session.datetimeStarted)
+    : new Date(0);
+  return {
+    id: session.sessionId,
+    tutor: session.tutorName ?? '—',
+    subject: session.subject ?? '—',
+    date: dt.toLocaleDateString('en-US'),
+    time: dt.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+    }),
+  };
+}
 
 function Page() {
   const ctx = useContext(CreditContext);
@@ -38,6 +55,19 @@ function Page() {
   const [selectedSession, setSelectedSession] = useState<SessionRow | null>(
     null,
   );
+  const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [sessionsError, setSessionsError] = useState(false);
+
+  useEffect(() => {
+    TutortoiseClient.getOpenSessions()
+      .then((data) => {
+        const raw: Session[] = Array.isArray(data) ? data : [];
+        setSessions(raw.map(toSessionRow));
+      })
+      .catch(() => setSessionsError(true))
+      .finally(() => setSessionsLoading(false));
+  }, []);
 
   const handleJoinClick = (session: SessionRow) => {
     setSelectedSession(session);
@@ -74,6 +104,8 @@ function Page() {
       // Keep both CreditContext and ParentContext in sync
       addCredits(-1);
       parentCtx.addCredits(-1);
+      // Remove the booked session from the list optimistically
+      setSessions((prev) => prev.filter((s) => s.id !== selectedSession.id));
     } catch (error) {
       console.error('Failed to book session:', error);
     } finally {
@@ -120,7 +152,20 @@ function Page() {
             cta='Need more credits?'
           />
         </div>
-        <AvailableSessionsTable onJoin={handleJoinClick} />
+        {sessionsLoading && (
+          <p className='tutoring__status'>Loading sessions…</p>
+        )}
+        {!sessionsLoading && sessionsError && sessions.length === 0 && (
+          <p className='tutoring__status tutoring__status--error'>
+            Failed to load sessions. Please try again.
+          </p>
+        )}
+        {!sessionsLoading && (
+          <AvailableSessionsTable sessions={sessions} onJoin={handleJoinClick} />
+        )}
+        {!sessionsLoading && !sessionsError && sessions.length === 0 && (
+          <p className='tutoring__status'>No sessions available.</p>
+        )}
       </div>
 
       {isBookingModalOpen && selectedSession && (
