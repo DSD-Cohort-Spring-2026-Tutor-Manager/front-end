@@ -35,7 +35,7 @@
 +│   │   ├── notes/page.tsx          ← NEW: session notes management (not yet built)
  │   ├── context/
  │   │   ├── AuthContext.tsx          ← Refactored ✅ — sources from Zustand, no fake auth
- │   │   └── StudentContext.tsx       ← REFACTOR: remove hardcoded default, load from API
+ │   │   └── ParentContext.tsx        ← Active ✅ — sole source of truth for parent, student, and credit data across all /parent pages
  │   ├── theme/                      ← Keep as-is (well-built)
 +│   ├── types/                      ← NEW: shared TypeScript interfaces (not yet built)
 +│   │   ├── session.ts
@@ -107,7 +107,7 @@
 **Current state:** React Context API + Zustand
 - `AuthContext` — **Refactored.** Now derives from `store/authStore.ts` (Zustand + persist). JWT token and role live in memory/Zustand only. No localStorage fake-auth. `lib/authService.ts` handles real login against the backend.
 - `ParentContext` — **Active.** `ParentProvider` fetches `GET /api/parent/{id}` on mount (using `userId` from Zustand) and populates `parentDetails` with `creditBalance`, `students[]`, and all `Parent` base fields. This is the source of truth for credit balance and the available student list across all `/parent` pages. See `.agent/context/frontend-agent/PARENT_CONTEXT_IMPLEMENTATION.md`.
-- `StudentContext` — ~~still stores selected student with **hardcoded default** `{ studentName: "Zayn", studentId: 7 }`. The student list is now available via `ParentContext.parentDetails.students` — this context should be migrated to use `parentDetails.selectedStudent` and then removed from the `/parent` route.~~ **Resolved March 6, 2026** — `StudentContext` is no longer used under `/parent`. The file is deprecated in-place (see `StudentContext.tsx` JSDoc). `ParentContext.selectedStudent` is the canonical source for the selected student across all `/parent` pages.
+- `StudentContext` — ~~still stores selected student with **hardcoded default** `{ studentName: "Zayn", studentId: 7 }`. The student list is now available via `ParentContext.parentDetails.students` — this context should be migrated to use `parentDetails.selectedStudent` and then removed from the `/parent` route.~~ **Deleted March 6, 2026** — confirmed zero consumers across the entire codebase. `ParentContext.parentDetails.selectedStudent` is the canonical source for the selected student across all `/parent` pages. `StudentContext` no longer exists.
 - `CreditContext` — ~~manages credit display state. The parent credit balance is now also owned by `ParentContext.parentDetails.creditBalance`. These two must be kept in sync or `CreditContext` removed from the `/parent` route in favour of `ParentContext`.~~ **Resolved March 6, 2026** — `CreditContext` / `CreditProvider` fully removed from the `/parent` route. `ParentContext.parentDetails.creditBalance` is the sole credit balance source for all `/parent` pages. `CreditProvider` no longer wraps the parent layout.
 
 **Remaining:**
@@ -115,7 +115,7 @@
 2. Parameterise `bookSession` — pass `parentDetails.parentId` and `parentDetails.selectedStudent.studentId` instead of hardcoded `1, 1`.
 3. ~~Resolve the dual credit balance — `CreditContext` and `ParentContext` both hold a balance; normalise to `ParentContext` within the `/parent` route.~~ **Done — `CreditContext` removed.**
 4. Consider adding a `SessionContext` if session state becomes shared across many components.
-5. Delete `app/context/StudentContext.tsx` once all non-parent consumers are confirmed absent.
+5. ~~Delete `app/context/StudentContext.tsx` once all non-parent consumers are confirmed absent.~~ **Done March 6, 2026** — zero imports found; file deleted.
 
 ---
 

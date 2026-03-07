@@ -34,7 +34,7 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
   - Session-fetch `useEffect` now guards on `selectedStudent?.studentId` being defined before firing.
   - `CreditsViewBar` value changed to `parentDetails.creditBalance.toString()`.
   - Balance fetch and `addStudent` call now use `parentDetails.parentId` (not hardcoded `1`).
-  - `app/context/StudentContext.tsx` retained with a `@deprecated` JSDoc notice; hardcoded default left in place so any accidental remaining consumer still compiles.
+  - `app/context/StudentContext.tsx` initially retained with a `@deprecated` JSDoc notice. **Deleted March 6, 2026** after a full-repository grep confirmed zero imports outside the file itself. The entire parent flow is driven exclusively by `ParentContext`.
 - **Zero new TypeScript errors** introduced.
 
 ### CreditContext Removed from `/parent` Route (March 6, 2026)
