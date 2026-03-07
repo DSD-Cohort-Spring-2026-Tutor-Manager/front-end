@@ -55,6 +55,16 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
 - **Resolution**: Added `usePathname` from `next/navigation` as a second dependency on the fetch `useEffect`. The effect now re-calls `GET /api/parent/{id}` whenever the pathname changes within the subtree. The response is merged with `setParentDetails((prev) => ({ ...prev, ...data }))` to preserve `selectedStudent` (a frontend-only field absent from the API response) across navigations.
 - **Zero new TypeScript errors** introduced.
 
+### Tutoring Page — Session Table Render Guard & Status Styles (March 6, 2026)
+- **Files changed**: `app/parent/tutoring/page.tsx`, `app/parent/tutoring/tutoring.css`
+- **Problem 1**: `AvailableSessionsTable` rendered whenever `!sessionsLoading`, meaning it mounted during both error and empty-list states, producing a visible header-only table underneath the status message.
+- **Resolution 1**: Render condition tightened to `!sessionsLoading && !sessionsError && sessions.length > 0`. Props (`sessions`, `onJoin={handleJoinClick}`) unchanged.
+- **Problem 2**: The three status `<p>` elements (loading / error / no sessions) had no CSS — they rendered as plain body text with no visual weight or spacing separation from the controls above.
+- **Resolution 2**: Added `.tutoring__status` (`margin-top: 2.5rem; font-size: 1.25rem; font-weight: 700`) and `.tutoring__status--error` (`color: var(--color-error)`) to `tutoring.css`. Uses token variable, not hardcoded hex, per styling guidelines.
+- **Zero new TypeScript errors** introduced.
+
+---
+
 ### Login Page Styling Pass (March 2026)
 - **Key changes**: `--Off-white` corrected to `#F8FAF7`; `--color-border` added; global button `border-radius` set to `14px`; `.btn-highlight` text changed to `var(--Support)` (navy) for WCAG compliance; login layout made mobile-responsive (`flex-col lg:flex-row`).
 - **Known workaround**: Tailwind `bg-[var(--X)]` does not reliably generate `background-color` in this build. Use inline `style={{ backgroundColor: "var(--X)" }}` as fallback. Active example: role-selector buttons in `components/LoginForm.tsx`.
