@@ -23,16 +23,15 @@ type SessionRow = {
 function toSessionRow(session: Session): SessionRow {
   const dt = session.datetimeStarted
     ? new Date(session.datetimeStarted)
-    : new Date(0);
+    : null;
   return {
     id: session.sessionId,
     tutor: session.tutorName ?? '—',
     subject: session.subject ?? '—',
-    date: dt.toLocaleDateString('en-US'),
-    time: dt.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    }),
+    date: dt ? dt.toLocaleDateString('en-US') : '—',
+    time: dt
+      ? dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : '—',
   };
 }
 
