@@ -155,7 +155,7 @@ function Page() {
             Failed to load sessions. Please try again.
           </p>
         )}
-        {!sessionsLoading && (
+        {!sessionsLoading && !sessionsError && sessions.length > 0 && (
           <AvailableSessionsTable sessions={sessions} onJoin={handleJoinClick} />
         )}
         {!sessionsLoading && !sessionsError && sessions.length === 0 && (
