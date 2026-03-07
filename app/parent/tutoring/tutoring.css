@@ -13,3 +13,13 @@
   width: 300px;
   align-items: center;
 }
+
+.tutoring__status {
+  margin-top: 2.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.tutoring__status--error {
+  color: #dc2626;
+}
