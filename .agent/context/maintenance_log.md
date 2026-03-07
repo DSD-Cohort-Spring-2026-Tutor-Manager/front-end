@@ -37,8 +37,25 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
   - `app/context/StudentContext.tsx` retained with a `@deprecated` JSDoc notice; hardcoded default left in place so any accidental remaining consumer still compiles.
 - **Zero new TypeScript errors** introduced.
 
+### CreditContext Removed from `/parent` Route (March 6, 2026)
+- **Files changed**: `app/parent/layout.tsx`, `app/parent/page.tsx`, `app/parent/tutoring/page.tsx`
+- **Problem**: `CreditContext` / `CreditProvider` maintained a parallel `credits` state alongside `ParentContext.parentDetails.creditBalance`, both sourced from the same API. The dashboard `page.tsx` had a redundant `getBalance()` fetch purely to sync `CreditContext`. The tutoring page called both `addCredits(-1)` (CreditContext) and `parentCtx.addCredits(-1)` (ParentContext) after every booking.
+- **Resolution**:
+  - `CreditProvider` removed from `app/parent/layout.tsx` — no longer wraps the parent subtree.
+  - `CreditContext` import and `useContext(CreditContext)` removed from `app/parent/page.tsx` and `app/parent/tutoring/page.tsx`.
+  - The standalone `getBalance()` `useEffect` in `app/parent/page.tsx` deleted entirely — `ParentContext.getParentDetails()` already populates `creditBalance`.
+  - `CreditsViewBar` in tutoring page changed from `credits.toString()` → `parentDetails.creditBalance.toString()`.
+  - Duplicate `addCredits(-1)` call removed from `tutoring/page.tsx` booking handler — only `parentCtx.addCredits(-1)` remains.
+  - `app/parent/credits/page.tsx` required no changes — was already `ParentContext`-only.
+- **Zero new TypeScript errors** introduced.
 
-- **Files changed**: `app/globals.css`, `app/login/page.tsx`, `components/LoginForm.tsx`
+### ParentContext Pathname-Triggered Refresh (March 6, 2026)
+- **File changed**: `app/context/ParentContext.tsx`
+- **Problem**: `ParentProvider` stays mounted across client-side navigations within the `/parent` layout. With `[userId]` as the only dependency, `GET /api/parent/{id}` only fired on first mount (or login), so navigating between pages mid-session could display stale `creditBalance` or `students`.
+- **Resolution**: Added `usePathname` from `next/navigation` as a second dependency on the fetch `useEffect`. The effect now re-calls `GET /api/parent/{id}` whenever the pathname changes within the subtree. The response is merged with `setParentDetails((prev) => ({ ...prev, ...data }))` to preserve `selectedStudent` (a frontend-only field absent from the API response) across navigations.
+- **Zero new TypeScript errors** introduced.
+
+### Login Page Styling Pass (March 2026)
 - **Key changes**: `--Off-white` corrected to `#F8FAF7`; `--color-border` added; global button `border-radius` set to `14px`; `.btn-highlight` text changed to `var(--Support)` (navy) for WCAG compliance; login layout made mobile-responsive (`flex-col lg:flex-row`).
 - **Known workaround**: Tailwind `bg-[var(--X)]` does not reliably generate `background-color` in this build. Use inline `style={{ backgroundColor: "var(--X)" }}` as fallback. Active example: role-selector buttons in `components/LoginForm.tsx`.
 - **Remaining work**: `bg-[--...]` syntax (missing `var()`) still present on `/unauthorized`, `/tutor`, `/parent`, `/admin` pages — needs project-wide normalization. Error banner still uses raw Tailwind red — migrate to `var(--color-error)`.
