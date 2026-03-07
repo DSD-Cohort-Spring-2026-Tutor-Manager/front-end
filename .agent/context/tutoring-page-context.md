@@ -13,7 +13,7 @@
 
 ## Book Session Flow
 
-```
+```text
 user clicks "Join" on a row
   → handleJoinClick(session: SessionRow)
     → setSelectedSession(session)
