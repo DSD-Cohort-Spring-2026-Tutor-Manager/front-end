@@ -1,6 +1,5 @@
 'use client';
 import { useContext, useEffect, useState } from 'react';
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import Databox from '../_components/DataBox/Databox';
 import DataboxMed from '../_components/DataBox/DataboxMed';
 import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
@@ -8,19 +7,8 @@ import './dashboard.css';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import Modal from '../_components/Modal/Modal';
 import Alert from '../_components/Alert/Alert';
-import { StudentContext } from '../context/StudentContext';
 import { ParentContext } from '../context/ParentContext';
-
-type Student = {
-  studentId: number;
-  parentId: number;
-  studentName: string;
-  notes: string;
-  sessionsCompleted: number;
-  previousScore: number;
-  latestScore: number;
-  sessions: Session[];
-};
+import { Student } from '../types/types';
 
 type Session = {
   sessionId: number;
@@ -45,30 +33,22 @@ function Home() {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [completedSess, setCompletedSess] = useState<Session[]>([]);
-  const [latestTwo, setLatesTwo] = useState<Session[]>([]);
-  const [availableStudents, setAvailableStudents] = useState();
-
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
-
-  const { credits, addCredits } = ctx;
-
-  const studentCtx = useContext(StudentContext);
-  if (!studentCtx)
-    throw new Error(
-      'StudentContext is missing. Wrap the app in StudentProvider.',
-    );
-
-  const { student, setStudent } = studentCtx;
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
   const { parentDetails, setParentDetails } = parentCtx;
-  const { creditBalance } = parentDetails; // Extract creditBalance from parentDetails
+
+  // Auto-select the first student once the API response has populated the list
+  useEffect(() => {
+    if (parentDetails.students.length > 0 && !parentDetails.selectedStudent) {
+      setParentDetails((prev) => ({
+        ...prev,
+        selectedStudent: prev.students[0],
+      }));
+    }
+  }, [parentDetails.students]);
 
   function getCompletedSessions(sessions: Session[], studentId: number) {
     return sessions.filter(
@@ -102,9 +82,16 @@ function Home() {
     if (!firstName || !lastName) {
       return;
     }
-    TutortoiseClient.addStudent(1, firstName, lastName)
+    const parentId = parentDetails.parentId;
+    if (!parentId) return;
+
+    TutortoiseClient.addStudent(parentId, firstName, lastName)
       .then((res: Student) => {
-        setStudent(res);
+        setParentDetails((prev) => ({
+          ...prev,
+          students: [...prev.students, res],
+          selectedStudent: prev.selectedStudent ?? res,
+        }));
         showSuccessAlert();
       })
       .catch((err) => {
@@ -115,41 +102,28 @@ function Home() {
       });
   }
 
-  // balance fetch
+  // sessions fetch — called once on mount; all students share the same session pool
   useEffect(() => {
-    TutortoiseClient.getParentDetails(1).then((res) => {
-      console.log(res);
-    });
-    TutortoiseClient.getBalance('1').then((res: number) => {
-      addCredits(-credits + res);
-    });
-  }, []);
-
-  // sessions fetch
-  useEffect(() => {
-    // const students = availableStudents =
     const loadSessions = async () => {
       try {
         const data = await TutortoiseClient.getAllSessions();
         const allSessions: Session[] = Array.isArray(data)
           ? data
           : (data.sessions ?? []);
-
-        const completedSessions = getCompletedSessions(
-          allSessions,
-          student?.studentId,
-        );
-        const latest = getLatestTwo(completedSessions);
-
         setSessions(allSessions);
-        setCompletedSess(completedSessions);
-        setLatesTwo(latest);
       } catch (err) {
         console.error('Failed to load the sessions:', err);
       }
     };
     loadSessions();
-  }, [student]);
+  }, []);
+
+  // Derived — recomputed inline on every render; no extra state or effect needed
+  const completedSess =
+    parentDetails.selectedStudent?.studentId != null
+      ? getCompletedSessions(sessions, parentDetails.selectedStudent.studentId)
+      : [];
+  const latestTwo = getLatestTwo(completedSess);
 
   // Alert
 
@@ -171,17 +145,19 @@ function Home() {
     };
   }, [isAlertVisible]);
 
+  const selectedStudent = parentDetails.selectedStudent;
+
   return (
     <main className='dashboard overflow-x-hidden h-full'>
       <CreditsViewBar
-        value={credits.toString()}
+        value={parentDetails.creditBalance.toString()}
         href='/parent/credits'
         cta='Need more credits?'
       />
       <section className='dashboard__data-row'>
         <Databox
           title='Student'
-          value={student?.studentName?.split(' ')[0]}
+          value={selectedStudent?.studentName?.split(' ')[0] ?? '—'}
           href='/student'
           cta='switch'
           topRightIcon={{
@@ -189,8 +165,19 @@ function Home() {
             alt: 'Add student button',
             onClick: () => setAddStudentModalIsOpen(true),
           }}
-          dropdownContent={[{ label: 'Zayn' }, { label: 'Student2' }]}
-          dropdownOnChange={setStudent}
+          dropdownContent={parentDetails.students.map((s) => ({
+            label: s.studentName,
+            studentId: s.studentId,
+            parentId: s.parentId,
+          }))}
+          dropdownOnChange={(selected) => {
+            const match = parentDetails.students.find(
+              (s) => s.studentId === selected.studentId,
+            );
+            if (match) {
+              setParentDetails((prev) => ({ ...prev, selectedStudent: match }));
+            }
+          }}
         />
         <Databox
           title='Sessions completed'

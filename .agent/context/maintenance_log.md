@@ -23,8 +23,49 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
 - **Matcher**: `['/api/:path*', '/admin/:path*', '/tutor/:path*', '/parent/:path*']`
 - **Do not rename** `proxy.ts` back to `middleware.ts` — that convention is deprecated.
 
+### Parent Dashboard Hardcoded Data Fix (March 6, 2026)
+- **Files changed**: `app/parent/page.tsx`, `app/parent/layout.tsx`, `app/context/StudentContext.tsx`
+- **Problem**: `app/parent/page.tsx` read student name and ID from `StudentContext`, which was initialised with a hardcoded `defaultStudent = { studentName: "Zayn", studentId: 7 }`. The dropdown was hardcoded to `[{ label: 'Zayn' }, { label: 'Student2' }]`. The `CreditsViewBar` displayed `CreditContext.credits` (initialised to `3`) instead of the API-sourced `parentDetails.creditBalance`. Session fetches used the hardcoded student ID.
+- **Resolution**:
+  - `StudentContext`/`StudentProvider` removed from all `/parent` page imports and from `app/parent/layout.tsx`.
+  - Dashboard now reads `parentDetails.selectedStudent` and `parentDetails.students` from `ParentContext` (which fetches from `GET /api/parent/{id}` on mount).
+  - Dropdown built dynamically from `parentDetails.students.map(…)`; `dropdownOnChange` resolves the full `Student` object via `.find(s => s.studentId === selected.studentId)` with a guard.
+  - An auto-init `useEffect` selects `students[0]` when the list first populates and `selectedStudent` is still `null`.
+  - Session-fetch `useEffect` now guards on `selectedStudent?.studentId` being defined before firing.
+  - `CreditsViewBar` value changed to `parentDetails.creditBalance.toString()`.
+  - Balance fetch and `addStudent` call now use `parentDetails.parentId` (not hardcoded `1`).
+  - `app/context/StudentContext.tsx` initially retained with a `@deprecated` JSDoc notice. **Deleted March 6, 2026** after a full-repository grep confirmed zero imports outside the file itself. The entire parent flow is driven exclusively by `ParentContext`.
+- **Zero new TypeScript errors** introduced.
+
+### CreditContext Removed from `/parent` Route (March 6, 2026)
+- **Files changed**: `app/parent/layout.tsx`, `app/parent/page.tsx`, `app/parent/tutoring/page.tsx`
+- **Problem**: `CreditContext` / `CreditProvider` maintained a parallel `credits` state alongside `ParentContext.parentDetails.creditBalance`, both sourced from the same API. The dashboard `page.tsx` had a redundant `getBalance()` fetch purely to sync `CreditContext`. The tutoring page called both `addCredits(-1)` (CreditContext) and `parentCtx.addCredits(-1)` (ParentContext) after every booking.
+- **Resolution**:
+  - `CreditProvider` removed from `app/parent/layout.tsx` — no longer wraps the parent subtree.
+  - `CreditContext` import and `useContext(CreditContext)` removed from `app/parent/page.tsx` and `app/parent/tutoring/page.tsx`.
+  - The standalone `getBalance()` `useEffect` in `app/parent/page.tsx` deleted entirely — `ParentContext.getParentDetails()` already populates `creditBalance`.
+  - `CreditsViewBar` in tutoring page changed from `credits.toString()` → `parentDetails.creditBalance.toString()`.
+  - Duplicate `addCredits(-1)` call removed from `tutoring/page.tsx` booking handler — only `parentCtx.addCredits(-1)` remains.
+  - `app/parent/credits/page.tsx` required no changes — was already `ParentContext`-only.
+- **Zero new TypeScript errors** introduced.
+
+### ParentContext Pathname-Triggered Refresh (March 6, 2026)
+- **File changed**: `app/context/ParentContext.tsx`
+- **Problem**: `ParentProvider` stays mounted across client-side navigations within the `/parent` layout. With `[userId]` as the only dependency, `GET /api/parent/{id}` only fired on first mount (or login), so navigating between pages mid-session could display stale `creditBalance` or `students`.
+- **Resolution**: Added `usePathname` from `next/navigation` as a second dependency on the fetch `useEffect`. The effect now re-calls `GET /api/parent/{id}` whenever the pathname changes within the subtree. The response is merged with `setParentDetails((prev) => ({ ...prev, ...data }))` to preserve `selectedStudent` (a frontend-only field absent from the API response) across navigations.
+- **Zero new TypeScript errors** introduced.
+
+### Tutoring Page — Session Table Render Guard & Status Styles (March 6, 2026)
+- **Files changed**: `app/parent/tutoring/page.tsx`, `app/parent/tutoring/tutoring.css`
+- **Problem 1**: `AvailableSessionsTable` rendered whenever `!sessionsLoading`, meaning it mounted during both error and empty-list states, producing a visible header-only table underneath the status message.
+- **Resolution 1**: Render condition tightened to `!sessionsLoading && !sessionsError && sessions.length > 0`. Props (`sessions`, `onJoin={handleJoinClick}`) unchanged.
+- **Problem 2**: The three status `<p>` elements (loading / error / no sessions) had no CSS — they rendered as plain body text with no visual weight or spacing separation from the controls above.
+- **Resolution 2**: Added `.tutoring__status` (`margin-top: 2.5rem; font-size: 1.25rem; font-weight: 700`) and `.tutoring__status--error` (`color: var(--color-error)`) to `tutoring.css`. Uses token variable, not hardcoded hex, per styling guidelines.
+- **Zero new TypeScript errors** introduced.
+
+---
+
 ### Login Page Styling Pass (March 2026)
-- **Files changed**: `app/globals.css`, `app/login/page.tsx`, `components/LoginForm.tsx`
 - **Key changes**: `--Off-white` corrected to `#F8FAF7`; `--color-border` added; global button `border-radius` set to `14px`; `.btn-highlight` text changed to `var(--Support)` (navy) for WCAG compliance; login layout made mobile-responsive (`flex-col lg:flex-row`).
 - **Known workaround**: Tailwind `bg-[var(--X)]` does not reliably generate `background-color` in this build. Use inline `style={{ backgroundColor: "var(--X)" }}` as fallback. Active example: role-selector buttons in `components/LoginForm.tsx`.
 - **Remaining work**: `bg-[--...]` syntax (missing `var()`) still present on `/unauthorized`, `/tutor`, `/parent`, `/admin` pages — needs project-wide normalization. Error banner still uses raw Tailwind red — migrate to `var(--color-error)`.

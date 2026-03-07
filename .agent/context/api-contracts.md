@@ -186,7 +186,7 @@ Books a session for a parent/student. Deducts 1 credit from parent balance.
 
 **Response `500`:** If insufficient credits or session already booked.
 
-> ⚠️ **Known issue:** The frontend currently hardcodes `parentId: 1` and `studentId: 1` in `tutortoiseClient.bookSession()`. Parameterize once `StudentContext` is wired to the API.
+> ✅ `bookSession` is fully parameterized. `parentId` comes from `ParentContext.parentDetails.parentId` and `studentId` from `ParentContext.parentDetails.selectedStudent.studentId`. `StudentContext` has been deleted — `ParentContext` is the sole source of truth for all parent-flow identity data.
 
 ---
 
