@@ -182,7 +182,7 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
                       <TableCell>{session.datetimeStarted?.split("T")[0]}</TableCell>
                       <TableCell>{session.studentFirstName} {session.studentLastName}</TableCell>
                       <TableCell>{session.subject}</TableCell>
-                      <TableCell>{session.datetimeStarted?.split("T")[1]}</TableCell>
+                      <TableCell>{session.datetimeStarted?.split("T")[1].slice(0, 5)}</TableCell>
 
                       {/* Notes cell */}
                       <TableCell sx={notesCellSx}>
