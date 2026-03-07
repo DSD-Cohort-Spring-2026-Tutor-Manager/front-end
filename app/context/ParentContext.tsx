@@ -9,6 +9,7 @@ import {
   SetStateAction,
 } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { usePathname } from 'next/navigation';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import { Parent, Student } from '../types/types';
 
@@ -43,6 +44,7 @@ export function ParentProvider({ children }: Props) {
     useState<ParentDetails>(defaultParentDetails);
 
   const userId = useAuthStore((state) => state.user?.id);
+  const pathname = usePathname();
 
   useEffect(() => {
     async function fetchParentDetails() {
@@ -67,7 +69,7 @@ export function ParentProvider({ children }: Props) {
     }
 
     fetchParentDetails();
-  }, [userId]);
+  }, [userId, pathname]);
 
   const addCredits = (amount: number) => {
     setParentDetails((prevDetails) => ({

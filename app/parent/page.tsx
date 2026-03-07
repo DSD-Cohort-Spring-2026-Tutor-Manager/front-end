@@ -1,6 +1,5 @@
 'use client';
 import { useContext, useEffect, useState } from 'react';
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import Databox from '../_components/DataBox/Databox';
 import DataboxMed from '../_components/DataBox/DataboxMed';
 import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
@@ -36,12 +35,6 @@ function Home() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [completedSess, setCompletedSess] = useState<Session[]>([]);
   const [latestTwo, setLatesTwo] = useState<Session[]>([]);
-
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
-
-  const { credits, addCredits } = ctx;
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
@@ -111,39 +104,31 @@ function Home() {
       });
   }
 
-  // balance fetch — re-runs once parentId is available from ParentContext
+  // sessions fetch — called once on mount; all students share the same session pool
   useEffect(() => {
-    const parentId = parentDetails.parentId;
-    if (!parentId) return;
-    TutortoiseClient.getBalance(String(parentId)).then((res: number) => {
-      addCredits(-credits + res);
-    });
-  }, [parentDetails.parentId]);
-
-  // sessions fetch — re-runs when the selected student changes
-  useEffect(() => {
-    const studentId = parentDetails.selectedStudent?.studentId;
-    if (!studentId) return;
-
     const loadSessions = async () => {
       try {
         const data = await TutortoiseClient.getAllSessions();
         const allSessions: Session[] = Array.isArray(data)
           ? data
           : (data.sessions ?? []);
-
-        const completedSessions = getCompletedSessions(allSessions, studentId);
-        const latest = getLatestTwo(completedSessions);
-
         setSessions(allSessions);
-        setCompletedSess(completedSessions);
-        setLatesTwo(latest);
       } catch (err) {
         console.error('Failed to load the sessions:', err);
       }
     };
     loadSessions();
-  }, [parentDetails.selectedStudent?.studentId]);
+  }, []);
+
+  // filter derived state — re-runs when student switches or the session list loads,
+  // no additional API call is made
+  useEffect(() => {
+    const studentId = parentDetails.selectedStudent?.studentId;
+    if (!studentId) return;
+    const completedSessions = getCompletedSessions(sessions, studentId);
+    setCompletedSess(completedSessions);
+    setLatesTwo(getLatestTwo(completedSessions));
+  }, [parentDetails.selectedStudent?.studentId, sessions]);
 
   // Alert
 

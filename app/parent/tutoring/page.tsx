@@ -3,7 +3,6 @@
 import { useContext, useEffect, useState } from 'react';
 
 import CreditsViewBar from '@/app/_components/CreditsViewbar/CreditsViewBar';
-import { CreditContext } from '@/app/_components/CreditContext/CreditContext';
 import { ParentContext } from '../../context/ParentContext';
 import AvailableSessionsTable from '@/app/_components/DataTable/AvailableSessionsTable/AvailableSessionsTable';
 import Modal from '@/app/_components/Modal/Modal';
@@ -38,18 +37,12 @@ function toSessionRow(session: Session): SessionRow {
 }
 
 function Page() {
-  const ctx = useContext(CreditContext);
-  if (!ctx)
-    throw new Error('CreditContext is missing. Wrap app in CreditProvider.');
-
-  const { credits, addCredits } = ctx;
-
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
     throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
 
   const { parentDetails, setParentDetails } = parentCtx;
-  const { creditBalance } = parentDetails; // Extract creditBalance from parentDetails
+  const { creditBalance } = parentDetails;
 
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<SessionRow | null>(
@@ -101,8 +94,6 @@ function Page() {
         Number(selectedSession.id),
       );
 
-      // Keep both CreditContext and ParentContext in sync
-      addCredits(-1);
       parentCtx.addCredits(-1);
       // Remove the booked session from the list optimistically
       setSessions((prev) => prev.filter((s) => s.id !== selectedSession.id));
@@ -147,7 +138,7 @@ function Page() {
           </label>
 
           <CreditsViewBar
-            value={credits.toString()}
+            value={parentDetails.creditBalance.toString()}
             href='/parent/credits'
             cta='Need more credits?'
           />
