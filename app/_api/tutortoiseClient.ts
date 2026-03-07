@@ -34,7 +34,10 @@ export const TutortoiseClient = {
     return await axiosInstance
       .get(OPEN_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => {
+        console.error("Sessions API call failed:", err);
+        throw err;
+      });
   },
 
   getAllSessions: async () => {

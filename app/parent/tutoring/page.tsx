@@ -54,6 +54,11 @@ function Page() {
   useEffect(() => {
     TutortoiseClient.getOpenSessions()
       .then((data) => {
+        if (!data) {
+          setSessionsError(true);
+          setSessions([]);
+          return;
+        }
         const raw: Session[] = Array.isArray(data) ? data : [];
         setSessions(raw.map(toSessionRow));
       })
