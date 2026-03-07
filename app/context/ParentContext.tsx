@@ -10,7 +10,6 @@ import {
   SetStateAction,
 } from 'react';
 import { useAuthStore } from '@/store/authStore';
-import { usePathname } from 'next/navigation';
 import { TutortoiseClient } from '../_api/tutortoiseClient';
 import { Parent, Student } from '../types/types';
 

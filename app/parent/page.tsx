@@ -45,8 +45,6 @@ function Home() {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const user = useAuthStore((s) => s.user);
-  const id = user?.id;
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)

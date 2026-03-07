@@ -20,14 +20,20 @@ export const TutortoiseClient = {
     return await axiosInstance
       .get(PARENT_DETAILS_ENDPOINT.replace("{id}", String(id)))
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => {
+        console.error("Sessions API call failed:", err);
+        throw err;
+      });
   },
 
   getBalance: async (id: number): Promise<number> => {
     return await axiosInstance
       .get(BALANCE_ENDPOINT.replace("{id}", String(id)))
       .then((res) => res.data)
-      .catch((err) => console.error("Balance API call failed:", err));
+      .catch((err) => {
+        console.error("Balance API call failed:", err);
+        throw err;
+      });
   },
 
   getOpenSessions: async () => {
@@ -44,14 +50,20 @@ export const TutortoiseClient = {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => {
+        console.error("Sessions API call failed:", err);
+        throw err;
+      });
   },
 
   getTransactionHistory: async (id: string): Promise<any> => {
     return await axiosInstance
       .get(TRANSACTION_HISTORY_ENDPOINT.replace("{id}", id))
       .then((res) => res.data)
-      .catch((err) => console.error("Transaction History API call failed"));
+      .catch((err) => {
+        console.error("Transaction History API call failed", err);
+        throw err;
+      });
   },
 
   buyCredits: async (
@@ -66,7 +78,10 @@ export const TutortoiseClient = {
         amount,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Buy credits API call failed", err));
+      .catch((err) => {
+        console.error("Buy credits API call failed", err);
+        throw err;
+      });
   },
   addStudent: async (
     parentId: number,
@@ -80,15 +95,19 @@ export const TutortoiseClient = {
         lastName,
       })
       .then((res) => res.data)
-      .catch((err) => console.error("Add students API call failed", err));
+      .catch((err) => {
+        console.error("Add students API call failed", err);
+        throw err;
+      });
   },
   getSessionHistory: async (): Promise<any> => {
     return await axiosInstance
       .get(ALL_SESSIONS_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) =>
-        console.error("Transaction History API call failed", err),
-      );
+      .catch((err) => {
+        console.error("Transaction History API call failed", err);
+        throw err;
+      });
   },
   bookSession: async (
     parentId: number,
@@ -117,7 +136,10 @@ export const TutortoiseClient = {
     return await axiosInstance
       .get(ADMIN_ENDPOINT)
       .then((res) => res.data)
-      .catch((err) => console.error("Sessions API call failed:", err));
+      .catch((err) => {
+        console.error("Sessions API call failed:", err);
+        throw err;
+      });
   },
 
   /**
@@ -151,7 +173,10 @@ export const TutortoiseClient = {
         },
       )
       .then((res) => res.data)
-      .catch((err) => console.error("Get student note API call failed", err));
+      .catch((err) => {
+        console.error("Get student note API call failed", err);
+        throw err;
+      });
   },
   updateStudentNote: async (
     studentId: number,
@@ -174,7 +199,10 @@ export const TutortoiseClient = {
         },
       )
       .then((res) => res.data)
-      .catch((err) => console.error("Update student note API call failed", err));
+      .catch((err) => {
+        console.error("Update student note API call failed", err);
+        throw err;
+      });
   },
 };
 
