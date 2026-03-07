@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * @deprecated StudentContext is no longer used within the /parent route.
+ * Student selection is now managed by ParentContext.parentDetails.selectedStudent.
+ * This file is retained only in case other routes consume it. Do not add new
+ * usages — migrate to ParentContext instead.
+ */
 import { createContext, useMemo, useState } from 'react';
 
 type Props = {

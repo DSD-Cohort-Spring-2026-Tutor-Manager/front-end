@@ -107,14 +107,15 @@
 **Current state:** React Context API + Zustand
 - `AuthContext` — **Refactored.** Now derives from `store/authStore.ts` (Zustand + persist). JWT token and role live in memory/Zustand only. No localStorage fake-auth. `lib/authService.ts` handles real login against the backend.
 - `ParentContext` — **Active.** `ParentProvider` fetches `GET /api/parent/{id}` on mount (using `userId` from Zustand) and populates `parentDetails` with `creditBalance`, `students[]`, and all `Parent` base fields. This is the source of truth for credit balance and the available student list across all `/parent` pages. See `.agent/context/frontend-agent/PARENT_CONTEXT_IMPLEMENTATION.md`.
-- `StudentContext` — still stores selected student with **hardcoded default** `{ studentName: "Zayn", studentId: 7 }`. The student list is now available via `ParentContext.parentDetails.students` — this context should be migrated to use `parentDetails.selectedStudent` and then removed from the `/parent` route.
+- `StudentContext` — ~~still stores selected student with **hardcoded default** `{ studentName: "Zayn", studentId: 7 }`. The student list is now available via `ParentContext.parentDetails.students` — this context should be migrated to use `parentDetails.selectedStudent` and then removed from the `/parent` route.~~ **Resolved March 6, 2026** — `StudentContext` is no longer used under `/parent`. The file is deprecated in-place (see `StudentContext.tsx` JSDoc). `ParentContext.selectedStudent` is the canonical source for the selected student across all `/parent` pages.
 - `CreditContext` — manages credit display state. The parent credit balance is now also owned by `ParentContext.parentDetails.creditBalance`. These two must be kept in sync or `CreditContext` removed from the `/parent` route in favour of `ParentContext`.
 
 **Remaining:**
-1. Migrate `selectedStudent` from `StudentContext` to `parentDetails.selectedStudent` in `ParentContext` so all `/parent` pages react to the same student selection from one place.
+1. ~~Migrate `selectedStudent` from `StudentContext` to `parentDetails.selectedStudent` in `ParentContext` so all `/parent` pages react to the same student selection from one place.~~ **Done.**
 2. Parameterise `bookSession` — pass `parentDetails.parentId` and `parentDetails.selectedStudent.studentId` instead of hardcoded `1, 1`.
 3. Resolve the dual credit balance — `CreditContext` and `ParentContext` both hold a balance; normalise to `ParentContext` within the `/parent` route.
 4. Consider adding a `SessionContext` if session state becomes shared across many components.
+5. Delete `app/context/StudentContext.tsx` once all non-parent consumers are confirmed absent.
 
 ---
 

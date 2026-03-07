@@ -23,7 +23,21 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
 - **Matcher**: `['/api/:path*', '/admin/:path*', '/tutor/:path*', '/parent/:path*']`
 - **Do not rename** `proxy.ts` back to `middleware.ts` — that convention is deprecated.
 
-### Login Page Styling Pass (March 2026)
+### Parent Dashboard Hardcoded Data Fix (March 6, 2026)
+- **Files changed**: `app/parent/page.tsx`, `app/parent/layout.tsx`, `app/context/StudentContext.tsx`
+- **Problem**: `app/parent/page.tsx` read student name and ID from `StudentContext`, which was initialised with a hardcoded `defaultStudent = { studentName: "Zayn", studentId: 7 }`. The dropdown was hardcoded to `[{ label: 'Zayn' }, { label: 'Student2' }]`. The `CreditsViewBar` displayed `CreditContext.credits` (initialised to `3`) instead of the API-sourced `parentDetails.creditBalance`. Session fetches used the hardcoded student ID.
+- **Resolution**:
+  - `StudentContext`/`StudentProvider` removed from all `/parent` page imports and from `app/parent/layout.tsx`.
+  - Dashboard now reads `parentDetails.selectedStudent` and `parentDetails.students` from `ParentContext` (which fetches from `GET /api/parent/{id}` on mount).
+  - Dropdown built dynamically from `parentDetails.students.map(…)`; `dropdownOnChange` resolves the full `Student` object via `.find(s => s.studentId === selected.studentId)` with a guard.
+  - An auto-init `useEffect` selects `students[0]` when the list first populates and `selectedStudent` is still `null`.
+  - Session-fetch `useEffect` now guards on `selectedStudent?.studentId` being defined before firing.
+  - `CreditsViewBar` value changed to `parentDetails.creditBalance.toString()`.
+  - Balance fetch and `addStudent` call now use `parentDetails.parentId` (not hardcoded `1`).
+  - `app/context/StudentContext.tsx` retained with a `@deprecated` JSDoc notice; hardcoded default left in place so any accidental remaining consumer still compiles.
+- **Zero new TypeScript errors** introduced.
+
+
 - **Files changed**: `app/globals.css`, `app/login/page.tsx`, `components/LoginForm.tsx`
 - **Key changes**: `--Off-white` corrected to `#F8FAF7`; `--color-border` added; global button `border-radius` set to `14px`; `.btn-highlight` text changed to `var(--Support)` (navy) for WCAG compliance; login layout made mobile-responsive (`flex-col lg:flex-row`).
 - **Known workaround**: Tailwind `bg-[var(--X)]` does not reliably generate `background-color` in this build. Use inline `style={{ backgroundColor: "var(--X)" }}` as fallback. Active example: role-selector buttons in `components/LoginForm.tsx`.
