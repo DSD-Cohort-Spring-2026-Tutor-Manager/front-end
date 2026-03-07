@@ -23,9 +23,9 @@ export const TutortoiseClient = {
       .catch((err) => console.error("Sessions API call failed:", err));
   },
 
-  getBalance: async (id: string): Promise<number> => {
+  getBalance: async (id: number): Promise<number> => {
     return await axiosInstance
-      .get(BALANCE_ENDPOINT.replace("{id}", id))
+      .get(BALANCE_ENDPOINT.replace("{id}", String(id)))
       .then((res) => res.data)
       .catch((err) => console.error("Balance API call failed:", err));
   },

@@ -1,14 +1,26 @@
-'use client';
-import { useContext, useEffect, useState } from 'react';
-import Databox from '../_components/DataBox/Databox';
-import DataboxMed from '../_components/DataBox/DataboxMed';
-import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
-import './dashboard.css';
-import { TutortoiseClient } from '../_api/tutortoiseClient';
-import Modal from '../_components/Modal/Modal';
-import Alert from '../_components/Alert/Alert';
+"use client";
+import { useContext, useEffect, useState } from "react";
+import Databox from "../_components/DataBox/Databox";
+import DataboxMed from "../_components/DataBox/DataboxMed";
+import CreditsViewBar from "../_components/CreditsViewbar/CreditsViewBar";
+import "./dashboard.css";
+import { TutortoiseClient } from "../_api/tutortoiseClient";
+import Modal from "../_components/Modal/Modal";
+import Alert from "../_components/Alert/Alert";
 import { ParentContext } from '../context/ParentContext';
-import { Student } from '../types/types';
+import { useAuthStore } from "@/store/authStore";
+
+
+type Student = {
+  studentId: number;
+  parentId: number;
+  studentName: string;
+  notes: string;
+  sessionsCompleted: number;
+  previousScore: number;
+  latestScore: number;
+  sessions: Session[];
+};
 
 type Session = {
   sessionId: number;
@@ -33,10 +45,12 @@ function Home() {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const user = useAuthStore((s) => s.user);
+  const id = user?.id;
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
-    throw new Error('ParentContext is missing. Wrap app in ParentProvider.');
+    throw new Error("ParentContext is missing. Wrap the app in ParentProvider.");
 
   const { parentDetails, setParentDetails } = parentCtx;
 
@@ -158,7 +172,7 @@ function Home() {
         <Databox
           title='Student'
           value={selectedStudent?.studentName?.split(' ')[0] ?? '—'}
-          href='/student'
+          href='/parent/student'
           cta='switch'
           topRightIcon={{
             src: '/icons/Add user icon.svg',
@@ -182,8 +196,6 @@ function Home() {
         <Databox
           title='Sessions completed'
           value={completedSess.length.toString()}
-          href='/student'
-          cta='View'
         />
         <DataboxMed latest={latestTwo} />
         {isAddStudentModalOpen && (

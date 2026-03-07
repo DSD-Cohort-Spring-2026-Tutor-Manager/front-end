@@ -1,0 +1,264 @@
+/* ── Student Page ──────────────────────────────────────────────────────────────
+   All colour values come from CSS custom properties injected by ThemeProvider
+   via Tokens.ts ( --color-* / --shadow-* / --radius-* ).
+   No hardcoded colour literals in this file.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Layout ── */
+
+.student-page {
+  width: 100%;
+  padding: 0 40px 48px;
+  box-sizing: border-box;
+}
+
+/* ── Page Header ── */
+
+.sp-header {
+  padding: 28px 0 16px;
+}
+
+.sp-header__avatar {
+  width: 64px !important;
+  height: 64px !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.sp-header__name {
+  color: var(--color-text-primary) !important;
+  font-weight: 700 !important;
+}
+
+.sp-header__chip {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+}
+
+/* ── Loading ── */
+
+.sp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 0;
+}
+
+/* ── Stat Grid ── */
+
+.sp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* ── Stat Card ── */
+
+.stat-card {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md) !important;
+}
+
+.stat-card--default {
+  background-color: var(--color-primary) !important;
+}
+
+.stat-card--accent {
+  background-color: var(--color-surface) !important;
+}
+
+.stat-card__avatar {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.stat-card__avatar--default {
+  background-color: var(--color-bg-paper) !important;
+  color: var(--color-surface) !important;
+}
+
+.stat-card__avatar--accent {
+  background-color: var(--color-primary) !important;
+  color: var(--color-surface) !important;
+}
+
+.stat-card__label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  color: var(--color-text-primary) !important;
+  opacity: 0.65;
+}
+
+.stat-card--accent .stat-card__label {
+  color: var(--color-text-secondary) !important;
+  opacity: 0.75;
+}
+
+.stat-card__value {
+  font-weight: 800 !important;
+  color: var(--color-text-primary) !important;
+  line-height: 1.1 !important;
+}
+
+.stat-card--accent .stat-card__value {
+  color: var(--color-text-secondary) !important;
+}
+
+/* ── Section heading ── */
+
+.sp-section-title {
+  font-weight: 700 !important;
+  color: var(--color-text-primary) !important;
+  margin-bottom: 12px !important;
+}
+
+.sp-divider {
+  margin-bottom: 12px !important;
+  border-color: var(--color-border) !important;
+}
+
+/* ── Score Growth Chart ── */
+
+.sc-svg {
+  width: 100%;
+  max-height: 180px;
+  overflow: visible;
+  display: block;
+}
+
+/* SVG element classes — colours via CSS vars so no inline style needed */
+.sc-grid-line {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.sc-axis-label {
+  fill: var(--color-text-primary);
+  opacity: 0.35;
+  font-size: 9px;
+  font-family: var(--font-sans);
+}
+
+.sc-area {
+  fill: var(--color-primary);
+  opacity: 0.35;
+}
+
+.sc-line {
+  stroke: var(--color-surface);
+  stroke-width: 2.5;
+}
+
+.sc-dot {
+  fill: var(--color-surface);
+}
+
+.sc-value-label {
+  fill: var(--color-surface);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+}
+
+/* Trend chip variants */
+.sc-trend-chip {
+  font-weight: 600 !important;
+}
+
+.sc-trend-chip.sc-trend--up {
+  background-color: var(--color-success-light) !important;
+  color: var(--color-success-dark) !important;
+}
+
+.sc-trend-chip.sc-trend--down {
+  background-color: var(--color-error-light) !important;
+  color: var(--color-error-dark) !important;
+}
+
+.sc-trend-chip.sc-trend--flat {
+  background-color: var(--color-border) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* X-axis label row */
+.sc-x-axis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+/* Empty chart state */
+.sc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.sc-empty__icon {
+  font-size: 2.5rem !important;
+  color: var(--color-border) !important;
+}
+
+/* ── Subject Progress Bars ── */
+
+/* MUI LinearProgress colour overrides via CSS classes (no sx needed) */
+.sp-bar {
+  height: 8px !important;
+  border-radius: 99px !important;
+  background-color: var(--color-primary) !important;
+}
+
+.sp-bar .MuiLinearProgress-bar {
+  border-radius: 99px !important;
+}
+
+.sp-bar--high .MuiLinearProgress-bar {
+  background-color: var(--color-success) !important;
+}
+
+.sp-bar--mid .MuiLinearProgress-bar {
+  background-color: var(--color-warning) !important;
+}
+
+.sp-bar--low .MuiLinearProgress-bar {
+  background-color: var(--color-surface) !important;
+}
+
+/* Score % chip */
+.sp-pct-chip {
+  font-weight: 700 !important;
+  min-width: 52px !important;
+}
+
+.sp-pct-chip.sp-bar--high {
+  background-color: var(--color-success-light) !important;
+  color: var(--color-success-dark) !important;
+}
+
+.sp-pct-chip.sp-bar--mid {
+  background-color: var(--color-warning-light) !important;
+  color: var(--color-warning-dark) !important;
+}
+
+.sp-pct-chip.sp-bar--low {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-primary) !important;
+}
