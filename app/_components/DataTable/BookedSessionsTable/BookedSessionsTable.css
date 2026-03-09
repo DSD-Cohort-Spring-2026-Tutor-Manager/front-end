@@ -1,0 +1,176 @@
+.booked-table {
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 8px 18px;
+  border-radius: 4px;
+  font-family: inherit;
+  margin-top: 32px;
+}
+
+.booked-table__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 0 8px;
+}
+
+.booked-table__title {
+  margin: 0;
+  font-size: 1.9rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--Support);
+}
+
+.booked-table__find-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  background: var(--Accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.booked-table__find-btn:hover {
+  opacity: 0.88;
+}
+
+.booked-table__divider {
+  height: 1px;
+  background: var(--Support);
+  opacity: 0.9;
+  margin-bottom: 14px;
+}
+
+.booked-table__labels {
+  display: grid;
+  grid-template-columns: 1.1fr 2fr 2fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  margin-bottom: 8px;
+  color: var(--Support);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.booked-table__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.booked-table__row {
+  display: grid;
+  grid-template-columns: 1.1fr 2fr 2fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  background: var(--Outlines);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-height: 44px;
+  font-weight: 700;
+}
+
+.booked-table__cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booked-table__empty {
+  text-align: center;
+  color: var(--Support);
+  font-weight: 600;
+  padding: 24px 0;
+  font-size: 1rem;
+}
+
+.booked-table__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 0;
+}
+
+.booked-table__view-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.booked-table__view-more-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 32px;
+  background: var(--Support);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.booked-table__view-more-btn:hover {
+  opacity: 0.88;
+}
+
+@media (max-width: 768px) {
+  .booked-table__title {
+    font-size: 1.35rem;
+  }
+
+  .booked-table__labels,
+  .booked-table__row {
+    grid-template-columns: 1.2fr 1.7fr 1.6fr 1fr;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .booked-table__labels {
+    display: none;
+  }
+
+  .booked-table__row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .booked-table__cell {
+    white-space: normal;
+  }
+
+  .booked-table__cell::before {
+    display: inline-block;
+    width: 70px;
+    color: #d8efe5;
+    font-weight: 800;
+  }
+
+  .booked-table__row .booked-table__cell:nth-child(1)::before {
+    content: 'Date: ';
+  }
+
+  .booked-table__row .booked-table__cell:nth-child(2)::before {
+    content: 'Tutor: ';
+  }
+
+  .booked-table__row .booked-table__cell:nth-child(3)::before {
+    content: 'Subject: ';
+  }
+
+  .booked-table__row .booked-table__cell:nth-child(4)::before {
+    content: 'Time: ';
+  }
+}
