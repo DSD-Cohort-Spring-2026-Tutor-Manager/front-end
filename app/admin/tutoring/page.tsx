@@ -28,7 +28,7 @@ function TutorRegistrationForm() {
     firstName: "",
     lastName: "",
     email: "",
-    password: "password123",
+    password: "",
     phone: "",
   });
   const [status, setStatus] = useState<{ type: "success" | "error" | null; msg: string }>({ type: null, msg: "" });
@@ -82,6 +82,10 @@ function TutorRegistrationForm() {
       <div className="form-group">
         <label>Phone</label>
         <input required type="number" name="phone" value={formData.phone} onChange={handleChange} />
+      </div>
+            <div className="form-group">
+        <label>Phone</label>
+        <input required type="password" name="password" value={formData.password} onChange={handleChange} />
       </div>
       <button disabled={loading} type="submit" className="form-btn">
         {loading ? <CircularProgress size={20} color="inherit" /> : "Submit"}
