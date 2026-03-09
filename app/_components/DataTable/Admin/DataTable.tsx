@@ -82,7 +82,6 @@ export default function DataTable({ sessions, type }: Props) {
 
   const renderCells = (session: Session) => {
     if (type === 'parent') {
-      debugger;
       return (
         <>
           <TableCell>{session.studentLastName}</TableCell>

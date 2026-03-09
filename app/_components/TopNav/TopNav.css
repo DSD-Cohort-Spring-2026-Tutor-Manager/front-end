@@ -35,12 +35,6 @@
   gap: 14px;
 }
 
-.topnav__user-container > img {
-  max-width: 38px;
-  max-height: 38px;
-  padding-bottom: 4px;
-}
-
 .topnav__user-container > button {
   background: none;
 }
