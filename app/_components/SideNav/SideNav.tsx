@@ -15,9 +15,8 @@ const parentNavItems = [
 
 const adminNavItems = [
   { href: "/admin", label: "Home", icon: "/icons/home.svg", iconActive: "/icons/Home-act.svg" },
-  { href: "/admin/tutoring", label: "Tutoring", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
+  { href: "/admin/tutoring", label: "Registration", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
   { href: "/admin/student", label: "Student", icon: "/icons/student.svg", iconActive: "/icons/student.svg" },
-  { href: "/admin/credits", label: "Credits", icon: "/icons/shop.svg", iconActive: "/icons/Shop-act.svg" },
   { href: "/admin/classes", label: "Classes", icon: "/icons/tutor.svg", iconActive: "/icons/tutor-act.svg" },
 ];
 
@@ -40,13 +39,11 @@ function SideNav() {
     return path;
   };
 
-  // ── Role resolution ──────────────────────────────────────────────────
   const derivedRoleFromPath =
     pathname.startsWith("/tutor")  ? "tutor"  :
     pathname.startsWith("/parent") ? "parent" :
     pathname.startsWith("/admin")  ? "admin"  : null;
 
-  // user?.role is source of truth; path is fallback for edge cases
   const role = (user?.role ?? derivedRoleFromPath)?.toLowerCase() || null;
 
   const navItems =
@@ -72,7 +69,6 @@ function SideNav() {
     return itemPath.length > bestMatchPath.length ? item.href : bestMatch;
   }, null);
 
-  // ── Logout ───────────────────────────────────────────────────────────
   const handleLogout = async () => {
     await logout();
     router.push("/login");
@@ -114,7 +110,6 @@ function SideNav() {
           })}
         </ul>
 
-        {/* Logout — button for correct semantics + keyboard accessibility */}
         <button
           type="button"
           className="side-nav__logout"

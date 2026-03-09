@@ -4,14 +4,17 @@ import { TutortoiseClient } from "../../_api/tutortoiseClient";
 import LeastActiveStudents from "../../_components/DataBox/LeastActiveStudents";
 import Databox from "../../_components/DataBox/Databox";
 import "./students.css";
+import TablePagination from "@mui/material/TablePagination";
 
 interface Session {
   studentId: string;
-  studentName?: string;
+  studentFirstName?: string;
+  studentLastName?: string;
   sessionStatus: string;
   datetimeStarted?: string;
   tutorId?: string;
   subject?: string;
+   parentId: string | null; 
 }
 
 interface StudentProfile {
@@ -24,6 +27,7 @@ interface StudentProfile {
   lastSeen: string | null;
   subjects: string[];
   tutors: string[];
+  creditsRemaining: number;
 }
 
 export default function StudentPage() {
@@ -33,6 +37,13 @@ export default function StudentPage() {
   const [sortKey, setSortKey]       = useState<keyof StudentProfile>("total");
   const [sortDir, setSortDir]       = useState<"asc" | "desc">("desc");
   const [activeView, setActiveView] = useState<"all" | "least">("all");
+  const [page, setPage]               = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleChangePage        = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => setPage(newPage);
+  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
     TutortoiseClient.getSessionHistory().then((data) => {
@@ -47,14 +58,17 @@ export default function StudentPage() {
       if (!map.has(s.studentId)) {
         map.set(s.studentId, {
           studentId:   s.studentId,
-          studentName: s.studentName ?? `Student ${s.studentId}`,
+          studentName: s.studentFirstName + " " + s.studentLastName,
           total: 0, completed: 0, scheduled: 0, cancelled: 0,
-          lastSeen: null, subjects: [], tutors: [],
+          lastSeen: null, subjects: [], tutors: [], creditsRemaining: 0,
         });
       }
       const p = map.get(s.studentId)!;
       p.total += 1;
       const status = s.sessionStatus?.toLowerCase();
+      if(status === "open"){
+        p.creditsRemaining += 1;
+      }
       if (status === "completed") p.completed += 1;
       if (status === "scheduled") p.scheduled += 1;
       if (status === "cancelled") p.cancelled += 1;
@@ -68,7 +82,6 @@ export default function StudentPage() {
     return [...map.values()];
   }, [sessions]);
 
-  // ✅ Fix: explicit number type on accumulator
   const stats = useMemo(() => {
     const totalSessions = profiles.reduce((sum: number, p) => sum + p.total, 0);
     return {
@@ -90,6 +103,7 @@ export default function StudentPage() {
       );
     }
 
+
     list.sort((a, b) => {
       const av = a[sortKey], bv = b[sortKey];
       if (av === null) return 1;
@@ -99,7 +113,12 @@ export default function StudentPage() {
     });
     return list;
   }, [profiles, search, sortKey, sortDir]);
-  console.log(displayed);
+
+ const paginated = useMemo(
+  () => displayed.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+  [displayed, page, rowsPerPage]
+);
+
 
   const handleSort = (k: keyof StudentProfile) => {
     if (k === sortKey) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -122,8 +141,6 @@ export default function StudentPage() {
 
   return (
     <main className="dashboard">
-
-      {/* ── Databoxes — horizontal row matching dashboard home ── */}
       <section className="dashboard__data-row" style={{ margin: "20px 20px" }}>
         <Databox
           title="Total Students"
@@ -145,8 +162,6 @@ export default function StudentPage() {
           value={stats.noShows}
         />
       </section>
-
-      {/* ── View toggle ── */}
       <div className="sp__view-toggle">
         <button
           className={`sp__toggle-btn ${activeView === "all" ? "sp__toggle-btn--on" : ""}`}
@@ -162,29 +177,14 @@ export default function StudentPage() {
         </button>
       </div>
 
-      {/* ── Least Active view ── */}
       {activeView === "least" && (
         <div style={{ margin: "0 20px" }}>
           <LeastActiveStudents sessions={sessions} limit={10} />
         </div>
       )}
 
-      {/* ── All Students table ── */}
       {activeView === "all" && (
         <div className="sp__table-card">
-
-          <div className="sp__toolbar">
-            <div className="sp__search-wrap">
-              <span className="sp__search-icon">⌕</span>
-              <input
-                className="sp__search"
-                placeholder="Search by name or ID…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <span className="sp__count">{displayed.length} students</span>
-          </div>
 
           {loading ? (
             <div className="sp__loading">
@@ -200,11 +200,11 @@ export default function StudentPage() {
                     <th className="sp__th-sort" onClick={() => handleSort("studentName")}>
                       Student {sortIcon("studentName")}
                     </th>
+                    <th className="sp__th-sort" onClick={() => handleSort("completed")}>
+                      Credits Remaining {sortIcon("completed")}
+                    </th>
                     <th className="sp__th-sort" onClick={() => handleSort("total")}>
                       Total {sortIcon("total")}
-                    </th>
-                    <th className="sp__th-sort" onClick={() => handleSort("completed")}>
-                      Done {sortIcon("completed")}
                     </th>
                     <th className="sp__th-sort" onClick={() => handleSort("scheduled")}>
                       Upcoming {sortIcon("scheduled")}
@@ -213,17 +213,15 @@ export default function StudentPage() {
                       Cancelled {sortIcon("cancelled")}
                     </th>
                     <th>Subjects</th>
-                    <th className="sp__th-sort" onClick={() => handleSort("lastSeen")}>
-                      Last Active {sortIcon("lastSeen")}
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {displayed.map((p, i) => {
-                    return (
+                {paginated.map((p, i) => {
+                  const globalIndex = page * rowsPerPage + i + 1;
+                  return (
                       <tr key={p.studentId} className="sp__row">
 
-                        <td className="sp__td-rank">{i + 1}</td>
+                        <td className="sp__td-rank">{globalIndex}</td>
 
                         <td>
                           <div className="sp__student-cell">
@@ -234,7 +232,7 @@ export default function StudentPage() {
                           </div>
                         </td>
 
-                        <td className="sp__td-num">{p.total}</td>
+                        <td className="sp__td-num">{p.creditsRemaining}</td>
                         <td className="sp__td-completed">{p.completed}</td>
                         <td className="sp__td-upcoming">{p.scheduled}</td>
                         <td className="sp__td-cancelled">{p.cancelled}</td>
@@ -254,7 +252,6 @@ export default function StudentPage() {
                             )}
                           </div>
                         </td>
-                        <td className="sp__td-date">{formatDate(p.lastSeen)}</td>
 
 
                       </tr>
@@ -271,6 +268,16 @@ export default function StudentPage() {
 
                 </tbody>
               </table>
+              <TablePagination
+                  rowsPerPageOptions={[10, 25, 50]}
+                  component="div"
+                  count={displayed.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+
             </div>
           )}
         </div>

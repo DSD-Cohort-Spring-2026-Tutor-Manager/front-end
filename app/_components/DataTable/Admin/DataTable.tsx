@@ -62,7 +62,6 @@ const STATUS_PRIORITY: Record<string, number> = {
 };
 
 const dedupedRows = (() => {
-  // Group sessions by key first
   const groupedMap = new Map<string, Session[]>();
 
   sessions.forEach((s) => {
@@ -75,7 +74,6 @@ const dedupedRows = (() => {
     groupedMap.get(key)!.push(s);
   });
 
-  // For each group, pick the session with the highest priority status
   return Array.from(groupedMap.values()).map((group) => {
     return group.reduce((best, current) => {
       const bestPriority = STATUS_PRIORITY[best.sessionStatus?.toLowerCase()] ?? 0;
