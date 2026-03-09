@@ -1,0 +1,309 @@
+/* ═══════════════════════════════════════════════════
+   STUDENTS PAGE  ·  matches existing table style
+════════════════════════════════════════════════════ */
+
+.sp__root {
+  padding: 0 4px;
+}
+
+/* ── Header ── */
+.sp__page-header {
+  margin-bottom: 4px;
+}
+.sp__page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--Text);
+  margin-bottom: 4px;
+  font-family: inherit;
+}
+.sp__page-sub {
+  font-size: 0.8rem;
+  color: var(--SubText, #94a3b8);
+  margin-bottom: 20px;
+}
+
+/* ── View toggle ── */
+.sp__view-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--CardBG, rgba(255,255,255,0.03));
+  border: 1px solid var(--Border, rgba(255,255,255,0.08));
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+  margin: 0 20px 20px;
+}
+.sp__toggle-btn {
+  padding: 7px 18px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--SubText, #94a3b8);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sp__toggle-btn:hover { color: var(--Text); }
+.sp__toggle-btn--on {
+  background: color-mix(in srgb, var(--Primary) 15%, transparent);
+  border-color: var(--Primary);
+  color: var(--Text);
+}
+
+/* ════════════════════════════════════
+   TABLE — matches screenshot exactly
+════════════════════════════════════ */
+
+.sp__table-card {
+  padding: 0 20px 20px;
+}
+
+/* Toolbar row */
+.sp__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 14px 0;
+}
+.sp__search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.sp__search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--SubText, #64748b);
+  font-size: 15px;
+  pointer-events: none;
+}
+.sp__search {
+  background: var(--InputBG, rgba(255,255,255,0.05));
+  border: 1px solid var(--Border, rgba(255,255,255,0.08));
+  border-radius: 8px;
+  padding: 7px 12px 7px 30px;
+  color: var(--Text);
+  font-size: 0.8rem;
+  font-family: inherit;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.2s;
+}
+.sp__search::placeholder { color: var(--SubText, #475569); }
+.sp__search:focus { border-color: var(--Primary); }
+.sp__count {
+  font-size: 0.75rem;
+  color: var(--SubText, #64748b);
+}
+
+/* Table wrapper */
+.sp__table-wrap { width: 100%; }
+
+.sp__table {
+  width: 100%;
+  border-collapse: separate;   /* MUST be separate for border-radius on rows */
+  border-spacing: 0 8px;       /* vertical gap between pill rows */
+  font-family: inherit;
+}
+
+/* ── Column headers — plain, matches screenshot ── */
+.sp__table thead th {
+  padding: 4px 20px 8px;
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--Text);
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+}
+.sp__th-sort {
+  cursor: pointer;
+  user-select: none;
+}
+.sp__th-sort:hover { opacity: 0.75; }
+
+/* ── Body rows — solid dark green matching other pages ── */
+.sp__row td {
+  background: #2d6a4f;
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  vertical-align: middle;
+  border: none;
+}
+
+/* pill shape: round left side of first cell, right side of last */
+.sp__row td:first-child {
+  border-radius: 12px 0 0 12px;
+}
+.sp__row td:last-child {
+  border-radius: 0 12px 12px 0;
+}
+
+/* subtle hover lift */
+.sp__row:hover td {
+  filter: brightness(1.08);
+}
+
+/* ── Cell types ── */
+.sp__td-rank {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  width: 36px;
+  text-align: center;
+}
+
+.sp__td-num       { text-align: center; color: #fff; }
+.sp__td-completed { text-align: center; color: var(--Highlight, #86efac); }
+.sp__td-upcoming  { text-align: center; color: rgba(255,255,255,0.85); }
+.sp__td-cancelled { text-align: center; color: #fca5a5; }
+.sp__td-date      { color: rgba(255,255,255,0.7); font-size: 0.78rem; white-space: nowrap; }
+
+/* ── Student cell ── */
+.sp__student-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sp__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+}
+.sp__name {
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+.sp__sid {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 500;
+}
+
+/* ── Subject tags — inside green row ── */
+.sp__tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.sp__tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  white-space: nowrap;
+}
+.sp__tag--more {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+  border-color: rgba(255,255,255,0.1);
+}
+.sp__tag--none {
+  background: transparent;
+  color: rgba(255,255,255,0.35);
+  border-color: transparent;
+}
+
+/* ── Health bar — inside green row ── */
+.sp__health {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 90px;
+}
+.sp__health-bar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sp__health-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.sp__health-pct {
+  font-size: 0.72rem;
+  font-weight: 700;
+  width: 32px;
+  text-align: right;
+  color: #fff;
+}
+
+/* ── Edit / action button — coral red, matches screenshot ── */
+.sp__btn-edit {
+  background: #e8615a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.sp__btn-edit:hover { background: #d94f48; }
+
+/* ── Loading ── */
+.sp__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px;
+  color: var(--SubText, #64748b);
+  font-size: 0.85rem;
+}
+.sp__spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--Border, rgba(255,255,255,0.1));
+  border-top-color: var(--Primary);
+  animation: sp-spin 0.7s linear infinite;
+}
+@keyframes sp-spin { to { transform: rotate(360deg); } }
+
+/* ── Empty state ── */
+.sp__empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--SubText, #475569);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 768px) {
+  .sp__search { width: 160px; }
+  .sp__table-card { padding: 0 12px 12px; }
+}
+/* ── Fix Databox row to always be horizontal ── */
+.dashboard__data-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard__data-row > * {
+  flex: 1;
+  min-width: 160px;
+}

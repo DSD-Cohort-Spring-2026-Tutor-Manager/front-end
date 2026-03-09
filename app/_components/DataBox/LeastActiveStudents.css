@@ -1,0 +1,201 @@
+/* ═══════════════════════════════════════════════════
+   LEAST ACTIVE STUDENTS — matches Tutortoise theme
+════════════════════════════════════════════════════ */
+
+.las__root {
+  background: transparent;
+  padding: 0 20px 20px;
+}
+
+/* ── Header ── */
+.las__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.las__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--Text);
+  margin-bottom: 3px;
+}
+.las__subtitle {
+  font-size: 0.75rem;
+  color: var(--SubText, #6b7280);
+}
+.las__badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--Accent) 15%, transparent);
+  color: var(--Accent);
+  border: 1px solid color-mix(in srgb, var(--Accent) 30%, transparent);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ── Column headers — plain bold, matches other table headers ── */
+.las__col-heads {
+  display: grid;
+  grid-template-columns: 36px 1fr 180px 100px 110px;
+  align-items: center;
+  padding: 4px 20px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--Text);
+}
+.las__col-rank     { text-align: center; }
+.las__col-sessions { text-align: center; }
+.las__col-activity { text-align: center; }
+.las__col-last     { text-align: right; }
+
+/* ── List ── */
+.las__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;               /* gap between pill rows */
+}
+
+/* ── Row — dark green pill matching other tables ── */
+.las__row {
+  display: grid;
+  grid-template-columns: 36px 1fr 180px 100px 110px;
+  align-items: center;
+  background: #2d6a4f;
+  border-radius: 12px;
+  padding: 14px 20px;
+  cursor: default;
+  transition: filter 0.15s;
+}
+.las__row:hover {
+  filter: brightness(1.08);
+}
+
+/* ── Rank ── */
+.las__rank {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+/* ── Student cell ── */
+.las__student {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.las__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+}
+.las__name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+.las__id {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+}
+
+/* ── Sessions bar + count ── */
+.las__sessions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.las__bar-wrap {
+  width: 80%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.las__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.las__count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Activity pill ── */
+.las__activity-col {
+  display: flex;
+  justify-content: center;
+}
+.las__pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ── Last seen ── */
+.las__last {
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Empty ── */
+.las__empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--SubText, #6b7280);
+  font-size: 0.82rem;
+  background: var(--Primary);
+  border-radius: 12px;
+}
+
+/* ── Footer legend ── */
+.las__footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.las__legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--SubText, #6b7280);
+}
+.las__legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.las__legend-note {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--SubText, #9ca3af);
+}
