@@ -15,6 +15,12 @@ This file tracks persistent warnings, minor maintenance items, and failed suppre
 
 ## Maintenance History
 
+### DataboxMed Grade-Change Text Logic Fix (March 8, 2026)
+- **File changed**: `app/_components/DataBox/DataboxMed.tsx`
+- **Problem**: The UI text always defaulted to "increased" when grades were equal, which was inaccurate for unchanged scores.
+- **Resolution**: Updated `gradeChangeWord` to support three states: `decreased` when `previous > current`, `increased` when `previous < current`, and `did not change` when `previous === current`.
+- **Behavioral impact**: Headline wording now matches the displayed score transition in all comparison cases.
+
 ### Next.js 16 Proxy Migration (March 2026)
 - **Issue**: `middleware.ts` convention deprecated in Next.js 16.
 - **Resolution**: Migrated all interception logic to `proxy.ts` root file using the `export function proxy(request: NextRequest)` named export.
