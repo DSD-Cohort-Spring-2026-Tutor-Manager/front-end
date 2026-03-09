@@ -1,15 +1,16 @@
-"use client";
-import { useContext, useEffect, useState } from "react";
-import Databox from "../_components/DataBox/Databox";
-import DataboxMed from "../_components/DataBox/DataboxMed";
-import CreditsViewBar from "../_components/CreditsViewbar/CreditsViewBar";
-import "./dashboard.css";
-import { TutortoiseClient } from "../_api/tutortoiseClient";
-import Modal from "../_components/Modal/Modal";
-import Alert from "../_components/Alert/Alert";
+'use client';
+import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Databox from '../_components/DataBox/Databox';
+import DataboxMed from '../_components/DataBox/DataboxMed';
+import CreditsViewBar from '../_components/CreditsViewbar/CreditsViewBar';
+import BookedSessionsTable from '../_components/DataTable/BookedSessionsTable/BookedSessionsTable';
+import './dashboard.css';
+import { TutortoiseClient } from '../_api/tutortoiseClient';
+import Modal from '../_components/Modal/Modal';
+import Alert from '../_components/Alert/Alert';
 import { ParentContext } from '../context/ParentContext';
-import { useAuthStore } from "@/store/authStore";
-
+import { useAuthStore } from '@/store/authStore';
 
 type Student = {
   studentId: number;
@@ -40,15 +41,40 @@ type Session = {
   assessmentPointsMax: number;
 };
 
+type SessionRow = {
+  id: number | string;
+  date: string;
+  tutor: string;
+  subject: string;
+  time: string;
+};
+
+function toSessionRow(session: Session): SessionRow {
+  const dt = session.datetimeStarted ? new Date(session.datetimeStarted) : null;
+  return {
+    id: session.sessionId,
+    tutor: session.tutorName ?? '—',
+    subject: session.subject ?? '—',
+    date: dt ? dt.toLocaleDateString('en-US') : '—',
+    time: dt
+      ? dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : '—',
+  };
+}
+
 function Home() {
+  const router = useRouter();
   const [isAddStudentModalOpen, setAddStudentModalIsOpen] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
-    throw new Error("ParentContext is missing. Wrap the app in ParentProvider.");
+    throw new Error(
+      'ParentContext is missing. Wrap the app in ParentProvider.',
+    );
 
   const { parentDetails, setParentDetails } = parentCtx;
 
@@ -125,6 +151,8 @@ function Home() {
         setSessions(allSessions);
       } catch (err) {
         console.error('Failed to load the sessions:', err);
+      } finally {
+        setSessionsLoading(false);
       }
     };
     loadSessions();
@@ -136,6 +164,23 @@ function Home() {
       ? getCompletedSessions(sessions, parentDetails.selectedStudent.studentId)
       : [];
   const latestTwo = getLatestTwo(completedSess);
+
+  const bookedSessions =
+    parentDetails.selectedStudent?.studentId != null
+      ? sessions
+          .filter(
+            (s) =>
+              s.sessionStatus === 'scheduled' &&
+              s.studentId === parentDetails.selectedStudent?.studentId &&
+              s.parentId === parentDetails.parentId,
+          )
+          .sort(
+            (a, b) =>
+              new Date(a.datetimeStarted).getTime() -
+              new Date(b.datetimeStarted).getTime(),
+          )
+          .map(toSessionRow)
+      : [];
 
   // Alert
 
@@ -215,6 +260,11 @@ function Home() {
           />
         )}
       </section>
+      <BookedSessionsTable
+        sessions={bookedSessions}
+        loading={sessionsLoading}
+        onFindTutor={() => router.push('/parent/tutoring')}
+      />
       <div className='alert-layer'>
         {isAlertVisible && (
           <Alert
