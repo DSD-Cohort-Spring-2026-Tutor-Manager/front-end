@@ -32,6 +32,14 @@ function SideNav() {
   const router = useRouter();
   const { user } = useAuth();
 
+  const normalizePath = (path: string) => {
+    if (path.length > 1 && path.endsWith("/")) {
+      return path.slice(0, -1);
+    }
+
+    return path;
+  };
+
   // ── Role resolution ──────────────────────────────────────────────────
   const derivedRoleFromPath =
     pathname.startsWith("/tutor")  ? "tutor"  :
@@ -45,6 +53,24 @@ function SideNav() {
     role === "tutor"  ? tutorNavItems  :
     role === "parent" ? parentNavItems :
     role === "admin"  ? adminNavItems  : [];
+
+  const currentPath = normalizePath(pathname);
+  const activeHref = navItems.reduce<string | null>((bestMatch, item) => {
+    const itemPath = normalizePath(item.href);
+    const isExactMatch = currentPath === itemPath;
+    const isBoundaryPrefixMatch = currentPath.startsWith(itemPath + "/");
+
+    if (!isExactMatch && !isBoundaryPrefixMatch) {
+      return bestMatch;
+    }
+
+    if (!bestMatch) {
+      return item.href;
+    }
+
+    const bestMatchPath = normalizePath(bestMatch);
+    return itemPath.length > bestMatchPath.length ? item.href : bestMatch;
+  }, null);
 
   // ── Logout ───────────────────────────────────────────────────────────
   const handleLogout = async () => {
@@ -68,10 +94,7 @@ function SideNav() {
         {/* Nav items */}
         <ul className="side-nav__list">
           {navItems.map((item) => {
-            // Active if exact match OR on a sub-route (but not "/" catch-all)
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href + "/"));
+            const isActive = item.href === activeHref;
 
             return (
               <li key={item.href}>

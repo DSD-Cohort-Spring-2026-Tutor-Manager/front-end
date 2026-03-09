@@ -13,6 +13,9 @@ const BOOK_SESSION_ENDPOINT =
 const ADMIN_ENDPOINT = "/api/admin/dashboard";
 const TUTOR_ASSIGN_GRADE_ENDPOINT = "/api/tutor/assign-grade";
 const STUDENT_NOTE_ENDPOINT = "/api/student/{studentId}/note";
+const CREATE_TUTOR_ENDPOINT = "/api/admin/dashboard/createTutor";
+const CREATE_PARENT_ENDPOINT = "/api/admin/dashboard/createParent";
+
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
 
@@ -201,6 +204,26 @@ export const TutortoiseClient = {
       .then((res) => res.data)
       .catch((err) => {
         console.error("Update student note API call failed", err);
+        throw err;
+      });
+  },
+
+  createTutor: async (tutorData: any): Promise<any> => {
+    return await axiosInstance
+      .post(CREATE_TUTOR_ENDPOINT, tutorData)
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("Create tutor API call failed", err);
+        throw err;
+      });
+  },
+
+  createParent: async (parentData: any): Promise<any> => {
+    return await axiosInstance
+      .post(CREATE_PARENT_ENDPOINT, parentData)
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("Create parent API call failed", err);
         throw err;
       });
   },
