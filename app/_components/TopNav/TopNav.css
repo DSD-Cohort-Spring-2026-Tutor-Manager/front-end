@@ -8,7 +8,7 @@
   height: 68px;
   background: #ffffff;
   border-bottom: 1.5px solid var(--Nav-Border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   flex-shrink: 0;
 }
 
@@ -35,6 +35,16 @@
   gap: 14px;
 }
 
+.topnav__user-container > img {
+  max-width: 38px;
+  max-height: 38px;
+  padding-bottom: 4px;
+}
+
+.topnav__user-container > button {
+  background: none;
+}
+
 /* Notification bell */
 .topnav-notification {
   width: 26px;
@@ -42,6 +52,8 @@
   opacity: 0.55;
   cursor: pointer;
   transition: opacity 0.15s;
+  display: flex;
+  align-items: center;
 }
 
 .topnav-notification:hover {
