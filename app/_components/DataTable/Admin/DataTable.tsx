@@ -23,6 +23,7 @@ interface Session {
   notes: string;
   parentId: string;
   assessmentPointsEarned: BigInteger;
+  status: string;
 }
 
 interface Props {
@@ -31,9 +32,9 @@ interface Props {
 }
 
 const COLUMN_CONFIGS: Record<string, string[]> = {
-  parent: ['Parent Name', 'Student Name', 'Credits', 'Status'],
-  tutor: ['Tutor', 'Subject'],
-  student: ['Student', 'Parent', 'Tutor', 'Notes', 'Subject', 'Grade'],
+  parent: ["Parent Name", "Student Name", "Credits"],
+  tutor: ["Tutor", "Subject"],
+  student: ["Student", "Parent", "Tutor", "Subject", "Grade"],
 };
 
 export default function DataTable({ sessions, type }: Props) {
@@ -52,29 +53,44 @@ export default function DataTable({ sessions, type }: Props) {
     setPage(0);
   };
 
-  const dedupedRows = (() => {
-    if (type === 'parent') {
-      return Array.from(
-        new Map(
-          sessions.map((s) => [`${s.parentId}-${s.studentId}`, s]),
-        ).values(),
-      );
-    }
-    if (type === 'tutor') {
-      return Array.from(
-        new Map(
-          sessions.map((s) => [`${s.tutorId}-${s.studentId}`, s]),
-        ).values(),
-      );
-    }
-    return Array.from(new Map(sessions.map((s) => [s.studentId, s])).values());
-  })();
+  
+const STATUS_PRIORITY: Record<string, number> = {
+  cancelled: 0,
+  open: 1,
+  scheduled: 2,
+  completed: 3,
+};
+
+const dedupedRows = (() => {
+  // Group sessions by key first
+  const groupedMap = new Map<string, Session[]>();
+
+  sessions.forEach((s) => {
+    let key: string;
+    if (type === "parent") key = `${s.parentId}-${s.studentId}`;
+    else if (type === "tutor") key = `${s.tutorId}-${s.studentId}`;
+    else key = String(s.studentId);
+
+    if (!groupedMap.has(key)) groupedMap.set(key, []);
+    groupedMap.get(key)!.push(s);
+  });
+
+  // For each group, pick the session with the highest priority status
+  return Array.from(groupedMap.values()).map((group) => {
+    return group.reduce((best, current) => {
+      const bestPriority = STATUS_PRIORITY[best.sessionStatus?.toLowerCase()] ?? 0;
+      const currentPriority = STATUS_PRIORITY[current.sessionStatus?.toLowerCase()] ?? 0;
+      return currentPriority > bestPriority ? current : best;
+    });
+  });
+})();
 
   const getRowKey = (session: Session): string => {
     if (type === 'parent') return `${session.parentId}-${session.studentId}`;
     if (type === 'tutor') return `${session.tutorId}-${session.studentId}`;
     return session.studentId;
   };
+  
   const paginatedRows = dedupedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
@@ -86,8 +102,8 @@ export default function DataTable({ sessions, type }: Props) {
         <>
           <TableCell>{session.studentLastName}</TableCell>
           <TableCell>{session.studentFirstName}</TableCell>
-          <TableCell>{creditBalances[session.parentId] ?? '—'}</TableCell>
-          <TableCell>{session.sessionStatus}</TableCell>
+          <TableCell>{creditBalances[session.parentId] ?? "—"}</TableCell>
+          
         </>
       );
     }
@@ -104,9 +120,9 @@ export default function DataTable({ sessions, type }: Props) {
         <TableCell>{session.studentFirstName}</TableCell>
         <TableCell>{session.studentLastName}</TableCell>
         <TableCell>{session.tutorName}</TableCell>
-        <TableCell>{session.notes}</TableCell>
         <TableCell>{session.subject}</TableCell>
-        <TableCell>{String(session.assessmentPointsEarned)}</TableCell>
+        <TableCell>{session.assessmentPointsEarned}</TableCell>
+       
       </>
     );
   };
