@@ -81,10 +81,10 @@ function TutorRegistrationForm() {
       </div>
       <div className="form-group">
         <label>Phone</label>
-        <input required type="number" name="phone" value={formData.phone} onChange={handleChange} />
+        <input required type="phone" name="phone" value={formData.phone} onChange={handleChange} />
       </div>
             <div className="form-group">
-        <label>Phone</label>
+        <label>Password</label>
         <input required type="password" name="password" value={formData.password} onChange={handleChange} />
       </div>
       <button disabled={loading} type="submit" className="form-btn">
@@ -100,7 +100,7 @@ function ParentRegistrationForm() {
     lastName: "",
     email: "",
     phone: "",
-    password: "password123",
+    password: "",
   });
   const [students, setStudents] = useState([{ firstName: "",lastName: ""}]);
   const [status, setStatus] = useState<{ type: "success" | "error" | null; msg: string }>({ type: null, msg: "" });
@@ -175,6 +175,10 @@ function ParentRegistrationForm() {
       <div className="form-group">
         <label>Phone</label>
         <input required name="phone" value={parentData.phone} onChange={handleParentChange} />
+      </div>
+            <div className="form-group">
+        <label>Password</label>
+        <input required name="password" value={parentData.password} onChange={handleParentChange} />
       </div>
 
       <hr style={{ margin: "20px 0" }} />
