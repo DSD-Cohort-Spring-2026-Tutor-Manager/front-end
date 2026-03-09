@@ -29,16 +29,19 @@ const TopNav = ({
         <div className='topnav__user-container'>
           {/* Notification */}
           <button
-            type="button"
-            className="topnav-notification"
-            aria-label="Open notifications"
+            type='button'
+            className='topnav-notification'
+            aria-label='Open notifications'
           >
             <img
-              src="/icons/notification.svg"
-              alt=""
-              aria-hidden="true"
+              src='/icons/notification.svg'
+              className='max-w-none'
+              alt=''
+              aria-hidden='true'
               width={26}
               height={26}
+              max-width={26}
+              max-height={26}
             />
           </button>
 

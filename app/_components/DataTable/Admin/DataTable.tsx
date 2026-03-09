@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TablePagination from "@mui/material/TablePagination";
-import Paper from "@mui/material/Paper";
-import { TutortoiseClient } from "../../../_api/tutortoiseClient";
+import { useEffect, useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import TablePagination from '@mui/material/TablePagination';
+import Paper from '@mui/material/Paper';
+import { TutortoiseClient } from '../../../_api/tutortoiseClient';
 
 interface Session {
   id: string;
@@ -28,7 +28,7 @@ interface Session {
 
 interface Props {
   sessions: Session[];
-  type: "parent" | "student" | "tutor";
+  type: 'parent' | 'student' | 'tutor';
 }
 
 const COLUMN_CONFIGS: Record<string, string[]> = {
@@ -86,8 +86,8 @@ const dedupedRows = (() => {
 })();
 
   const getRowKey = (session: Session): string => {
-    if (type === "parent") return `${session.parentId}-${session.studentId}`;
-    if (type === "tutor") return `${session.tutorId}-${session.studentId}`;
+    if (type === 'parent') return `${session.parentId}-${session.studentId}`;
+    if (type === 'tutor') return `${session.tutorId}-${session.studentId}`;
     return session.studentId;
   };
   
@@ -97,7 +97,7 @@ const dedupedRows = (() => {
   );
 
   const renderCells = (session: Session) => {
-    if (type === "parent") {
+    if (type === 'parent') {
       return (
         <>
           <TableCell>{session.studentLastName}</TableCell>
@@ -107,7 +107,7 @@ const dedupedRows = (() => {
         </>
       );
     }
-    if (type === "tutor") {
+    if (type === 'tutor') {
       return (
         <>
           <TableCell>{session.tutorName}</TableCell>
@@ -152,7 +152,7 @@ const dedupedRows = (() => {
           <TableBody>
             {dedupedRows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={COLUMN_CONFIGS[type].length} align="center">
+                <TableCell colSpan={COLUMN_CONFIGS[type].length} align='center'>
                   No sessions available
                 </TableCell>
               </TableRow>
@@ -170,13 +170,13 @@ const dedupedRows = (() => {
       {dedupedRows.length > 10 && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
-          component="div"
+          component='div'
           count={dedupedRows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{ color: "#595959" }}
+          style={{ color: '#595959' }}
         />
       )}
     </Paper>

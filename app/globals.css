@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source not "../.agent";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -6,24 +6,33 @@
    ───────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --Primary:    #cde8b5;   /* Mint green      */
-  --Outlines:   #2e6f5e;   /* Dark green      */
-  --Accent:     #f39c34;   /* Orange          */
-  --Support:    #243a5e;   /* Navy blue       */
-  --Highlight:  #7fbf4d;   /* Bright green    */
-  --Off-white:  #F8FAF7;   /* Page background (design token) */
-  --color-border: #E2E8F0;  /* Subtle container/input borders */
-  --Nav-Border: #e0e5de;   /* Subtle border   */
+  --Primary: #cde8b5; /* Mint green      */
+  --Outlines: #2e6f5e; /* Dark green      */
+  --Accent: #f39c34; /* Orange          */
+  --Support: #243a5e; /* Navy blue       */
+  --Highlight: #7fbf4d; /* Bright green    */
+  --Off-white: #f8faf7; /* Page background (design token) */
+  --color-border: #e2e8f0; /* Subtle container/input borders */
+  --Nav-Border: #e0e5de; /* Subtle border   */
 }
 
 /* ── Reset ── */
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   background-color: var(--Off-white);
   color: var(--Support);
 }
