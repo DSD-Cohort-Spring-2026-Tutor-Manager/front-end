@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Databox from '../_components/DataBox/Databox';
 import DataboxMed from '../_components/DataBox/DataboxMed';
@@ -69,6 +69,11 @@ function Home() {
   const [isAlertExiting, setIsAlertExiting] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [subjectFilter, setSubjectFilter] = useState<string>('Physics');
+
+  const subjects = Array.from(new Set(sessions.map((s) => s.subject))).filter(
+    (s) => s != null,
+  ) as string[];
 
   const parentCtx = useContext(ParentContext);
   if (!parentCtx)
@@ -95,7 +100,14 @@ function Home() {
   }
 
   function getLatestTwo(sessions: Session[]) {
+    const sessionsSubject = subjectFilter;
     return [...sessions]
+      .filter(
+        (s) =>
+          s.subject === sessionsSubject &&
+          s.assessmentPointsEarned != null &&
+          s.assessmentPointsEarned !== 0,
+      )
       .sort(
         (a, b) =>
           new Date(b.datetimeStarted).getTime() -
@@ -140,6 +152,15 @@ function Home() {
       });
   }
 
+  function changeSubject(direction: 'previous' | 'next') {
+    const currentIndex = subjects.indexOf(subjectFilter);
+    if (currentIndex === -1) return;
+    const newIndex =
+      direction === 'previous'
+        ? (currentIndex - 1 + subjects.length) % subjects.length
+        : (currentIndex + 1) % subjects.length;
+    setSubjectFilter(subjects[newIndex]);
+  }
   // sessions fetch — called once on mount; all students share the same session pool
   useEffect(() => {
     const loadSessions = async () => {
@@ -183,7 +204,6 @@ function Home() {
       : [];
 
   // Alert
-
   useEffect(() => {
     if (!isAlertVisible) return;
 
@@ -240,7 +260,11 @@ function Home() {
           title='Sessions completed'
           value={completedSess.length.toString()}
         />
-        <DataboxMed latest={latestTwo} />
+        <DataboxMed
+          latest={latestTwo}
+          subjectFilter={subjectFilter}
+          changeSubject={changeSubject}
+        />
         {isAddStudentModalOpen && (
           <Modal
             type='add student'

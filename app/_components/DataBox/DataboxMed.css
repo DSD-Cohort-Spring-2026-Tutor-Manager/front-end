@@ -8,3 +8,28 @@
   background-color: var(--Primary);
   border-radius: 28px;
 }
+
+.databox__buttons-container {
+  display: flex;
+  gap: 20px;
+}
+
+.databox-med > .databox__title {
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.databox-med > .databox__title-value {
+  font-size: 35px;
+  font-weight: 800;
+  color: var(--Outlines);
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.databox-med > .databox__subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--Support);
+  margin-bottom: 5px;
+}
