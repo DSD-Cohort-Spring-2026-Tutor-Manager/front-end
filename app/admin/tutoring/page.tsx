@@ -6,6 +6,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { TutortoiseClient } from "../../_api/tutortoiseClient";
 import CircularProgress from "@mui/material/CircularProgress";
+import "./tutoring.css"
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,6 +63,7 @@ function TutorRegistrationForm() {
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className="admin-form">
       <h3>Register New Tutor</h3>
       {status.type && (
@@ -222,10 +224,10 @@ export default function AdminTutoringPage() {
   return (
     <main className="dashboard">
       <section style={{ margin: "20px" }}>
-        <h2>Registration & Tutoring</h2>
+        <h2 className="reg__page-title">Registration & Tutoring</h2>
         <Box sx={{ width: "100%", mt: 2 }}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs value={tabValue} onChange={handleTabChange}>
+            <Tabs value={tabValue} onChange={handleTabChange} className="reg__tabs">
               <Tab label="Tutor Registration" />
               <Tab label="Parent & Student Registration" />
             </Tabs>

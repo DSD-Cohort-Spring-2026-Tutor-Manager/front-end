@@ -40,7 +40,6 @@ function Home() {
       if (details) {
         setBookedSessions(details.weeklySessionsBooked);
         setWeeklyCreditsSold(details.weeklyCreditSold);
-        console.log(details);
       }
     });
   }, []);
