@@ -13,6 +13,12 @@ type DataboxMedProps = {
 function DataboxMed({ latest }: DataboxMedProps) {
   const current = latest[0]?.assessmentPointsEarned ?? 0;
   const previous = latest[1]?.assessmentPointsEarned ?? 0;
+  const gradeChangeWord =
+    previous > current
+      ? 'decreased'
+      : previous < current
+        ? 'increased'
+        : 'did not change';
 
   return (
     <div
@@ -21,7 +27,7 @@ function DataboxMed({ latest }: DataboxMedProps) {
     >
       <h2 className='databox__title'>
         Student's grade{' '}
-        <span className='text-lime-600 font-bold'>increased</span> since last
+        <span className='text-lime-600 font-bold'>{gradeChangeWord}</span> since last
         exam
       </h2>
       <p className='databox__title-value'>

@@ -1,0 +1,193 @@
+
+/* ═══════════════════════════════════════════════════
+   REGISTRATION PAGE — matches Tutortoise admin theme
+════════════════════════════════════════════════════ */
+
+/* ── Page heading ── */
+.reg__page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--Text);
+  margin-bottom: 4px;
+}
+
+/* ── MUI Tab overrides — matches your Parents/Students/Tutors tabs ── */
+.reg__tabs .MuiTab-root {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  color: var(--SubText, #6b7280) !important;
+  text-transform: none !important;
+  padding: 10px 20px !important;
+}
+.reg__tabs .MuiTab-root.Mui-selected {
+  color: var(--Text) !important;
+}
+.reg__tabs .MuiTabs-indicator {
+  background-color: #2d6a4f !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+.reg__tabs .MuiTabs-root {
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* ── Form card — light green card matching Databox style ── */
+.admin-form {
+  background: var(--CardBG, #e8f5e9);
+  border: 1px solid rgba(45, 106, 79, 0.15);
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 560px;
+  width: 100%;
+}
+
+.admin-form h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--Text, #1a3c2e);
+  margin-bottom: 20px;
+}
+
+/* ── Form group ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--SubText, #4b6e5a);
+}
+
+.form-group input {
+  background: #fff;
+  border: 1.5px solid rgba(45, 106, 79, 0.25);
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--Text, #1a3c2e);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #aac4b5;
+}
+
+.form-group input:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+/* ── Divider ── */
+.admin-form hr {
+  border: none;
+  border-top: 1.5px solid rgba(45, 106, 79, 0.15);
+  margin: 24px 0;
+}
+
+/* ── Student card ── */
+.student-card {
+  background: rgba(45, 106, 79, 0.06);
+  border: 1px solid rgba(45, 106, 79, 0.15);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.student-card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Buttons ── */
+.form-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #2d6a4f;
+  color: #fff;
+  min-width: 100px;
+}
+
+.form-btn:hover:not(:disabled) {
+  background: #245a41;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
+}
+
+.form-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-btn--secondary {
+  background: transparent;
+  color: #2d6a4f;
+  border: 1.5px solid #2d6a4f;
+  width: 100%;
+}
+
+.form-btn--secondary:hover:not(:disabled) {
+  background: rgba(45, 106, 79, 0.08);
+  box-shadow: none;
+}
+
+.form-btn--danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+  padding: 7px 16px;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+.form-btn--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.06);
+  box-shadow: none;
+}
+
+/* ── Feedback messages ── */
+.form-msg {
+  padding: 10px 14px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.form-msg--success {
+  background: rgba(45, 106, 79, 0.1);
+  color: #2d6a4f;
+  border: 1px solid rgba(45, 106, 79, 0.25);
+}
+
+.form-msg--error {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .admin-form { padding: 20px 16px; }
+}

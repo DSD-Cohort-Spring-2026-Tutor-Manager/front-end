@@ -37,10 +37,10 @@ export default function LoginPage() {
         <div className="relative z-10 w-full flex flex-col items-center gap-3">
           <div className="flex items-center gap-3">
             <Image
-              src="/images/worm_with_glasses.png"
+              src="/icons/tutortoise-logo.svg"
               alt="Tutortoise logo"
-              width={44}
-              height={44}
+              width={52}
+              height={52}
               className="rounded-[10px]"
             />
             <span className="text-xl font-bold tracking-tight">Tutortoise</span>
@@ -85,10 +85,10 @@ export default function LoginPage() {
         {/* Mobile-only logo */}
         <div className="flex lg:hidden items-center gap-2 mb-10">
           <Image
-            src="/images/worm_with_glasses.png"
+            src="/icons/tutortoise-logo.svg"
             alt="Tutortoise logo"
-            width={36}
-            height={36}
+            width={44}
+            height={44}
             className="rounded-[10px]"
           />
           <span className="text-lg font-bold text-[var(--Support)]">Tutortoise</span>
