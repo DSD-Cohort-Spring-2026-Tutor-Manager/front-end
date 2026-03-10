@@ -65,7 +65,9 @@
 .stat-card {
   border-radius: var(--radius-lg) !important;
   border: 1px solid var(--color-border) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease !important;
 }
 
 .stat-card:hover {
@@ -249,8 +251,8 @@
 }
 
 .sp-pct-chip.sp-bar--high {
-  background-color: var(--color-success-light) !important;
-  color: var(--color-success-dark) !important;
+  background-color: var(--Accent) !important;
+  color: white !important;
 }
 
 .sp-pct-chip.sp-bar--mid {

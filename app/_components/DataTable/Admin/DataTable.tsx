@@ -32,9 +32,9 @@ interface Props {
 }
 
 const COLUMN_CONFIGS: Record<string, string[]> = {
-  parent: ["Parent Name", "Student Name", "Credits"],
-  tutor: ["Tutor", "Subject"],
-  student: ["Student", "Parent", "Tutor", "Subject", "Grade"],
+  parent: ['Parent Name', 'Student Name', 'Credits'],
+  tutor: ['Tutor', 'Subject'],
+  student: ['Student', 'Parent', 'Tutor', 'Subject', 'Grade'],
 };
 
 export default function DataTable({ sessions, type }: Props) {
@@ -53,42 +53,43 @@ export default function DataTable({ sessions, type }: Props) {
     setPage(0);
   };
 
-  
-const STATUS_PRIORITY: Record<string, number> = {
-  cancelled: 0,
-  open: 1,
-  scheduled: 2,
-  completed: 3,
-};
+  const STATUS_PRIORITY: Record<string, number> = {
+    cancelled: 0,
+    open: 1,
+    scheduled: 2,
+    completed: 3,
+  };
 
-const dedupedRows = (() => {
-  const groupedMap = new Map<string, Session[]>();
+  const dedupedRows = (() => {
+    const groupedMap = new Map<string, Session[]>();
 
-  sessions.forEach((s) => {
-    let key: string;
-    if (type === "parent") key = `${s.parentId}-${s.studentId}`;
-    else if (type === "tutor") key = `${s.tutorId}-${s.studentId}`;
-    else key = String(s.studentId);
+    sessions.forEach((s) => {
+      let key: string;
+      if (type === 'parent') key = `${s.parentId}-${s.studentId}`;
+      else if (type === 'tutor') key = `${s.tutorId}-${s.studentId}`;
+      else key = String(s.studentId);
 
-    if (!groupedMap.has(key)) groupedMap.set(key, []);
-    groupedMap.get(key)!.push(s);
-  });
-
-  return Array.from(groupedMap.values()).map((group) => {
-    return group.reduce((best, current) => {
-      const bestPriority = STATUS_PRIORITY[best.sessionStatus?.toLowerCase()] ?? 0;
-      const currentPriority = STATUS_PRIORITY[current.sessionStatus?.toLowerCase()] ?? 0;
-      return currentPriority > bestPriority ? current : best;
+      if (!groupedMap.has(key)) groupedMap.set(key, []);
+      groupedMap.get(key)!.push(s);
     });
-  });
-})();
+
+    return Array.from(groupedMap.values()).map((group) => {
+      return group.reduce((best, current) => {
+        const bestPriority =
+          STATUS_PRIORITY[best.sessionStatus?.toLowerCase()] ?? 0;
+        const currentPriority =
+          STATUS_PRIORITY[current.sessionStatus?.toLowerCase()] ?? 0;
+        return currentPriority > bestPriority ? current : best;
+      });
+    });
+  })();
 
   const getRowKey = (session: Session): string => {
     if (type === 'parent') return `${session.parentId}-${session.studentId}`;
     if (type === 'tutor') return `${session.tutorId}-${session.studentId}`;
     return session.studentId;
   };
-  
+
   const paginatedRows = dedupedRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
@@ -100,8 +101,7 @@ const dedupedRows = (() => {
         <>
           <TableCell>{session.studentLastName}</TableCell>
           <TableCell>{session.studentFirstName}</TableCell>
-          <TableCell>{creditBalances[session.parentId] ?? "—"}</TableCell>
-          
+          <TableCell>{creditBalances[session.parentId] ?? '—'}</TableCell>
         </>
       );
     }
@@ -120,7 +120,6 @@ const dedupedRows = (() => {
         <TableCell>{session.tutorName}</TableCell>
         <TableCell>{session.subject}</TableCell>
         <TableCell>{session.assessmentPointsEarned}</TableCell>
-       
       </>
     );
   };
