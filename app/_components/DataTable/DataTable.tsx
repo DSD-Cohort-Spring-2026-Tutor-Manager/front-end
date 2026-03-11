@@ -97,11 +97,14 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
       setOpenSessionId(null);
       setAnchorEl(null);
       showSuccessAlert();
-      window.location.reload();
+      setTimeout(() => {
+    window.location.reload();
+  }, 2000);
     } catch (error) {
       console.error("Failed to assign grade:", error);
     } finally {
       setLoadingSessionId(null);
+      
 
     }
   };
