@@ -18,8 +18,6 @@ import DialogActions from "@mui/material/DialogActions";
 import { Box, TextField, CircularProgress, Typography } from "@mui/material";
 import { TutortoiseClient } from "@/app/_api/tutortoiseClient";
 import { useAuthStore } from "@/store/authStore";
-
-// ── Shared sx constants ──────────────────────────────────────────────────────
 const notesCellSx = { maxWidth: 300, width: 300 };
 const notesBoxSx  = { display: "flex", alignItems: "center", gap: 0.5, minWidth: 0 };
 const notesTextSx = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 };
@@ -82,7 +80,7 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
 
   const handleGradeSubmit = async (sessionId: string | number, rowKey: string) => {
     const raw   = gradeValues[rowKey]?.trim();
-    const grade = raw === "" ? NaN : parseInt(raw, 10);
+    const grade = raw === "" ? NaN : parseFloat(raw);
     if (Number.isNaN(grade) || grade < 0 || grade > 100) return;
     setLoadingSessionId(rowKey);
     try {
@@ -93,6 +91,7 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
       console.error("Failed to assign grade:", error);
     } finally {
       setLoadingSessionId(null);
+      window.location.reload();
     }
   };
 
@@ -182,9 +181,8 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
                       <TableCell>{session.datetimeStarted?.split("T")[0]}</TableCell>
                       <TableCell>{session.studentFirstName} {session.studentLastName}</TableCell>
                       <TableCell>{session.subject}</TableCell>
-                      <TableCell>{session.datetimeStarted?.split("T")[1]}</TableCell>
+                      <TableCell>{session.datetimeStarted?.split("T")[1].slice(0, 5)}</TableCell>
 
-                      {/* Notes cell */}
                       <TableCell sx={notesCellSx}>
                         <Box sx={notesBoxSx}>
                           <Typography variant="body2" sx={notesTextSx}>
@@ -215,8 +213,6 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
                           </Box>
                         </Box>
                       </TableCell>
-
-                      {/* Options cell */}
                       <TableCell>
                         {type === "upcoming" && (
                           <>
@@ -296,7 +292,6 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
         )}
       </Paper>
 
-      {/* ── Edit Notes Dialog ── */}
       <Dialog open={notesDialog} onClose={() => setNotesDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
           Edit Notes
@@ -331,8 +326,6 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* ── View Full Notes Dialog ── */}
       <Dialog open={!!viewNotesSession} onClose={() => setViewNotesSession(null)} maxWidth="sm" fullWidth>
         <DialogTitle>
           Full Notes
