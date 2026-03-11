@@ -14,11 +14,11 @@ interface AuthState {
   user: AuthUser | null;
   role: Role | null;
   isAuthenticated: boolean;
-  setAuth: (user: AuthUser, role: Role, token: string) => void;
+  hasHydrated: boolean;
+  setHasHydrated: (val: boolean) => void;
+  setAuth: (user: AuthUser, role: Role) => void;
   clearAuth: () => void;
 }
-
-
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -30,15 +30,14 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (user: AuthUser, role: Role) =>
         set({ user, role, isAuthenticated: true }),
       setHasHydrated: (val) => set({ hasHydrated: val }),
-      clearAuth: () =>
-        set({ user: null, role: null,isAuthenticated: false }),
+      clearAuth: () => set({ user: null, role: null, isAuthenticated: false }),
     }),
     {
       name: "auth-storage",
-      onRehydrateStorage: () => (state) => {  // <-- add this
+      onRehydrateStorage: () => (state) => {
+        // <-- add this
         state?.setHasHydrated(true);
       },
-    }
-  )
+    },
+  ),
 );
-

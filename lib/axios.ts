@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useAuthStore } from "@/store/authStore";
 
 const axiosInstance = axios.create({
   baseURL: typeof window !== "undefined" ? window.location.origin : "",
@@ -10,10 +9,6 @@ const axiosInstance = axios.create({
 
 // Request interceptor — attach Bearer token from Zustand store
 axiosInstance.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
   return config;
 });
 
@@ -29,7 +24,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
