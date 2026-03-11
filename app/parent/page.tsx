@@ -83,7 +83,6 @@ function Home() {
 
   const { parentDetails, setParentDetails } = parentCtx;
 
-  // Auto-select the first student once the API response has populated the list
   useEffect(() => {
     if (parentDetails.students.length > 0 && !parentDetails.selectedStudent) {
       setParentDetails((prev) => ({
@@ -161,7 +160,6 @@ function Home() {
         : (currentIndex + 1) % subjects.length;
     setSubjectFilter(subjects[newIndex]);
   }
-  // sessions fetch — called once on mount; all students share the same session pool
   useEffect(() => {
     const loadSessions = async () => {
       try {

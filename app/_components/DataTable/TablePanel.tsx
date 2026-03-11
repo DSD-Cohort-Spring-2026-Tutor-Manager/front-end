@@ -17,54 +17,30 @@ function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
+interface BasicTabsProps {
+  upcomingSessions: any[];
+  completedSessions: any[];
+}
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
 
-function filterTutorSessions(sessions: any[], tutorName: string) {
-  if (!Array.isArray(sessions) || !tutorName?.trim()) return { upcoming: [], completed: [] };
-  const forTutor = sessions.filter((s) => s.tutorName === tutorName.trim());
-  return {
-    upcoming: forTutor.filter((s) => s.sessionStatus === "scheduled"),
-    completed: forTutor.filter((s) => s.sessionStatus === "completed"),
-  };
-}
-
-export default function BasicTabs(props: any) {
-  const [completedSessions, setCompletedSessions] = useState<any[]>([]);
-  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
+export default function BasicTabs({upcomingSessions, completedSessions}: BasicTabsProps) {
   const [value, setValue] = React.useState(0);
-  const user = useAuthStore((s:any) => s.user);
-  const tutorName = user?.name ?? "";
-
-  const fetchSessions = useCallback(() => {
-    TutortoiseClient.getSessionHistory().then((sessions) => {
-      const { upcoming, completed } = filterTutorSessions(sessions, tutorName);
-      setUpcomingSessions(upcoming);
-      setCompletedSessions(completed);
-    });
-  }, [tutorName]);
-
-  useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+  const user = useAuthStore((s) => s.user);
 
   const handleAssignGrade = useCallback(
     async (sessionId: string | number, grade: number) => {
-      const tutorId =
-        (user?.id != null ? Number(user.id) : NaN) ||
-        upcomingSessions[0]?.tutorId ||
-        1;
       await TutortoiseClient.assignGrade(
-        Number(tutorId),
+        Number(user?.id),
         Number(sessionId),
         grade,
       );
-      fetchSessions();
     },
-    [user?.id, upcomingSessions, fetchSessions],
+    [user?.id],
   );
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

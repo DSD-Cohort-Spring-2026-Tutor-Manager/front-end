@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
@@ -18,6 +18,8 @@ import DialogActions from "@mui/material/DialogActions";
 import { Box, TextField, CircularProgress, Typography } from "@mui/material";
 import { TutortoiseClient } from "@/app/_api/tutortoiseClient";
 import { useAuthStore } from "@/store/authStore";
+import Alert from '@/app/_components/Alert/Alert';
+
 const notesCellSx = { maxWidth: 300, width: 300 };
 const notesBoxSx  = { display: "flex", alignItems: "center", gap: 0.5, minWidth: 0 };
 const notesTextSx = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 };
@@ -69,11 +71,18 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
   const [notesError, setNotesError]             = useState("");
   const [notesSuccess, setNotesSuccess]         = useState(false);
   const [viewNotesSession, setViewNotesSession] = useState<Session | null>(null);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [isAlertExiting, setIsAlertExiting] = useState(false);
 
   const handleChangePage = (_: unknown, newPage: number) => setPage(newPage);
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
+  };
+
+  const showSuccessAlert = () => {
+    setIsAlertExiting(false);
+    setIsAlertVisible(true);
   };
 
   const paginatedSessions = sessions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -87,11 +96,13 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
       await onAssignGrade?.(sessionId, grade);
       setOpenSessionId(null);
       setAnchorEl(null);
+      showSuccessAlert();
+      window.location.reload();
     } catch (error) {
       console.error("Failed to assign grade:", error);
     } finally {
       setLoadingSessionId(null);
-      window.location.reload();
+
     }
   };
 
@@ -148,9 +159,27 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
 
   const isGradeInvalid = (rowKey: string) => {
     const v = gradeValues[rowKey]?.trim();
-    const n = v === "" ? NaN : parseInt(v, 10);
+    const n = v === "" ? NaN : parseFloat(v);
     return Number.isNaN(n) || n < 0 || n > 100;
   };
+
+    useEffect(() => {
+      if (!isAlertVisible) return;
+  
+      const stayTimer = setTimeout(() => {
+        setIsAlertExiting(true);
+      }, 5000);
+  
+      const removeTimer = setTimeout(() => {
+        setIsAlertVisible(false);
+        setIsAlertExiting(false);
+      }, 5400);
+  
+      return () => {
+        clearTimeout(stayTimer);
+        clearTimeout(removeTimer);
+      };
+    }, [isAlertVisible]);
 
   return (
     <>
@@ -175,7 +204,7 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
                 </TableRow>
               ) : (
                 paginatedSessions.map((session, index) => {
-                  const rowKey = session.id ?? `row-${index}`;
+                  const rowKey = session.sessionId ?? `row-${index}`;
                   return (
                     <TableRow key={rowKey}>
                       <TableCell>{session.datetimeStarted?.split("T")[0]}</TableCell>
@@ -344,6 +373,15 @@ export default function DataTable({ sessions, type, onAssignGrade, setSessions }
           <Button variant="outlined" color="inherit" onClick={() => setViewNotesSession(null)}>Close</Button>
         </DialogActions>
       </Dialog>
+            <div className='alert-layer'>
+        {isAlertVisible && (
+          <Alert
+            type='success'
+            text='Grade assigned and session completed successfully!'
+            className={isAlertExiting ? 'alert-exit' : 'alert-enter'}
+          />
+        )}
+      </div>
     </>
   );
 }

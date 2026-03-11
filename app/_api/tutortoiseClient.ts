@@ -2,6 +2,7 @@ import axiosInstance from "@/lib/axios";
 
 // Make calls to the same origin to route requests through the proxy
 const PARENT_DETAILS_ENDPOINT = "/api/parent/{id}";
+const TUTOR_SESSIONS_DETAILS_ENDPOINT = "/api/sessions/tutor/{tutorId}"
 const BALANCE_ENDPOINT = "/api/credits/balance/{id}";
 const TRANSACTION_HISTORY_ENDPOINT = "/api/credits/history/{id}";
 const BUY_CREDITS_ENDPOINT = "/api/credits/buy";
@@ -208,6 +209,20 @@ export const TutortoiseClient = {
       });
   },
 
+    getTutorSessions: async ( tutorId:string, status: string): Promise<any> => {
+    return await axiosInstance
+      .get(
+       TUTOR_SESSIONS_DETAILS_ENDPOINT.replace("{tutorId}", tutorId),
+        {
+          params: {status }, 
+        },
+      )
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("Get tutor session API call failed", err);
+        throw err;
+      });
+  },
   createTutor: async (tutorData: any): Promise<any> => {
     return await axiosInstance
       .post(CREATE_TUTOR_ENDPOINT, tutorData)
