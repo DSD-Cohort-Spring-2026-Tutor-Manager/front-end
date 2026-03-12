@@ -35,7 +35,7 @@ function Home() {
           lastValue={adminDetails?.lastWeeklySessionsBooked}
         />
         <Databox
-          title="Revenue"
+          title="Revenue in $"
           subtitle="This Week"
           value={adminDetails?.weeklyCashRevenue}
           lastValue={adminDetails?.lastWeeklyCashRevenue}
