@@ -75,7 +75,7 @@ export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
       <div className="las__header">
         <div>
           <h3 className="las__title">Least Active Students</h3>
-          <p className="las__subtitle">Bottom {limit} by session count</p>
+          <p className="las__subtitle">Bottom {limit} by session count, excl. cancelled</p>
         </div>
         <span className="las__badge">{rows.length} students</span>
       </div>
