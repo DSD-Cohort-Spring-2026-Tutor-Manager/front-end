@@ -85,8 +85,6 @@ export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
       });
   }, []); // ← runs once on mount, no dependency on rows
 
-  const maxTotal = rows[rows.length - 1]?.total || 1;
-
   const formatDate = (d: string | null) => {
     if (!d) return "Never";
     const diff = Math.floor(
@@ -127,7 +125,6 @@ export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
               <div className="las__student">
                 <div>
                   <p className="las__name">{s.studentName}</p>
-                  <p className="las__id">ID {s.studentId}</p>
                 </div>
               </div>
 
