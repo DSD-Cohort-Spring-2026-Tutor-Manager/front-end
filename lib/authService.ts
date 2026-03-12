@@ -4,7 +4,6 @@ import { useAuthStore, type AuthUser, type Role } from "@/store/authStore";
 export interface LoginResponse {
   success: boolean;
   message: string;
-  token?: string;
   role?: Role;
   user?: AuthUser;
   /** From backend /api/login when no nested user: userId, firstName, lastName, email */
@@ -20,7 +19,7 @@ export interface LoginResponse {
 export async function login(
   email: string,
   password: string,
-  role: "parent" | "tutor" | "admin"
+  role: "parent" | "tutor" | "admin",
 ): Promise<LoginResponse> {
   // IMPORTANT: credentials = base64(email + ":" + password) with UTF‑8 support
   const encoder = new TextEncoder();
@@ -46,11 +45,16 @@ export async function login(
         ? {
             id: data.userId ?? 0,
             email: data.email ?? "",
-            name: [data.firstName, data.lastName].filter(Boolean).join(" ").trim() || (data.email ?? "User"),
+            name:
+              [data.firstName, data.lastName]
+                .filter(Boolean)
+                .join(" ")
+                .trim() ||
+              (data.email ?? "User"),
           }
         : null);
     if (user) {
-      useAuthStore.getState().setAuth(user, data.role, data.token ?? "");
+      useAuthStore.getState().setAuth(user, data.role);
     }
   }
 
