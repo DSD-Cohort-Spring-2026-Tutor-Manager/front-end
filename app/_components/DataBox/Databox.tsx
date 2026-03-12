@@ -17,6 +17,7 @@ function Databox({
   dropdownContent,
   dropdownOnChange,
   subtitle,
+  lastValue,
 }: {
   title: string;
   value: string | number;
@@ -26,13 +27,24 @@ function Databox({
   onClick?: () => void;
   topRightIcon?: TopRightIcon;
   dropdownContent?: any[];
+  lastValue?: number;
   dropdownOnChange?: (selectedOption: any) => void;
 }) {
+  const diff =
+    lastValue != null && typeof value === "number" ? value - lastValue : null;
   return (
     <div className="databox-sm w-full h-80 bg-(--Primary) rounded-xl relative">
       <h2 className="databox__title">{title}</h2>
       <p className="databox__title-value">{value}</p>
       {subtitle ? <h3 className="databox__subtitle">{subtitle}</h3> : ""}
+      {diff !== null && (
+        <p
+          className={`databox__diff ${diff >= 0 ? "databox__diff--up" : "databox__diff--down"}`}
+        >
+          {diff >= 0 ? "▲" : "▼"} {diff >= 0 ? "+" : ""}
+          {diff} vs last week
+        </p>
+      )}
       {cta &&
         (dropdownContent?.length ? (
           <div className="dropdown databox_btn">

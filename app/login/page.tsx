@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import {
-  GraduationCap,
-  CalendarDays,
+  MessageSquareText,
+  FileText,
   BarChart3,
   CheckCircle2,
 } from "lucide-react";
@@ -12,22 +12,23 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Sign In — Tutortoise",
   description:
-    "Sign in to your Tutortoise account to manage tutoring sessions.",
+    "Learning that moves at your pace. Sign in to access personalized tutoring sessions, track your progress, and connect with expert tutors anytime, anywhere.",
 };
 
 const features = [
-  { icon: GraduationCap, text: "Find verified tutors across 50+ subjects" },
-  { icon: CalendarDays,  text: "Flexible scheduling that fits your lifestyle" },
-  { icon: BarChart3,     text: "Track progress with real-time session reports" },
+  {
+    icon: MessageSquareText,
+    text: "Helping learners come out of their shell with personalized tutoring sessions",
+  },
+  { icon: FileText, text: "Steady support for growing minds" },
+  { icon: BarChart3, text: "Track progress with real-time session reports" },
 ];
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex-1 flex flex-col lg:flex-row">
-
       {/* ── Left Panel (35%) — Branding ── */}
       <div className="flex w-full lg:w-[35%] flex-col justify-between bg-[var(--Support)] text-white p-6 lg:p-10 relative overflow-hidden">
-
         {/* Decorative background circles (large screens only) */}
         <div className="hidden lg:block absolute -top-24 -left-24 w-72 h-72 rounded-full bg-white/5" />
         <div className="hidden lg:block absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
@@ -48,10 +49,10 @@ export default function LoginPage() {
 
           <div className="text-center">
             <h2 className="text-2xl lg:text-[2rem] font-bold leading-tight mb-2">
-              Connecting learners with the right tutors
+              Slow and steady wins the grade!
             </h2>
             <p className="text-white/60 text-sm mb-8">
-              Trusted by families and educators across the country.
+              Proven curriculum, real progress, complete transparency
             </p>
 
             <ul className="hidden lg:block space-y-5">
@@ -73,15 +74,16 @@ export default function LoginPage() {
         <div className="hidden lg:flex relative z-10 items-center gap-3 p-4 bg-white/10 rounded-[14px] border border-white/10 backdrop-blur-sm">
           <CheckCircle2 className="w-5 h-5 text-[var(--Highlight)] flex-shrink-0" />
           <p className="text-xs text-white/70 leading-relaxed">
-            <span className="text-white font-semibold">10,000+ sessions</span>{" "}
-            booked. Verified tutors reviewed by our team before approval.
+            <span className="text-white font-semibold">
+              Pay only for the tutoring sessions you need.
+            </span>{" "}
+            No subscriptions, no commitments. Cancel anytime.
           </p>
         </div>
       </div>
 
       {/* ── Right Panel (60%) — Login Form ── */}
       <div className="flex-1 flex flex-col items-center justify-center bg-[var(--Off-white)] px-6 py-12 min-h-[500px]">
-
         {/* Mobile-only logo */}
         <div className="flex lg:hidden items-center gap-2 mb-10">
           <Image
@@ -91,7 +93,9 @@ export default function LoginPage() {
             height={44}
             className="rounded-[10px]"
           />
-          <span className="text-lg font-bold text-[var(--Support)]">Tutortoise</span>
+          <span className="text-lg font-bold text-[var(--Support)]">
+            Tutortoise
+          </span>
         </div>
 
         <div className="w-full max-w-md flex flex-col items-center justify-center">
@@ -108,7 +112,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-
     </div>
   );
 }
