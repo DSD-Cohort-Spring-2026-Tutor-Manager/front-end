@@ -154,7 +154,7 @@ export default function DataTable({
         Number(session.studentId),
         tutorId,
       );
-      const fetched = data?.lastName || data?.notes || session.notes || '';
+      const fetched = data?.notes || session.notes || '';
       setExistingNotes(fetched);
       setEditedNotes(fetched);
     } catch {
