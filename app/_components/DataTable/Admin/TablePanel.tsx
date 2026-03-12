@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import DataTable from "./DataTable";
 import { useEffect, useState } from "react";
 import { TutortoiseClient } from "../../../_api/tutortoiseClient";
+import { ParentRecord } from "../../../types/types";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -15,7 +16,9 @@ function CustomTabPanel(props: TabPanelProps) {
     </div>
   );
 }
-
+interface Props {
+  parentHistory: ParentRecord[];
+}
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -26,35 +29,24 @@ const TAB_CONFIG: { label: string; type: "parent" | "student" | "tutor" }[] = [
   { label: "Students", type: "student" },
   { label: "Tutors", type: "tutor" },
 ];
-export default function BasicTabs(props: any) {
-  const [fullSessions, setFullSessions] = useState<any[]>([]);
+export default function BasicTabs({ parentHistory }: Props) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  useEffect(() => {
-    TutortoiseClient.getSessionHistory().then((sessions) => {
-      if (Array.isArray(sessions)) {
-        setFullSessions(sessions);
-      }
-    });
-  }, []);
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange}>
           <Tab label={"Parents"} />
-          <Tab label={"Students"} />
-          <Tab label={"Tutors"} />
         </Tabs>
       </Box>
 
       {TAB_CONFIG.map((tab, index) => (
         <CustomTabPanel key={tab.type} value={value} index={index}>
-          <DataTable sessions={fullSessions} type={tab.type} />
+          <DataTable parentHistory={parentHistory} />
         </CustomTabPanel>
       ))}
     </Box>

@@ -5,30 +5,7 @@ import LeastActiveStudents from "../../_components/DataBox/LeastActiveStudents";
 import Databox from "../../_components/DataBox/Databox";
 import "./students.css";
 import TablePagination from "@mui/material/TablePagination";
-
-interface Session {
-  studentId: string;
-  studentFirstName?: string;
-  studentLastName?: string;
-  sessionStatus: string;
-  datetimeStarted?: string;
-  tutorId?: string;
-  subject?: string;
-  parentId: string | null;
-}
-
-interface StudentProfile {
-  studentId: string;
-  studentName: string;
-  total: number;
-  completed: number;
-  scheduled: number;
-  cancelled: number;
-  lastSeen: string | null;
-  subjects: string[];
-  tutors: string[];
-  creditsRemaining: number;
-}
+import { Session, StudentProfile } from "../../types/types";
 
 export default function StudentPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -60,10 +37,11 @@ export default function StudentPage() {
   const profiles = useMemo<StudentProfile[]>(() => {
     const map = new Map<string, StudentProfile>();
     sessions.forEach((s) => {
-      if (!map.has(s.studentId)) {
-        map.set(s.studentId, {
-          studentId: s.studentId,
-          studentName: s.studentFirstName + " " + s.studentLastName,
+      if (!map.has(String(s.studentId))) {
+        map.set(String(s.studentId), {
+          studentId: String(s.studentId),
+          studentName:
+            (s.studentFirstName || "") + " " + (s.studentLastName || ""),
           total: 0,
           completed: 0,
           scheduled: 0,
@@ -74,7 +52,7 @@ export default function StudentPage() {
           creditsRemaining: 0,
         });
       }
-      const p = map.get(s.studentId)!;
+      const p = map.get(String(s.studentId))!;
       p.total += 1;
       const status = s.sessionStatus?.toLowerCase();
       if (status === "open") {
@@ -87,9 +65,10 @@ export default function StudentPage() {
         const d = s.datetimeStarted.split("T")[0];
         if (!p.lastSeen || d > p.lastSeen) p.lastSeen = d;
       }
-      if (s.subject && !p.subjects.includes(s.subject))
-        p.subjects.push(s.subject);
-      if (s.tutorId && !p.tutors.includes(s.tutorId)) p.tutors.push(s.tutorId);
+      if (s.subject && !p.subjects.includes(String(s.subject)))
+        p.subjects.push(String(s.subject));
+      if (s.tutorId && !p.tutors.includes(String(s.tutorId)))
+        p.tutors.push(String(s.tutorId));
     });
     return [...map.values()];
   }, [sessions]);
@@ -239,7 +218,7 @@ export default function StudentPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="sp__td-completed">{p.completed}</td>
+                        <td className="sp__td-completed">{p.total}</td>
                         <td className="sp__td-upcoming">{p.scheduled}</td>
                         <td className="sp__td-cancelled">{p.cancelled}</td>
 

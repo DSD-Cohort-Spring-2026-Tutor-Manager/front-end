@@ -2,38 +2,11 @@
 import { useMemo, useEffect, useState } from "react";
 import "./LeastActiveStudents.css";
 import { TutortoiseClient } from "../../_api/tutortoiseClient";
-
-interface Session {
-  studentId: string;
-  studentFirstName?: string;
-  studentLastName?: string;
-  parentId: string | null;
-  sessionStatus: string;
-  datetimeStarted?: string;
-}
+import { ParentRecord, StudentStat, Session } from "../../types/types";
 
 interface Props {
   sessions: Session[];
   limit?: number;
-}
-
-interface StudentStat {
-  studentId: string;
-  studentName: string;
-  parentId: string | null;
-  total: number;
-  completed: number;
-  scheduled: number;
-  lastSeen: string | null;
-}
-interface ParentRecord {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  currentCreditAmount: number;
-  numberOfStudents: number;
 }
 
 export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
@@ -45,19 +18,19 @@ export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
     sessions.forEach((s) => {
       const status = s.sessionStatus?.toLowerCase();
 
-      if (!map.has(s.studentId)) {
-        map.set(s.studentId, {
-          studentId: s.studentId,
+      if (!map.has(String(s.studentId))) {
+        map.set(String(s.studentId), {
+          studentId: String(s.studentId),
           studentName:
             `${s.studentFirstName ?? ""} ${s.studentLastName ?? ""}`.trim(),
-          parentId: s.parentId,
+          parentId: String(s.parentId),
           total: 0,
           completed: 0,
           scheduled: 0,
           lastSeen: null,
         });
       }
-      const entry = map.get(s.studentId)!;
+      const entry = map.get(String(s.studentId))!;
       entry.total += 1;
       if (status === "completed") entry.completed += 1;
       if (status === "scheduled") entry.scheduled += 1;
@@ -102,9 +75,7 @@ export default function LeastActiveStudents({ sessions, limit = 10 }: Props) {
       <div className="las__header">
         <div>
           <h3 className="las__title">Least Active Students</h3>
-          <p className="las__subtitle">
-            Bottom {limit} by session count · excl. cancelled
-          </p>
+          <p className="las__subtitle">Bottom {limit} by session count</p>
         </div>
         <span className="las__badge">{rows.length} students</span>
       </div>
