@@ -1,20 +1,27 @@
-import * as React from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
-import DataTable from "./DataTable";
-import { useCallback, useEffect, useState } from "react";
-import { TutortoiseClient } from "../../_api/tutortoiseClient";
-import { useAuthStore } from "@/store/authStore";
+import * as React from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import DataTable from './DataTable';
+import { useCallback, useEffect, useState } from 'react';
+import { TutortoiseClient } from '../../_api/tutortoiseClient';
+import { useAuthStore } from '@/store/authStore';
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
+    <div role='tabpanel' hidden={value !== index} {...other}>
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
+}
+
+interface BasicTabsProps {
+  upcomingSessions: any[];
+  completedSessions: any[];
+  onTabChange?: (tabIndex: number) => void;
+  onNoteSaved?: () => void;
 }
 
 interface TabPanelProps {
@@ -23,73 +30,55 @@ interface TabPanelProps {
   value: number;
 }
 
-function filterTutorSessions(sessions: any[], tutorName: string) {
-  if (!Array.isArray(sessions) || !tutorName?.trim()) return { upcoming: [], completed: [] };
-  const forTutor = sessions.filter((s) => s.tutorName === tutorName.trim());
-  return {
-    upcoming: forTutor.filter((s) => s.sessionStatus === "scheduled"),
-    completed: forTutor.filter((s) => s.sessionStatus === "completed"),
-  };
-}
-
-export default function BasicTabs(props: any) {
-  const [completedSessions, setCompletedSessions] = useState<any[]>([]);
-  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
+export default function BasicTabs({
+  upcomingSessions,
+  completedSessions,
+  onTabChange,
+  onNoteSaved,
+}: BasicTabsProps) {
   const [value, setValue] = React.useState(0);
-  const user = useAuthStore((s:any) => s.user);
-  const tutorName = user?.name ?? "";
-
-  const fetchSessions = useCallback(() => {
-    TutortoiseClient.getSessionHistory().then((sessions) => {
-      const { upcoming, completed } = filterTutorSessions(sessions, tutorName);
-      setUpcomingSessions(upcoming);
-      setCompletedSessions(completed);
-    });
-  }, [tutorName]);
-
-  useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+  const user = useAuthStore((s) => s.user);
 
   const handleAssignGrade = useCallback(
     async (sessionId: string | number, grade: number) => {
-      const tutorId =
-        (user?.id != null ? Number(user.id) : NaN) ||
-        upcomingSessions[0]?.tutorId ||
-        1;
       await TutortoiseClient.assignGrade(
-        Number(tutorId),
+        Number(user?.id),
         Number(sessionId),
         grade,
       );
-      fetchSessions();
     },
-    [user?.id, upcomingSessions, fetchSessions],
+    [user?.id],
   );
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    onTabChange?.(newValue);
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label={"Upcoming Schedule"} />
-          <Tab label={"Completed Schedule"} />
+          <Tab label={'Upcoming Schedule'} />
+          <Tab label={'Completed Schedule'} />
         </Tabs>
       </Box>
 
       <CustomTabPanel value={value} index={0}>
         <DataTable
           sessions={upcomingSessions}
-          type="upcoming"
+          type='upcoming'
           onAssignGrade={handleAssignGrade}
+          onNoteSaved={onNoteSaved}
         />
       </CustomTabPanel>
 
       <CustomTabPanel value={value} index={1}>
-        <DataTable sessions={completedSessions} type="completed" />
+        <DataTable
+          sessions={completedSessions}
+          type='completed'
+          onNoteSaved={onNoteSaved}
+        />
       </CustomTabPanel>
     </Box>
   );

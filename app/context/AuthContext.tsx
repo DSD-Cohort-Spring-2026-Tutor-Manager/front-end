@@ -24,8 +24,8 @@ const AuthContext = createContext<{
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Derive legacy user shape from Zustand store
-  const zustandUser = useAuthStore((s:any) => s.user);
-  const zustandRole = useAuthStore((s:any) => s.role);
+  const zustandUser = useAuthStore((s: any) => s.user);
+  const zustandRole = useAuthStore((s: any) => s.role);
 
   const legacyUser: LegacyUser | null =
     zustandUser && zustandRole
@@ -45,10 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // When a legacy user is provided, hydrate the Zustand auth store so that
     // newer parts of the app see a consistent user/role.
-    const roleUpper = user.role.toUpperCase() as
-      | "PARENT"
-      | "TUTOR"
-      | "ADMIN";
+    const roleUpper = user.role.toUpperCase() as "PARENT" | "TUTOR" | "ADMIN";
 
     // We don't have a token in this legacy path, so pass an empty string.
     // Authorization is enforced server-side; this is for UI state only.
@@ -60,7 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: user.name,
       },
       roleUpper,
-      "",
     );
   };
 
