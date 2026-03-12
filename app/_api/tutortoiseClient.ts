@@ -15,6 +15,7 @@ const TUTOR_ASSIGN_GRADE_ENDPOINT = "/api/tutor/assign-grade";
 const STUDENT_NOTE_ENDPOINT = "/api/student/{studentId}/note";
 const CREATE_TUTOR_ENDPOINT = "/api/admin/dashboard/createTutor";
 const CREATE_PARENT_ENDPOINT = "/api/admin/dashboard/createParent";
+const HISTORY_PARENT_ENDPOINT = "/api/admin/dashboard/allParents";
 
 export const TutortoiseClient = {
   getBasePath: () => window.location.origin,
@@ -112,6 +113,15 @@ export const TutortoiseClient = {
         throw err;
       });
   },
+  getParentHistory: async (): Promise<any> => {
+    return await axiosInstance
+      .get(HISTORY_PARENT_ENDPOINT)
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("Parent History API call failed", err);
+        throw err;
+      });
+  },
   bookSession: async (
     parentId: number,
     studentId: number,
@@ -152,7 +162,7 @@ export const TutortoiseClient = {
   assignGrade: async (
     tutorId: number,
     sessionId: number,
-    grade: number
+    grade: number,
   ): Promise<any> => {
     return await axiosInstance
       .put(TUTOR_ASSIGN_GRADE_ENDPOINT, {
@@ -169,12 +179,9 @@ export const TutortoiseClient = {
 
   getStudentNote: async (studentId: number, tutorId: number): Promise<any> => {
     return await axiosInstance
-      .get(
-       STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)),
-        {
-          params: { tutorId }, 
-        },
-      )
+      .get(STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)), {
+        params: { tutorId },
+      })
       .then((res) => res.data)
       .catch((err) => {
         console.error("Get student note API call failed", err);
@@ -190,7 +197,7 @@ export const TutortoiseClient = {
   ): Promise<any> => {
     return await axiosInstance
       .put(
-       STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)),
+        STUDENT_NOTE_ENDPOINT.replace("{studentId}", String(studentId)),
         {
           studentId,
           firstName,
@@ -228,4 +235,3 @@ export const TutortoiseClient = {
       });
   },
 };
-
