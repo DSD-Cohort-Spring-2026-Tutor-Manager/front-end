@@ -18,7 +18,6 @@ function Home() {
       .then(setParentHistory)
       .catch(() => {});
   }, []);
-  console.log("adminDetails", adminDetails);
   return (
     <main className="dashboard">
       <section className="dashboard__data-row" style={{ margin: "20px 20px" }}>
